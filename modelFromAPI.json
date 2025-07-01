@@ -1,0 +1,97 @@
+{
+  "_id": 7000,
+  "sug_degem": "M", // Model type // Тип модели
+  "tozeret_cd": 724, // Manufacturer code // Код производителя
+  "tozeret_nm": "פולקסווגן גרמנ", // Manufacturer name // Название производителя
+  "tozeret_eretz_nm": "גרמניה", // Country of manufacturer // Страна производителя
+  "tozar": "פולקסווגן", // Brand // Бренд
+  "degem_cd": 992, // Model code // Код модели
+  "degem_nm": "7HC-SHBTF7", // Model name // Название модели
+  "shnat_yitzur": 2022, // Year of manufacture // Год производства
+  "kvuzat_agra_cd": 7, // Tax group code // Код налоговой группы
+  "nefah_manoa": 1968, // Engine capacity // Объем двигателя
+  "mishkal_kolel": 3080, // Total weight // Общий вес
+  "gova": 197, // Height // Высота
+  "hanaa_cd": 1, // Drive type code // Код типа привода
+  "hanaa_nm": "4X2", // Drive type // Тип привода
+  "mazgan_ind": 1, // Air conditioning indicator // Индикатор кондиционера
+  "abs_ind": 1, // ABS indicator // Индикатор ABS
+  "kariot_avir_source": "8", // Airbags source // Источник подушек безопасности
+  "mispar_kariot_avir": 8, // Number of airbags // Количество подушек безопасности
+  "hege_koah_ind": 1, // Power steering indicator // Индикатор усилителя руля
+  "automatic_ind": 1, // Automatic transmission indicator // Индикатор автоматической трансмиссии
+  "halonot_hashmal_source": "2", // Electric windows source // Источник электрических окон
+  "mispar_halonot_hashmal": 2, // Number of electric windows // Количество электрических окон
+  "halon_bagg_ind": 0, // Rear window indicator // Индикатор заднего окна
+  "galgaley_sagsoget_kala_ind": 1, // Alloy wheels indicator // Индикатор легкосплавных дисков
+  "argaz_ind": 0, // Trunk indicator // Индикатор багажника
+  "merkav": "ואן/נוסעים", // Body type // Тип кузова
+  "ramat_gimur": "COMFORTLINE", // Trim level // Уровень отделки
+  "delek_cd": 2, // Fuel type code // Код типа топлива
+  "delek_nm": "דיזל", // Fuel type // Тип топлива
+  "mispar_dlatot": 4, // Number of doors // Количество дверей
+  "koah_sus": 150, // Horsepower // Лошадиные силы
+  "mispar_moshavim": 8, // Number of seats // Количество мест
+  "bakarat_yatzivut_ind": 1, // Stability control indicator // Индикатор системы стабилизации
+  "kosher_grira_im_blamim": 2220, // Towing capacity with brakes // Буксировочная способность с тормозами
+  "kosher_grira_bli_blamim": 750, // Towing capacity without brakes // Буксировочная способность без тормозов
+  "sug_tkina_cd": 1, // Type of maintenance code // Код типа обслуживания
+  "sug_tkina_nm": "אירופאית", // Type of maintenance // Тип обслуживания
+  "sug_mamir_cd": 3, // Type of catalyst code // Код типа катализатора
+  "sug_mamir_nm": "משולב-לוכד וממיר", // Type of catalyst // Тип катализатора
+  "technologiat_hanaa_cd": null, // Drive technology code // Код технологии привода
+  "technologiat_hanaa_nm": "הנעה רגילה", // Drive technology // Технология привода
+  "kamut_CO2": null, // CO2 amount // Количество CO2
+  "kamut_NOX": null, // NOX amount // Количество NOX
+  "kamut_PM10": null, // PM10 amount // Количество PM10
+  "kamut_HC": null, // HC amount // Количество HC
+  "kamut_HC_NOX": null, // HC+NOX amount // Количество HC+NOX
+  "kamut_CO": null, // CO amount // Количество CO
+  "kamut_CO2_city": null, // City CO2 amount // Количество CO2 в городе
+  "kamut_NOX_city": null, // City NOX amount // Количество NOX в городе
+  "kamut_PM10_city": null, // City PM10 amount // Количество PM10 в городе
+  "kamut_HC_city": null, // City HC amount // Количество HC в городе
+  "kamut_CO_city": null, // City CO amount // Количество CO в городе
+  "kamut_CO2_hway": null, // Highway CO2 amount // Количество CO2 на шоссе
+  "kamut_NOX_hway": null, // Highway NOX amount // Количество NOX на шоссе
+  "kamut_PM10_hway": null, // Highway PM10 amount // Количество PM10 на шоссе
+  "kamut_HC_hway": null, // Highway HC amount // Количество HC на шоссе
+  "kamut_CO_hway": null, // Highway CO amount // Количество CO на шоссе
+  "madad_yarok": 318, // Green index // Зеленый индекс
+  "kvutzat_zihum": 15, // Pollution group // Группа загрязнения
+  "bakarat_stiya_menativ_ind": 1, // Lane departure warning indicator // Индикатор предупреждения о сходе с полосы
+  "bakarat_stiya_menativ_makor_hatkana": "יצרן", // Lane departure warning source // Источник предупреждения о сходе с полосы
+  "nitur_merhak_milfanim_ind": 1, // Front distance monitoring indicator // Индикатор мониторинга передней дистанции
+  "nitur_merhak_milfanim_makor_hatkana": "יצרן", // Front distance monitoring source // Источник мониторинга передней дистанции
+  "zihuy_beshetah_nistar_ind": 1, // Blind spot detection indicator // Индикатор обнаружения слепых зон
+  "bakarat_shyut_adaptivit_ind": 1, // Adaptive cruise control indicator // Индикатор адаптивного круиз-контроля
+  "zihuy_holchey_regel_ind": 0, // Pedestrian detection indicator // Индикатор обнаружения пешеходов
+  "zihuy_holchey_regel_makor_hatkana": "", // Pedestrian detection source // Источник обнаружения пешеходов
+  "maarechet_ezer_labalam_ind": 1, // Driver assistance system indicator // Индикатор системы помощи водителю
+  "matzlemat_reverse_ind": 1, // Reverse camera indicator // Индикатор камеры заднего вида
+  "hayshaney_lahatz_avir_batzmigim_ind": 1, // Tire pressure monitoring indicator // Индикатор мониторинга давления в шинах
+  "hayshaney_hagorot_ind": 0, // Seatbelt indicator // Индикатор ремней безопасности
+  "nikud_betihut": 2.5000, // Safety rating // Рейтинг безопасности
+  "ramat_eivzur_betihuty": 2, // Safety equipment level // Уровень безопасности оборудования
+  "teura_automatit_benesiya_kadima_ind": 1, // Automatic forward lighting indicator // Индикатор автоматического переднего освещения
+  "shlita_automatit_beorot_gvohim_ind": 0, // Automatic high beam control indicator // Индикатор автоматического управления дальним светом
+  "shlita_automatit_beorot_gvohim_makor_hatkana": "", // Automatic high beam control source // Источник автоматического управления дальним светом
+  "zihuy_matzav_hitkarvut_mesukenet_ind": 1, // Dangerous proximity detection indicator // Индикатор обнаружения опасного сближения
+  "zihuy_tamrurey_tnua_ind": 0, // Traffic sign recognition indicator // Индикатор распознавания дорожных знаков
+  "zihuy_rechev_do_galgali": 0, // Motorcycle detection indicator // Индикатор обнаружения мотоциклов
+  "zihuy_tamrurey_tnua_makor_hatkana": "", // Traffic sign recognition source // Источник распознавания дорожных знаков
+  "CO2_WLTP": 203, // CO2 WLTP // CO2 по WLTP
+  "HC_WLTP": 13.600, // HC WLTP // HC по WLTP
+  "PM_WLTP": 0.2800, // PM WLTP // PM по WLTP
+  "NOX_WLTP": 33.200, // NOX WLTP // NOX по WLTP
+  "CO_WLTP": 15.400, // CO WLTP // CO по WLTP
+  "CO2_WLTP_NEDC": null, // CO2 WLTP NEDC // CO2 по WLTP NEDC
+  "bakarat_stiya_activ_s": 1, // Active lane departure warning // Активное предупреждение о сходе с полосы
+  "blima_otomatit_nesia_leahor": 1, // Automatic emergency braking // Автоматическое экстренное торможение
+  "bakarat_mehirut_isa": 0, // Speed limiter indicator // Индикатор ограничителя скорости
+  "blimat_hirum_lifnei_holhei_regel_ofanaim": 0, // Emergency braking before pedestrians or cyclists // Экстренное торможение перед пешеходами или велосипедистами
+  "hitnagshut_cad_shetah_met": 0, // Collision with rigid obstacle // Столкновение с жестким препятствием
+  "alco_lock": 0, // Alcohol lock indicator // Индикатор алкозамка
+  "dg_metach_solela": null, // Urban environment indicator // Индикатор городской среды
+  "kinuy_mishari": "CARAVELLE" // Commercial designation // Коммерческое обозначение
+}

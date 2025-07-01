@@ -1,0 +1,15 @@
+{
+  "byDate": "לפי תאריך",
+  "until": "עד",
+  "month": "חודש",
+  "sleep": "שנה",
+  "manufacturerName": "יצרן",
+  "modelName": "דגם",
+  "manufacturerYear": "שנה",
+  "volume": "נפח",
+  "gearbox": "תיבת הילוכים",
+  "Manually": "ידני",
+  "Automatically": "אוטומטי",
+  "Robotic": "רובוטי",
+  "fin": "תת דגם"
+}

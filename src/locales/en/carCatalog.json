@@ -1,0 +1,20 @@
+{
+  "back": "Back to catalog",
+  "catalog": "Cars catalog",
+  "countries": "countries",
+  "add": "Add new",
+  "change": "Change prices",
+  "duplicate": "Country duplicate",
+  "gearbox": "Gearbox",
+  "vol": "Volume",
+  "year": "Year",
+  "model": "Model",
+  "manufacturer": "Manufacturer",
+  "1": "Manually",
+  "2": "Automatically",
+  "3": "Robotic",
+  "edit": "Actions",
+  "carType": "Vehicles Type",
+  "modelFinishing": "Finishing",
+  "category": "Category"
+}

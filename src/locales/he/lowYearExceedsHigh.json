@@ -1,0 +1,9 @@
+{
+  "ManufacturerName": "יצרן",
+  "ModelName": "דגם",
+  "LowYear": "שנת יצור נמוכה",
+  "LowPrice": "מחיר",
+  "HighYear": "שנת יצור גבוהה",
+  "HighPrice": "מחיר",
+  "Difference": "הפרש"
+}

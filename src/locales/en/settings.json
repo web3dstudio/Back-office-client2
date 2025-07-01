@@ -1,0 +1,15 @@
+{
+  "title": "System settings",
+  "userSettings": "user settings",
+  "active2FA": "active two factor authentication",
+  "subtlety": "subtlety",
+  "disconnectUsers": "disconnect inactive user after X minutes",
+  "needAdminApprove": "need admin approve after registration",
+  "defaultQueries": "default daily queries for user",
+  "blockUser": "block user after",
+  "loginTry": "bad logins",
+  "blockDoubleLogin": "block double login (different device / different explorer / etc)",
+  "keeping": "keeping",
+  "disconnectAssessorsUsers": "disconnect inactive accesors user after X minutes",
+  "disconnectOpinionsUsers": "disconnect inactive opinions user after X minutes"
+}

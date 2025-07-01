@@ -1,0 +1,14 @@
+{
+  "byDate": "by date",
+  "until": "until",
+  "month": "a month",
+  "sleep": "sleep",
+  "manufacturerName": "Manufacturer",
+  "modelName": "Model",
+  "manufacturerYear": "Year",
+  "volume": "Volume",
+  "gearbox": "Gearbox",
+  "Manually": "Manually",
+  "Automatically": "Automatically",
+  "Robotic": "Robotic"
+}

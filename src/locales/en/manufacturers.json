@@ -1,0 +1,17 @@
+{
+  "title": "Manufacturers",
+  "back": "Back",
+  "add": "Add new",
+  "delete": "Delete",
+  "cancel": "Cancel",
+  "name": "Name",
+  "engName": "English Name",
+  "view": "View",
+  "editTitle": "Edit",
+  "edit": "Edit",
+  "code": "Code",
+  "save": "Save",
+  "approveDelete": "Are you sure?",
+  "logo": "Manufacturer logo",
+  "Filter": "Filter"
+}

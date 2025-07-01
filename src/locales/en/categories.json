@@ -1,0 +1,11 @@
+{
+  "delete": "Delete",
+  "edit": "Edit",
+  "name": "Name",
+  "title": "Categories",
+  "add": "Add new",
+  "back": "Back",
+  "licenseType": "License Type",
+  "priceListType": "Price List Type",
+  "categoryID": "ID"
+}

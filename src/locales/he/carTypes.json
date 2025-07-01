@@ -1,0 +1,11 @@
+{
+  "title": "סוגי רכבים",
+  "back": "חזרה",
+  "add": "הוספת חדש +",
+  "carType": "סוג רכב",
+  "icon": "סמליל",
+  "edit": "עריכה",
+  "delete": "מחיקה",
+  "priceListType": "סוג מחירון",
+  "carTypeID": "ID"
+}

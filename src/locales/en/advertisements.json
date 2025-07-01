@@ -1,0 +1,17 @@
+{
+  "title": "Price list advertisement management",
+  "priceTitle": "Advertising Price",
+  "placement1": "Advertisement at the top",
+  "placement2": "Advertisement at the bottom",
+  "placement3": "Side ad",
+  "operations": "operations",
+  "link": "link",
+  "content": "The content of the advertisement",
+  "replace": "Ad replacement",
+  "1": "home page",
+  "2": "search page",
+  "3": "favorites page",
+  "4": "help page",
+  "5": "messages page",
+  "back": "Back"
+}

@@ -1,0 +1,23 @@
+{
+  "manufacturerCode": "יצרן",
+  "modelCode": "דגם",
+  "year": "שנה",
+  "carType": "סוג רכב",
+  "isAuto": "Is Auto",
+  "manufacturerName": "יצרן",
+  "modelName": "תאור דגם",
+  "body": "מרכב",
+  "innerCode": "קוד לוי",
+  "innerSubCode": "קוד משני",
+  "fromYear": "משנה",
+  "toYear": "עד שנה",
+  "comments": "דגם לוי",
+  "addTitle": "הוספת קוד חדש",
+  "add": "הוספת קוד חדש",
+  "series": "סדרה",
+  "save": "שמור",
+  "editTitle": "ערוך קוד",
+  "externalCarType": "קוד משרד התחבורה",
+  "chassis": "מרכב",
+  "modelDescription": "תיאור הדגם"
+}

@@ -1,0 +1,16 @@
+{
+  "title": "ארכיון מחירונים",
+  "year": "שנה",
+  "month": "חודש",
+  "type": "סוג מחירון",
+  "carTypes": "סוג רכב",
+  "advertize": "פרסומות",
+  "comment": "הערה",
+  "view": "צפייה",
+  "crateNew": "שמירה",
+  "date": "מחירון",
+  "priceListType": "סוג מחירון",
+  "download": "הורדה",
+  "delete": "מחיקה",
+  "preview": "צפייה"
+}

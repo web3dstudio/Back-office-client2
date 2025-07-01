@@ -1,0 +1,9 @@
+{
+  "ManufacturerName": "Manufacturer Name",
+  "ModelName": "Model Name",
+  "LowYear": "Low Year",
+  "LowPrice": "Low Price",
+  "HighYear": "High Year",
+  "HighPrice": "High Price",
+  "Difference": "Difference"
+}

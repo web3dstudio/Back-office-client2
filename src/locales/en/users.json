@@ -1,0 +1,13 @@
+{
+  "title": "Users",
+  "add": "add new user",
+  "search": "search user",
+  "totalUsers": "total users",
+  "department": "department",
+  "position": "position",
+  "address": "address",
+  "email": "email",
+  "phone": "phone",
+  "userName": "user name",
+  "fullName": "full name"
+}

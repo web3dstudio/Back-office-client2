@@ -1,0 +1,13 @@
+{
+  "manufacturerName": "יצרן",
+  "modelCode": "קוד לוי",
+  "modelName": "דגם",
+  "year": "שנה",
+  "carType": "סוג רכב",
+  "isAuto": "Is Auto",  
+  "innerCarTypeCode": "קוד משרד התחבורה",
+  "innerSubCode": "קוד משני",
+  "fromYear": "משנה",
+  "toYear": "עד שנה",
+  "comments": "דגם לוי"
+}

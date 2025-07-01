@@ -1,0 +1,20 @@
+{
+  "byDate": "by date",
+  "until": "until",
+  "month": "a month",
+  "sleep": "sleep",
+  "tableTitle": "Monthly traffic",
+  "percent": "percent",
+  "sessions": "sessions",
+  "trafficChannels": "traffic channels",
+  "organic": "organic",
+  "direct": "direct",
+  "reference": "reference",
+  "reviewSessions": "review sessions",
+  "newSessions": "new sessions",
+  "newUsers": "new users",
+  "abandonRate": "abandonment rate",
+  "pagesSessions": "pages / sessions",
+  "sessionAvg": "session average",
+  "day": "a day"
+}

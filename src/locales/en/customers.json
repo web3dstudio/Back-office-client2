@@ -1,0 +1,17 @@
+{
+  "title": "customers",
+  "add": "add new",
+  "filterName": "filter by customer name",
+  "filterType": "filter by customer type",
+  "queries": "daily queries",
+  "subValidity": "subscription validity",
+  "type": "type",
+  "address": "address",
+  "email": "email",
+  "mobile": "mobile phone",
+  "company": "company",
+  "fullName": "full name",
+  "search": "Search",
+  "sus": "delete",
+  "dup": "duplicate"
+}

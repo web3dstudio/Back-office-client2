@@ -1,0 +1,23 @@
+{
+  "back": "Back to catalog",
+  "title": "Sweeping price changes",
+  "oneTime": "one time change",
+  "fixes": "fixes",
+  "save": "save",
+  "parameter": "parameter",
+  "change": "change",
+  "catName": "category name",
+  "addNewChange": "add new change",
+  "year": "year",
+  "month": "month",
+  "category": "category",
+  "cartype": "car type",
+  "1": "fixes changes",
+  "2": "one time changes",
+  "manufacturer": "manufacturer",
+  "model": "model",
+  "from": "from",
+  "to": "to",
+  "volume": "volume",
+  "price": "price"
+}

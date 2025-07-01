@@ -1,0 +1,11 @@
+{
+  "name": "שם לקוח",
+  "company": "חברה",
+  "phone": "טלפון",
+  "email": "אימייל",
+  "address": "כתובת",
+  "subValidity": "תוקף מנויי",
+  "maxQueries": "מקס' שאילתות",
+  "exclusion": "החרגה",
+  "expired": "פג תוקף"
+}
