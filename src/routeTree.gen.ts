@@ -13,6 +13,35 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
+import { Route as AuthenticatedValuesIndexRouteImport } from './routes/_authenticated/values/index'
+import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedTechSupportIndexRouteImport } from './routes/_authenticated/tech-support/index'
+import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedServiceCallsIndexRouteImport } from './routes/_authenticated/service-calls/index'
+import { Route as AuthenticatedRepositoryIndexRouteImport } from './routes/_authenticated/repository/index'
+import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports/index'
+import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
+import { Route as AuthenticatedPriceListIndexRouteImport } from './routes/_authenticated/price-list/index'
+import { Route as AuthenticatedOpinionsIndexRouteImport } from './routes/_authenticated/opinions/index'
+import { Route as AuthenticatedModelsIndexRouteImport } from './routes/_authenticated/models/index'
+import { Route as AuthenticatedManufacturersIndexRouteImport } from './routes/_authenticated/manufacturers/index'
+import { Route as AuthenticatedIntegralExtrasIndexRouteImport } from './routes/_authenticated/integral-extras/index'
+import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
+import { Route as AuthenticatedCodesIndexRouteImport } from './routes/_authenticated/codes/index'
+import { Route as AuthenticatedClientSupportIndexRouteImport } from './routes/_authenticated/client-support/index'
+import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
+import { Route as AuthenticatedCatalogIndexRouteImport } from './routes/_authenticated/catalog/index'
+import { Route as AuthenticatedCarUpgradesIndexRouteImport } from './routes/_authenticated/car-upgrades/index'
+import { Route as AuthenticatedCarTypesIndexRouteImport } from './routes/_authenticated/car-types/index'
+import { Route as AuthenticatedCarPropertiesIndexRouteImport } from './routes/_authenticated/car-properties/index'
+import { Route as AuthenticatedCarMarksIndexRouteImport } from './routes/_authenticated/car-marks/index'
+import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
+import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
+import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
+import { Route as AuthenticatedManufacturersNewRouteImport } from './routes/_authenticated/manufacturers/new'
+import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
+import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
+import { Route as AuthenticatedModelsSyncIndexRouteImport } from './routes/_authenticated/models/sync/index'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -32,33 +61,383 @@ const PublicLoginIndexRoute = PublicLoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => PublicRoute,
 } as any)
+const AuthenticatedValuesIndexRoute =
+  AuthenticatedValuesIndexRouteImport.update({
+    id: '/values/',
+    path: '/values/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
+  id: '/users/',
+  path: '/users/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedTechSupportIndexRoute =
+  AuthenticatedTechSupportIndexRouteImport.update({
+    id: '/tech-support/',
+    path: '/tech-support/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedSettingsIndexRoute =
+  AuthenticatedSettingsIndexRouteImport.update({
+    id: '/settings/',
+    path: '/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedServiceCallsIndexRoute =
+  AuthenticatedServiceCallsIndexRouteImport.update({
+    id: '/service-calls/',
+    path: '/service-calls/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedRepositoryIndexRoute =
+  AuthenticatedRepositoryIndexRouteImport.update({
+    id: '/repository/',
+    path: '/repository/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsIndexRoute =
+  AuthenticatedReportsIndexRouteImport.update({
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedProfileIndexRoute =
+  AuthenticatedProfileIndexRouteImport.update({
+    id: '/profile/',
+    path: '/profile/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPriceListIndexRoute =
+  AuthenticatedPriceListIndexRouteImport.update({
+    id: '/price-list/',
+    path: '/price-list/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedOpinionsIndexRoute =
+  AuthenticatedOpinionsIndexRouteImport.update({
+    id: '/opinions/',
+    path: '/opinions/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedModelsIndexRoute =
+  AuthenticatedModelsIndexRouteImport.update({
+    id: '/models/',
+    path: '/models/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedManufacturersIndexRoute =
+  AuthenticatedManufacturersIndexRouteImport.update({
+    id: '/manufacturers/',
+    path: '/manufacturers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedIntegralExtrasIndexRoute =
+  AuthenticatedIntegralExtrasIndexRouteImport.update({
+    id: '/integral-extras/',
+    path: '/integral-extras/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCustomersIndexRoute =
+  AuthenticatedCustomersIndexRouteImport.update({
+    id: '/customers/',
+    path: '/customers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCodesIndexRoute = AuthenticatedCodesIndexRouteImport.update({
+  id: '/codes/',
+  path: '/codes/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedClientSupportIndexRoute =
+  AuthenticatedClientSupportIndexRouteImport.update({
+    id: '/client-support/',
+    path: '/client-support/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCategoriesIndexRoute =
+  AuthenticatedCategoriesIndexRouteImport.update({
+    id: '/categories/',
+    path: '/categories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogIndexRoute =
+  AuthenticatedCatalogIndexRouteImport.update({
+    id: '/catalog/',
+    path: '/catalog/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCarUpgradesIndexRoute =
+  AuthenticatedCarUpgradesIndexRouteImport.update({
+    id: '/car-upgrades/',
+    path: '/car-upgrades/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCarTypesIndexRoute =
+  AuthenticatedCarTypesIndexRouteImport.update({
+    id: '/car-types/',
+    path: '/car-types/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCarPropertiesIndexRoute =
+  AuthenticatedCarPropertiesIndexRouteImport.update({
+    id: '/car-properties/',
+    path: '/car-properties/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCarMarksIndexRoute =
+  AuthenticatedCarMarksIndexRouteImport.update({
+    id: '/car-marks/',
+    path: '/car-marks/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAdvertisementsIndexRoute =
+  AuthenticatedAdvertisementsIndexRouteImport.update({
+    id: '/advertisements/',
+    path: '/advertisements/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAccessoriesIndexRoute =
+  AuthenticatedAccessoriesIndexRouteImport.update({
+    id: '/accessories/',
+    path: '/accessories/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedOpinionsNewRoute =
+  AuthenticatedOpinionsNewRouteImport.update({
+    id: '/opinions/new',
+    path: '/opinions/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedManufacturersNewRoute =
+  AuthenticatedManufacturersNewRouteImport.update({
+    id: '/manufacturers/new',
+    path: '/manufacturers/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCustomersNewRoute =
+  AuthenticatedCustomersNewRouteImport.update({
+    id: '/customers/new',
+    path: '/customers/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCatalogNewCarRoute =
+  AuthenticatedCatalogNewCarRouteImport.update({
+    id: '/catalog/new-car',
+    path: '/catalog/new-car',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedModelsSyncIndexRoute =
+  AuthenticatedModelsSyncIndexRouteImport.update({
+    id: '/models/sync/',
+    path: '/models/sync/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
+  '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/manufacturers/new': typeof AuthenticatedManufacturersNewRoute
+  '/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/accessories': typeof AuthenticatedAccessoriesIndexRoute
+  '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
+  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
+  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
+  '/car-types': typeof AuthenticatedCarTypesIndexRoute
+  '/car-upgrades': typeof AuthenticatedCarUpgradesIndexRoute
+  '/catalog': typeof AuthenticatedCatalogIndexRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/client-support': typeof AuthenticatedClientSupportIndexRoute
+  '/codes': typeof AuthenticatedCodesIndexRoute
+  '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
+  '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/models': typeof AuthenticatedModelsIndexRoute
+  '/opinions': typeof AuthenticatedOpinionsIndexRoute
+  '/price-list': typeof AuthenticatedPriceListIndexRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
+  '/repository': typeof AuthenticatedRepositoryIndexRoute
+  '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/tech-support': typeof AuthenticatedTechSupportIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
+  '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
+  '/models/sync': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
+  '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/manufacturers/new': typeof AuthenticatedManufacturersNewRoute
+  '/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/accessories': typeof AuthenticatedAccessoriesIndexRoute
+  '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
+  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
+  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
+  '/car-types': typeof AuthenticatedCarTypesIndexRoute
+  '/car-upgrades': typeof AuthenticatedCarUpgradesIndexRoute
+  '/catalog': typeof AuthenticatedCatalogIndexRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/client-support': typeof AuthenticatedClientSupportIndexRoute
+  '/codes': typeof AuthenticatedCodesIndexRoute
+  '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
+  '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/models': typeof AuthenticatedModelsIndexRoute
+  '/opinions': typeof AuthenticatedOpinionsIndexRoute
+  '/price-list': typeof AuthenticatedPriceListIndexRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
+  '/repository': typeof AuthenticatedRepositoryIndexRoute
+  '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/tech-support': typeof AuthenticatedTechSupportIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
+  '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
+  '/models/sync': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/_authenticated/manufacturers/new': typeof AuthenticatedManufacturersNewRoute
+  '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
+  '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
+  '/_authenticated/car-marks/': typeof AuthenticatedCarMarksIndexRoute
+  '/_authenticated/car-properties/': typeof AuthenticatedCarPropertiesIndexRoute
+  '/_authenticated/car-types/': typeof AuthenticatedCarTypesIndexRoute
+  '/_authenticated/car-upgrades/': typeof AuthenticatedCarUpgradesIndexRoute
+  '/_authenticated/catalog/': typeof AuthenticatedCatalogIndexRoute
+  '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
+  '/_authenticated/client-support/': typeof AuthenticatedClientSupportIndexRoute
+  '/_authenticated/codes/': typeof AuthenticatedCodesIndexRoute
+  '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/_authenticated/integral-extras/': typeof AuthenticatedIntegralExtrasIndexRoute
+  '/_authenticated/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
+  '/_authenticated/models/': typeof AuthenticatedModelsIndexRoute
+  '/_authenticated/opinions/': typeof AuthenticatedOpinionsIndexRoute
+  '/_authenticated/price-list/': typeof AuthenticatedPriceListIndexRoute
+  '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
+  '/_authenticated/repository/': typeof AuthenticatedRepositoryIndexRoute
+  '/_authenticated/service-calls/': typeof AuthenticatedServiceCallsIndexRoute
+  '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/tech-support/': typeof AuthenticatedTechSupportIndexRoute
+  '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
+  '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
+  '/_authenticated/models/sync/': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login'
+  fullPaths:
+    | '/'
+    | '/catalog/new-car'
+    | '/customers/new'
+    | '/manufacturers/new'
+    | '/opinions/new'
+    | '/accessories'
+    | '/advertisements'
+    | '/car-marks'
+    | '/car-properties'
+    | '/car-types'
+    | '/car-upgrades'
+    | '/catalog'
+    | '/categories'
+    | '/client-support'
+    | '/codes'
+    | '/customers'
+    | '/integral-extras'
+    | '/manufacturers'
+    | '/models'
+    | '/opinions'
+    | '/price-list'
+    | '/profile'
+    | '/reports'
+    | '/repository'
+    | '/service-calls'
+    | '/settings'
+    | '/tech-support'
+    | '/users'
+    | '/values'
+    | '/login'
+    | '/models/sync'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login'
+  to:
+    | '/'
+    | '/catalog/new-car'
+    | '/customers/new'
+    | '/manufacturers/new'
+    | '/opinions/new'
+    | '/accessories'
+    | '/advertisements'
+    | '/car-marks'
+    | '/car-properties'
+    | '/car-types'
+    | '/car-upgrades'
+    | '/catalog'
+    | '/categories'
+    | '/client-support'
+    | '/codes'
+    | '/customers'
+    | '/integral-extras'
+    | '/manufacturers'
+    | '/models'
+    | '/opinions'
+    | '/price-list'
+    | '/profile'
+    | '/reports'
+    | '/repository'
+    | '/service-calls'
+    | '/settings'
+    | '/tech-support'
+    | '/users'
+    | '/values'
+    | '/login'
+    | '/models/sync'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_public'
     | '/_authenticated/'
+    | '/_authenticated/catalog/new-car'
+    | '/_authenticated/customers/new'
+    | '/_authenticated/manufacturers/new'
+    | '/_authenticated/opinions/new'
+    | '/_authenticated/accessories/'
+    | '/_authenticated/advertisements/'
+    | '/_authenticated/car-marks/'
+    | '/_authenticated/car-properties/'
+    | '/_authenticated/car-types/'
+    | '/_authenticated/car-upgrades/'
+    | '/_authenticated/catalog/'
+    | '/_authenticated/categories/'
+    | '/_authenticated/client-support/'
+    | '/_authenticated/codes/'
+    | '/_authenticated/customers/'
+    | '/_authenticated/integral-extras/'
+    | '/_authenticated/manufacturers/'
+    | '/_authenticated/models/'
+    | '/_authenticated/opinions/'
+    | '/_authenticated/price-list/'
+    | '/_authenticated/profile/'
+    | '/_authenticated/reports/'
+    | '/_authenticated/repository/'
+    | '/_authenticated/service-calls/'
+    | '/_authenticated/settings/'
+    | '/_authenticated/tech-support/'
+    | '/_authenticated/users/'
+    | '/_authenticated/values/'
     | '/_public/login/'
+    | '/_authenticated/models/sync/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -96,15 +475,276 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PublicLoginIndexRouteImport
       parentRoute: typeof PublicRoute
     }
+    '/_authenticated/values/': {
+      id: '/_authenticated/values/'
+      path: '/values'
+      fullPath: '/values'
+      preLoaderRoute: typeof AuthenticatedValuesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/users/': {
+      id: '/_authenticated/users/'
+      path: '/users'
+      fullPath: '/users'
+      preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/tech-support/': {
+      id: '/_authenticated/tech-support/'
+      path: '/tech-support'
+      fullPath: '/tech-support'
+      preLoaderRoute: typeof AuthenticatedTechSupportIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/settings/': {
+      id: '/_authenticated/settings/'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/service-calls/': {
+      id: '/_authenticated/service-calls/'
+      path: '/service-calls'
+      fullPath: '/service-calls'
+      preLoaderRoute: typeof AuthenticatedServiceCallsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/repository/': {
+      id: '/_authenticated/repository/'
+      path: '/repository'
+      fullPath: '/repository'
+      preLoaderRoute: typeof AuthenticatedRepositoryIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/': {
+      id: '/_authenticated/reports/'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/profile/': {
+      id: '/_authenticated/profile/'
+      path: '/profile'
+      fullPath: '/profile'
+      preLoaderRoute: typeof AuthenticatedProfileIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/price-list/': {
+      id: '/_authenticated/price-list/'
+      path: '/price-list'
+      fullPath: '/price-list'
+      preLoaderRoute: typeof AuthenticatedPriceListIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/opinions/': {
+      id: '/_authenticated/opinions/'
+      path: '/opinions'
+      fullPath: '/opinions'
+      preLoaderRoute: typeof AuthenticatedOpinionsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/models/': {
+      id: '/_authenticated/models/'
+      path: '/models'
+      fullPath: '/models'
+      preLoaderRoute: typeof AuthenticatedModelsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/manufacturers/': {
+      id: '/_authenticated/manufacturers/'
+      path: '/manufacturers'
+      fullPath: '/manufacturers'
+      preLoaderRoute: typeof AuthenticatedManufacturersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/integral-extras/': {
+      id: '/_authenticated/integral-extras/'
+      path: '/integral-extras'
+      fullPath: '/integral-extras'
+      preLoaderRoute: typeof AuthenticatedIntegralExtrasIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/customers/': {
+      id: '/_authenticated/customers/'
+      path: '/customers'
+      fullPath: '/customers'
+      preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/codes/': {
+      id: '/_authenticated/codes/'
+      path: '/codes'
+      fullPath: '/codes'
+      preLoaderRoute: typeof AuthenticatedCodesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/client-support/': {
+      id: '/_authenticated/client-support/'
+      path: '/client-support'
+      fullPath: '/client-support'
+      preLoaderRoute: typeof AuthenticatedClientSupportIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/categories/': {
+      id: '/_authenticated/categories/'
+      path: '/categories'
+      fullPath: '/categories'
+      preLoaderRoute: typeof AuthenticatedCategoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/': {
+      id: '/_authenticated/catalog/'
+      path: '/catalog'
+      fullPath: '/catalog'
+      preLoaderRoute: typeof AuthenticatedCatalogIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/car-upgrades/': {
+      id: '/_authenticated/car-upgrades/'
+      path: '/car-upgrades'
+      fullPath: '/car-upgrades'
+      preLoaderRoute: typeof AuthenticatedCarUpgradesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/car-types/': {
+      id: '/_authenticated/car-types/'
+      path: '/car-types'
+      fullPath: '/car-types'
+      preLoaderRoute: typeof AuthenticatedCarTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/car-properties/': {
+      id: '/_authenticated/car-properties/'
+      path: '/car-properties'
+      fullPath: '/car-properties'
+      preLoaderRoute: typeof AuthenticatedCarPropertiesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/car-marks/': {
+      id: '/_authenticated/car-marks/'
+      path: '/car-marks'
+      fullPath: '/car-marks'
+      preLoaderRoute: typeof AuthenticatedCarMarksIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/advertisements/': {
+      id: '/_authenticated/advertisements/'
+      path: '/advertisements'
+      fullPath: '/advertisements'
+      preLoaderRoute: typeof AuthenticatedAdvertisementsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/accessories/': {
+      id: '/_authenticated/accessories/'
+      path: '/accessories'
+      fullPath: '/accessories'
+      preLoaderRoute: typeof AuthenticatedAccessoriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/opinions/new': {
+      id: '/_authenticated/opinions/new'
+      path: '/opinions/new'
+      fullPath: '/opinions/new'
+      preLoaderRoute: typeof AuthenticatedOpinionsNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/manufacturers/new': {
+      id: '/_authenticated/manufacturers/new'
+      path: '/manufacturers/new'
+      fullPath: '/manufacturers/new'
+      preLoaderRoute: typeof AuthenticatedManufacturersNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/customers/new': {
+      id: '/_authenticated/customers/new'
+      path: '/customers/new'
+      fullPath: '/customers/new'
+      preLoaderRoute: typeof AuthenticatedCustomersNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/catalog/new-car': {
+      id: '/_authenticated/catalog/new-car'
+      path: '/catalog/new-car'
+      fullPath: '/catalog/new-car'
+      preLoaderRoute: typeof AuthenticatedCatalogNewCarRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/models/sync/': {
+      id: '/_authenticated/models/sync/'
+      path: '/models/sync'
+      fullPath: '/models/sync'
+      preLoaderRoute: typeof AuthenticatedModelsSyncIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
+  AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
+  AuthenticatedManufacturersNewRoute: typeof AuthenticatedManufacturersNewRoute
+  AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
+  AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
+  AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
+  AuthenticatedCarMarksIndexRoute: typeof AuthenticatedCarMarksIndexRoute
+  AuthenticatedCarPropertiesIndexRoute: typeof AuthenticatedCarPropertiesIndexRoute
+  AuthenticatedCarTypesIndexRoute: typeof AuthenticatedCarTypesIndexRoute
+  AuthenticatedCarUpgradesIndexRoute: typeof AuthenticatedCarUpgradesIndexRoute
+  AuthenticatedCatalogIndexRoute: typeof AuthenticatedCatalogIndexRoute
+  AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
+  AuthenticatedClientSupportIndexRoute: typeof AuthenticatedClientSupportIndexRoute
+  AuthenticatedCodesIndexRoute: typeof AuthenticatedCodesIndexRoute
+  AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
+  AuthenticatedIntegralExtrasIndexRoute: typeof AuthenticatedIntegralExtrasIndexRoute
+  AuthenticatedManufacturersIndexRoute: typeof AuthenticatedManufacturersIndexRoute
+  AuthenticatedModelsIndexRoute: typeof AuthenticatedModelsIndexRoute
+  AuthenticatedOpinionsIndexRoute: typeof AuthenticatedOpinionsIndexRoute
+  AuthenticatedPriceListIndexRoute: typeof AuthenticatedPriceListIndexRoute
+  AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
+  AuthenticatedRepositoryIndexRoute: typeof AuthenticatedRepositoryIndexRoute
+  AuthenticatedServiceCallsIndexRoute: typeof AuthenticatedServiceCallsIndexRoute
+  AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
+  AuthenticatedTechSupportIndexRoute: typeof AuthenticatedTechSupportIndexRoute
+  AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
+  AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
+  AuthenticatedModelsSyncIndexRoute: typeof AuthenticatedModelsSyncIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
+  AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
+  AuthenticatedManufacturersNewRoute: AuthenticatedManufacturersNewRoute,
+  AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
+  AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
+  AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
+  AuthenticatedCarMarksIndexRoute: AuthenticatedCarMarksIndexRoute,
+  AuthenticatedCarPropertiesIndexRoute: AuthenticatedCarPropertiesIndexRoute,
+  AuthenticatedCarTypesIndexRoute: AuthenticatedCarTypesIndexRoute,
+  AuthenticatedCarUpgradesIndexRoute: AuthenticatedCarUpgradesIndexRoute,
+  AuthenticatedCatalogIndexRoute: AuthenticatedCatalogIndexRoute,
+  AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
+  AuthenticatedClientSupportIndexRoute: AuthenticatedClientSupportIndexRoute,
+  AuthenticatedCodesIndexRoute: AuthenticatedCodesIndexRoute,
+  AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
+  AuthenticatedIntegralExtrasIndexRoute: AuthenticatedIntegralExtrasIndexRoute,
+  AuthenticatedManufacturersIndexRoute: AuthenticatedManufacturersIndexRoute,
+  AuthenticatedModelsIndexRoute: AuthenticatedModelsIndexRoute,
+  AuthenticatedOpinionsIndexRoute: AuthenticatedOpinionsIndexRoute,
+  AuthenticatedPriceListIndexRoute: AuthenticatedPriceListIndexRoute,
+  AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
+  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
+  AuthenticatedRepositoryIndexRoute: AuthenticatedRepositoryIndexRoute,
+  AuthenticatedServiceCallsIndexRoute: AuthenticatedServiceCallsIndexRoute,
+  AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
+  AuthenticatedTechSupportIndexRoute: AuthenticatedTechSupportIndexRoute,
+  AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
+  AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
+  AuthenticatedModelsSyncIndexRoute: AuthenticatedModelsSyncIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

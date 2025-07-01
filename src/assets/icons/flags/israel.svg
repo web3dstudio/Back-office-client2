@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="israel" transform="translate(-215 -193.316)">
+    <g id="Group_158" data-name="Group 158" transform="translate(215 193.316)">
+      <circle id="Ellipse_13" data-name="Ellipse 13" cx="12" cy="12" r="12" transform="translate(0 0)" fill="#fff"/>
+      <g id="Group_157" data-name="Group 157" transform="translate(1.761 2.609)">
+        <path id="Path_151" data-name="Path 151" d="M-54.356,292h-3.012l-1.506-2.609L-60.381,292h-3.012l1.506,2.609-1.506,2.609h3.012l1.506,2.609,1.506-2.609h3.012l-1.506-2.609Zm-2.668,2.609-.925,1.6H-59.8l-.925-1.6.925-1.6h1.85Zm-1.85-3.205.344.6h-.689Zm-2.776,1.6h.689l-.344.6Zm0,3.205.344-.6.344.6Zm2.776,1.6-.344-.6h.689Zm2.776-1.6h-.689l.344-.6Zm-.689-3.205h.689l-.344.6Z" transform="translate(69.113 -285.218)" fill="#0052b4"/>
+        <path id="Path_152" data-name="Path 152" d="M-167.717,200.348h-14.94a12.06,12.06,0,0,0-2.769,3.13h20.478A12.064,12.064,0,0,0-167.717,200.348Z" transform="translate(185.426 -200.348)" fill="#0052b4"/>
+        <path id="Path_153" data-name="Path 153" d="M-182.657,537.391h14.94a12.062,12.062,0,0,0,2.769-3.13h-20.478A12.064,12.064,0,0,0-182.657,537.391Z" transform="translate(185.426 -518.609)" fill="#0052b4"/>
+      </g>
+    </g>
+  </g>
+</svg>
