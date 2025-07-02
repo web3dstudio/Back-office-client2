@@ -8,7 +8,7 @@ export function useCarTypesQuery(): UseQueryResult<TCarType[], Error> {
   return useQuery({
     queryKey: ['carTypes'],
     queryFn: async (): Promise<TCarType[]> => {
-      const response = await axiosAPI.get('/carTypes')
+      const response = await axiosAPI.get('/v2/carTypes')
       return response.data
     },
     refetchOnWindowFocus: false,
@@ -20,7 +20,7 @@ export function useCarTypesQuery(): UseQueryResult<TCarType[], Error> {
   })
 }
 
-export function useCarTypeDeleteMutation(): UseMutationResult<
+export function useCarTypesDeleteMutation(): UseMutationResult<
   void,
   Error,
   string,
@@ -31,7 +31,7 @@ export function useCarTypeDeleteMutation(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (id: string): Promise<void> => {
-      await axiosAPI.delete(`/carTypes/${id}`)
+      await axiosAPI.delete(`/v2/carTypes/${id}`)
     },
     retry: 3,
     onSuccess: (_, id) => {
@@ -50,7 +50,7 @@ export function useCarTypeDeleteMutation(): UseMutationResult<
   })
 }
 
-export function useCarTypeAddMutation(): UseMutationResult<
+export function useCarTypesAddMutation(): UseMutationResult<
   TCarType,
   Error,
   Omit<TCarType, 'id'>,
@@ -61,7 +61,7 @@ export function useCarTypeAddMutation(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (newCarType: Omit<TCarType, 'id'>): Promise<TCarType> => {
-      const response = await axiosAPI.post('/carTypes', newCarType)
+      const response = await axiosAPI.post('/v2/carTypes/', newCarType)
       return response.data
     },
     retry: 3,
@@ -82,7 +82,7 @@ export function useCarTypeAddMutation(): UseMutationResult<
 }
 
 
-export function useCarTypeUpdateMutation(): UseMutationResult<
+export function useCarTypesUpdateMutation(): UseMutationResult<
   TCarType,
   Error,
   TCarType,
@@ -93,7 +93,12 @@ export function useCarTypeUpdateMutation(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (updatedCarType: TCarType): Promise<TCarType> => {
-      const response = await axiosAPI.put(`/carTypes/${updatedCarType.id}`, updatedCarType)
+      // Отправляем только id вместо объекта в priceListType
+      const payload = {
+        ...updatedCarType,
+        priceListType: updatedCarType.priceListType?.id ?? null
+      };
+      const response = await axiosAPI.put(`/v2/carTypes/${updatedCarType.id}`, payload)
       return response.data
     },
     retry: 3,

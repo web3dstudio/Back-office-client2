@@ -12,6 +12,7 @@ import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import IntegralExtrasForm from '../../../components/IntegralExtras/IntegralExtrasForm'
+import AppError from '../../../components/AppError'
 
 
 export const Route = createFileRoute('/_authenticated/integral-extras/')({
@@ -19,16 +20,15 @@ export const Route = createFileRoute('/_authenticated/integral-extras/')({
 })
 
 function IntegralExtrasPage() {
-	const { t, i18n } = useTranslation()
+	const { t } = useTranslation()
 	const [openFormDialog, setOpenFormDialog] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const [selected, setSelected] = useState<TIntegralExtra | null>(null)
 
+	const { data: integralExtras, isLoading, isError } = useIntegralExtrasQuery()
 	const { mutate: addMutation } = useIntegralExtrasAddMutation()
 	const { mutate: updateMutation } = useIntegralExtrasUpdateMutation()
 	const { mutate: deleteMutation } = useIntegralExtrasDeleteMutation()
-
-	const { data: integralExtras, isLoading, } = useIntegralExtrasQuery()
 
 	const columns = [
 		{
@@ -99,6 +99,9 @@ function IntegralExtrasPage() {
 		setOpenConfirmDialog(false)
 	}
 
+	if (isError && !isLoading) {
+		return <AppError />
+	}
 
 	return (
 		<Grid container spacing={3} >

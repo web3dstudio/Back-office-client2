@@ -1,6 +1,6 @@
 import type { TCarType, TPriceListType } from '../../types'
 import { useTranslation } from 'react-i18next'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -15,17 +15,16 @@ interface Props {
   data: TCarType | null
   isPending: boolean
   onCancel: () => void
-  onConfirm: (data: TFormInput) => void
+  onConfirm: (data: TCarType) => void
 }
 
 type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon'>
 
-function CarTypeForm({ data, isPending = false, onCancel }: Props) {
-  const { t } = useTranslation('common')
-  const { t: tCat } = useTranslation('categories')
-  const { t: tCarTypes } = useTranslation('carTypes')
+function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
+  const { t } = useTranslation()
 
   const { data: priceListTypesList } = usePriceListTypesQuery()
+
 
   const schema = object()
     .shape({
@@ -60,29 +59,36 @@ function CarTypeForm({ data, isPending = false, onCancel }: Props) {
       name: data?.name || '',
       carTypeID: data?.carTypeID || '',
       licenseType: data?.licenseType || '',
-      priceListType: data?.priceListType || null,
+      priceListType: (() => {
+        if (!data?.priceListType) return null;
+        if (typeof data.priceListType === 'object') return data.priceListType;
+        // ищем объект в списке
+        return (priceListTypesList as TPriceListType[] | undefined)?.find(
+          (item) => String(item.id) === String(data.priceListType)
+        ) || null;
+      })(),
     },
   })
 
-  const { control, formState } = methods
+  const { handleSubmit, control, formState, reset } = methods
   const errors = formState.errors
 
-  // const onSubmit: SubmitHandler<TFormInput> = (data) => {
-  //   onConfirm(data)
-  // }
+  const onSubmit = (data: any) => {
+    onConfirm(data)
+    reset()
+  }
+
   return (
-    <form
-    // onSubmit={handleSubmit(onSubmit) as FormEventHandler<HTMLFormElement>}
-    >
-      <Grid container sx={{ mt: 1 }}>
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Grid container columns={12} sx={{ mt: 1, columnGap: 2 }}>
         <Grid size={12}>
           <AppControlledTextField
             required
             name='name'
             control={control}
             errors={errors}
-            label={t('modals.name')}
-            placeholder={t('modals.name')}
+            label={t('name', { ns: 'carTypes' })}
+            placeholder={t('name', { ns: 'carTypes' })}
           />
         </Grid>
 
@@ -91,8 +97,8 @@ function CarTypeForm({ data, isPending = false, onCancel }: Props) {
             name='carTypeID'
             control={control}
             errors={errors}
-            label={tCarTypes('ID')}
-            placeholder={tCarTypes('ID')}
+            label={t('ID', { ns: 'carTypes' })}
+            placeholder={t('ID', { ns: 'carTypes' })}
           />
         </Grid>
 
@@ -101,43 +107,43 @@ function CarTypeForm({ data, isPending = false, onCancel }: Props) {
             name='licenseType'
             control={control}
             errors={errors}
-            label={tCat('licenseType')}
-            placeholder={tCat('licenseType')}
+            label={t('licenseType', { ns: 'carTypes' })}
+            placeholder={t('licenseType', { ns: 'carTypes' })}
           />
         </Grid>
 
         <Grid size={12}>
           <AppControlledAutocomplete
             name='priceListType'
-            options={priceListTypesList as TPriceListType[]}
+            options={priceListTypesList as TPriceListType[] || []}
             control={control}
             errors={errors}
-            label={tCat('priceListType')}
-            placeholder={tCat('priceListType')}
+            label={t('priceListType', { ns: 'carTypes' })}
+            placeholder={t('priceListType', { ns: 'carTypes' })}
           />
         </Grid>
 
-        <Grid
-          size={12}
-          sx={{ display: 'flex', justifyContent: 'end', gap: 1, mt: 3 }}
-        >
-          <Box>
-            <Button variant='outlined' onClick={() => onCancel()}>
-              {t('modals.cancel', { ns: 'common' })}
-            </Button>
-          </Box>
-
-          <Box sx={{ minWidth: '100px' }}>
+        <Grid size={12}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
-              disabled={
-                !formState.isValid || (formState.isValid && !formState.isDirty)
-              }
-              loading={isPending}
-              variant='contained'
-              type='submit'
-              fullWidth
+              color='primary'
+              size='small'
+              onClick={onCancel}
+              variant='outlined'
             >
-              {t('modals.save', { ns: 'common' })}
+              <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
+                {t('modals.cancel', { ns: 'common' })}
+              </Typography>
+            </Button>
+            <Button
+              color='primary'
+              type='submit'
+              variant='contained'
+              loading={isPending}
+            >
+              <Typography sx={{ textWrap: 'nowrap' }}>
+                {t('modals.save', { ns: 'common' })}
+              </Typography>
             </Button>
           </Box>
         </Grid>

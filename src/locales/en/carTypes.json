@@ -7,5 +7,9 @@
   "edit": "Edit",
   "delete": "Delete",
   "priceListType": "Price List Type",
-  "carTypeID": "ID"
+  "carTypeID": "ID",
+  "name": "Name",
+  "nameEn": "Name (English)",
+  "code": "Code",
+  "licenseType": "License Type"
 }

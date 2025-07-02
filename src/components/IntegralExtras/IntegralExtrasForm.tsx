@@ -46,7 +46,6 @@ function IntegralExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
 		reset()
 	}
 
-
 	return (
 		<form onSubmit={handleSubmit(onSubmit)}>
 			<Grid container sx={{ mt: 1 }}>

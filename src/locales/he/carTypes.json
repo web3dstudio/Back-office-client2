@@ -7,5 +7,9 @@
   "edit": "עריכה",
   "delete": "מחיקה",
   "priceListType": "סוג מחירון",
-  "carTypeID": "ID"
+  "carTypeID": "ID",
+  "name": "שם",
+  "nameEn": "שם (אנגלית)",
+  "code": "קוד",
+  "licenseType": "סוג רישיון"
 }

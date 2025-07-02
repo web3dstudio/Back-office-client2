@@ -6,6 +6,7 @@ import {
   type SxProps,
   InputLabel,
   useTheme,
+  FormHelperText,
 } from '@mui/material'
 import { type Control, Controller, type FieldErrors } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -39,6 +40,7 @@ export function AppControlledAutocomplete<
   name,
   control,
   options,
+  errors,
   getOptionLabel = (option) => (option as GenericOption)?.name || '',
   isOptionEqualToValue = (option, value) =>
     (option as GenericOption).id === (value as GenericOption)?.id,
@@ -93,12 +95,20 @@ export function AppControlledAutocomplete<
                       boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.09)',
                     },
                     'label + &': {
-                      marginTop: theme.spacing(3),
+                      marginTop: theme.spacing(2),
                     },
                   },
                   ...sx,
                 }}
               />
+              {!errors?.[name]?.message && (
+                <FormHelperText margin='dense'> </FormHelperText>
+              )}
+              {errors?.[name]?.message && (
+                <FormHelperText margin='dense'>
+                  {errors[name]?.message as string}
+                </FormHelperText>
+              )}
             </FormControl>
           )}
           renderOption={(props, option) => {
