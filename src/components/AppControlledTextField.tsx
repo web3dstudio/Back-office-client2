@@ -5,6 +5,7 @@ import {
   InputLabel,
   FormHelperText,
   useTheme,
+  type TextFieldProps,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import type { SxProps } from '@mui/system'
@@ -18,6 +19,7 @@ interface ControlledTextFieldProps {
   sx?: SxProps
   type?: 'text' | 'password' | 'number'
   required?: boolean
+  slotProps?: TextFieldProps['slotProps']
 }
 
 const ControlledTextField = ({
@@ -29,6 +31,7 @@ const ControlledTextField = ({
   sx = {},
   type = 'text',
   required = false,
+  slotProps,
 }: ControlledTextFieldProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -57,13 +60,14 @@ const ControlledTextField = ({
             error={!!errors?.[name]?.message}
             variant='outlined'
             placeholder={placeholder ? t(placeholder) : ''}
+            slotProps={slotProps}
             sx={{
               '& .MuiOutlinedInput-root': {
                 '&.Mui-focused fieldset': {
                   boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.09)',
                 },
                 'label + &': {
-                  marginTop: theme.spacing(3),
+                  marginTop: theme.spacing(2),
                 },
               },
               ...sx,

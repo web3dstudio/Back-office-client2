@@ -57,7 +57,7 @@ function OpinionsPage() {
     }
   }, [integralExtrasData, methods, defaultValues]);
 
-  const { handleSubmit, formState } = methods
+  const { handleSubmit } = methods
   // const errors = formState.errors
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {

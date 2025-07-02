@@ -6,12 +6,19 @@ import {
   type GridRowClassNameParams,
   type GridRowSelectionModel,
   type GridValidRowModel,
+  Toolbar,
+  ToolbarButton,
+  QuickFilter,
+  QuickFilterControl,
+  QuickFilterClear,
+  QuickFilterTrigger,
 } from '@mui/x-data-grid'
 import i18next from 'i18next'
 import { heIL, enUS } from '@mui/x-data-grid/locales'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import { useState } from 'react'
 import { Box, type SxProps, Typography } from '@mui/material'
+
 
 interface Props<T extends GridValidRowModel> {
   rows: T[]
@@ -31,6 +38,7 @@ interface Props<T extends GridValidRowModel> {
   sx?: SxProps,
   hideFooterSelectedRowCount?: boolean,
   headerHeight?: number,
+  initialState?: any,
 }
 
 const AppDataGrid = <T extends GridValidRowModel>({
@@ -50,6 +58,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
   getRowClassName,
   sx,
   hideFooterSelectedRowCount = false,
+  initialState,
 }: Props<T>) => {
   const localeText =
     i18next.language === 'he'
@@ -112,7 +121,8 @@ const AppDataGrid = <T extends GridValidRowModel>({
       getRowClassName={getRowClassName}
       sx={sx}
       hideFooterSelectedRowCount={hideFooterSelectedRowCount}
-
+      initialState={initialState}
+      showToolbar
     />
   )
 }

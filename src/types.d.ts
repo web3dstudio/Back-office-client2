@@ -148,11 +148,11 @@ export type TIntegralExtra = {
   name: string
   nameEn: string | null
   defaultChangePercentage: number
-  tosID: string
-  apiField: string | null
-  sortIndex: number
-  iconId: string | null
-  icon: string | null
+  tosID?: string
+  apiField?: string | null
+  sortIndex?: number
+  iconId?: string | null
+  icon?: string | null
 }
 
 export type TAppExtrasItemField = {

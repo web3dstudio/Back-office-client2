@@ -1,17 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
-import { useIntegralExtrasQuery } from '../../../query/integralExtras.query'
+import { useIntegralExtrasAddMutation, useIntegralExtrasDeleteMutation, useIntegralExtrasQuery, useIntegralExtrasUpdateMutation } from '../../../query/integralExtras.query'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import AppDataGrid from '../../../components/AppDataGrid'
-import { TIntegralExtra } from '../../../types'
-import { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import type { TIntegralExtra } from '../../../types'
+import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
 import { useTranslation } from 'react-i18next'
-
 import AppActionButton from '../../../components/AppActionButton'
 import { useState } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
+import IntegralExtrasForm from '../../../components/IntegralExtras/IntegralExtrasForm'
 
 
 export const Route = createFileRoute('/_authenticated/integral-extras/')({
@@ -22,7 +22,11 @@ function IntegralExtrasPage() {
 	const { t, i18n } = useTranslation()
 	const [openFormDialog, setOpenFormDialog] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-	const [action, setAction] = useState('add')
+	const [selected, setSelected] = useState<TIntegralExtra | null>(null)
+
+	const { mutate: addMutation } = useIntegralExtrasAddMutation()
+	const { mutate: updateMutation } = useIntegralExtrasUpdateMutation()
+	const { mutate: deleteMutation } = useIntegralExtrasDeleteMutation()
 
 	const { data: integralExtras, isLoading, } = useIntegralExtrasQuery()
 
@@ -31,10 +35,19 @@ function IntegralExtrasPage() {
 			field: 'name',
 			headerName: t('name', { ns: 'integralExtras' }),
 			editable: false,
-			hideable: false,
+			hideable: true,
 			type: 'string',
 			flex: 1,
-			valueGetter: (_value: any, row: TIntegralExtra) => i18n.language === 'he' ? row.name : row.nameEn,
+			valueGetter: (_value: any, row: TIntegralExtra) => row.name,
+		},
+		{
+			field: 'nameEn',
+			headerName: t('nameEn', { ns: 'integralExtras' }),
+			editable: false,
+			hideable: true,
+			type: 'string',
+			flex: 1,
+			valueGetter: (_value: any, row: TIntegralExtra) => row.nameEn,
 		},
 		{
 			field: 'defaultChangePercentage',
@@ -51,32 +64,39 @@ function IntegralExtrasPage() {
 			width: 100,
 			hideable: false,
 			getActions: (params: GridRenderCellParams) => [
-
 				<AppActionButton type='edit' onClick={() => {
-					onEdit(params.row)
+					setSelected(() => params.row)
+					setOpenFormDialog(true)
 				}} />,
 				<AppActionButton type='delete' onClick={() => {
-					onDelete(params.row)
+					setSelected(() => params.row)
+					setOpenConfirmDialog(true)
 				}} />
 			],
 		}
 	]
 
-	const onAdd = () => {
-		setAction('add')
-		// reset(defaultValues)
-		setOpenFormDialog(true)
+	const onSubmit = (data: TIntegralExtra) => {
+		if (selected) {
+			updateMutation({ ...data, id: selected.id }, {
+				onSuccess: () => {
+					setOpenFormDialog(false)
+				}
+			})
+		} else {
+			addMutation(data, {
+				onSuccess: () => {
+					setOpenFormDialog(false)
+				}
+			})
+		}
 	}
 
-	const onEdit = (_row: TIntegralExtra) => {
-		setAction('edit')
-		// reset(row)
-		setOpenFormDialog(true)
-	}
-
-	const onDelete = (_row: TIntegralExtra) => {
-		setAction('delete')
-		setOpenConfirmDialog(true)
+	const onDelete = () => {
+		if (selected) {
+			deleteMutation(selected?.id)
+		}
+		setOpenConfirmDialog(false)
 	}
 
 
@@ -99,7 +119,12 @@ function IntegralExtrasPage() {
 					</Typography>
 				</Box>
 				<Box>
-					<Button variant='contained' onClick={onAdd}>
+					<Button variant='contained' onClick={() => {
+						setSelected(null)
+						setOpenFormDialog(true)
+					}
+
+					}>
 						{t('modals.add', { ns: 'common' })}
 					</Button>
 				</Box>
@@ -124,25 +149,37 @@ function IntegralExtrasPage() {
 					editMode='row'
 					isLoading={isLoading}
 					hideFooterSelectedRowCount={true}
+					initialState={{
+						filter: {
+							filterModel: {
+								items: [],
+								quickFilterValues: [],
+							},
+						},
+					}}
 				/>
 			</StyledPaper>
 
 			<AppConfirmDialog
 				open={openConfirmDialog}
 				onClose={() => setOpenConfirmDialog(false)}
-				onSubmit={() => { }}
+				onSubmit={onDelete}
 				title={t('modals.approveDelete', { ns: 'common' })}
 			/>
 
 			<AppDialog
 				open={openFormDialog}
 				onClose={() => setOpenFormDialog(false)}
-				onSubmit={() => { }}
-				title={t('modals.add', { ns: 'common' })}
+				title={selected ? t('modals.edit', { ns: 'common' }) : t('modals.add', { ns: 'common' })}
+				maxWidth='sm'
 			>
-				FORM {action}
+				<IntegralExtrasForm
+					data={selected}
+					isPending={false}
+					onCancel={() => setOpenFormDialog(false)}
+					onConfirm={(data) => onSubmit(data)}
+				/>
 			</AppDialog>
-
 		</Grid>
 	)
 }

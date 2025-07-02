@@ -225,7 +225,7 @@ function ModelsSyncPage() {
           isLoading={newModelsIsLoading}
           checkboxSelection={true}
           onRowSelectionModelChange={(newRowSelectionModel) => {
-            setSelectedIds([...newRowSelectionModel])
+            setSelectedIds(newRowSelectionModel as unknown as GridRowId[])
           }}
         />
       </StyledPaper>
