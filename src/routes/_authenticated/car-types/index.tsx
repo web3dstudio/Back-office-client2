@@ -19,6 +19,8 @@ import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import CarTypeForm from '../../../components/CarType/CarTypeForm'
 import { usePriceListTypesQuery } from '../../../query/priceListTypes.querty'
+import { useIconsQuery } from '../../../query/icons.query'
+
 
 export const Route = createFileRoute('/_authenticated/car-types/')({
   component: CarTypes,
@@ -30,15 +32,49 @@ function CarTypes() {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TCarType | null>(null)
 
+  useIconsQuery()
+
   const { data: carTypes, isLoading, isError } = useCarTypesQuery()
   usePriceListTypesQuery()
   const { data: priceListTypesList } = usePriceListTypesQuery()
+
 
   const { mutate: addMutation } = useCarTypesAddMutation()
   const { mutate: updateMutation } = useCarTypesUpdateMutation()
   const { mutate: deleteMutation } = useCarTypesDeleteMutation()
 
   const columns = [
+    {
+      field: 'icon',
+      headerName: t('icon', { ns: 'carTypes' }) || 'Icon',
+      editable: false,
+      hideable: true,
+      type: 'string',
+      width: 60,
+      renderCell: (params: GridRenderCellParams<TCarType>) => {
+        const icon = params.row.icon;
+        if (icon && icon.downloadUri) {
+          return (
+            <Box
+              sx={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                height: '100%',
+                width: '100%',
+              }}
+            >
+              <img
+                src={icon.downloadUri}
+                alt="icon"
+                style={{ width: 20, height: 20, objectFit: 'contain' }}
+              />
+            </Box>
+          )
+        }
+        return null;
+      },
+    },
     {
       field: 'name',
       headerName: t('name', { ns: 'carTypes' }),
@@ -75,12 +111,21 @@ function CarTypes() {
       field: 'priceListType',
       headerName: t('priceListType', { ns: 'carTypes' }),
       hideable: true,
+      editable: false,
       type: 'string',
       flex: 1,
       valueGetter: (_value: any, row: TCarType) => {
         return priceListTypesList?.find(type => String(type?.id) === String(row?.priceListType))?.name
       }
     },
+    {
+      field: 'iconId',
+      headerName: 'iconId',
+      editable: false,
+      hideable: false,
+      type: 'string',
+    },
+
     {
       field: 'actions',
       type: 'actions',
@@ -89,6 +134,7 @@ function CarTypes() {
       hideable: false,
       getActions: (params: GridRenderCellParams) => [
         <AppActionButton type='edit' onClick={() => {
+          console.log('params.row', params.row)
           setSelected(() => params.row)
           setOpenFormDialog(true)
         }} />,
@@ -149,9 +195,7 @@ function CarTypes() {
           <Button variant='contained' onClick={() => {
             setSelected(null)
             setOpenFormDialog(true)
-          }
-
-          }>
+          }}>
             {t('modals.add', { ns: 'common' })}
           </Button>
         </Box>
@@ -176,6 +220,9 @@ function CarTypes() {
           editMode='row'
           isLoading={isLoading}
           hideFooterSelectedRowCount={true}
+          columnVisibilityModel={{
+            iconId: false,
+          }}
           initialState={{
             filter: {
               filterModel: {

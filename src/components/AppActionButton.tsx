@@ -1,4 +1,4 @@
-import { Box, useTheme } from "@mui/material"
+import { Box, type SxProps, useTheme } from "@mui/material"
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
 
@@ -6,9 +6,10 @@ import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
 interface IProps {
     type: 'edit' | 'delete'
     onClick: () => void
+    sx?: SxProps
 }
 
-function AppActionButton({ type, onClick }: IProps) {
+function AppActionButton({ type, onClick, sx }: IProps) {
     const theme = useTheme()
     return (
         <Box
@@ -25,6 +26,7 @@ function AppActionButton({ type, onClick }: IProps) {
                     backgroundColor: type === 'edit' ? 'primary.dark' : 'error.dark',
                     cursor: 'pointer',
                 },
+                ...sx,
             }}
         >
             {type === 'edit' && <EditTwoToneIcon fontSize="small" />}

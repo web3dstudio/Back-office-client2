@@ -12,7 +12,7 @@ i18n
   .init({
     fallbackLng: 'he',
     debug: false,
-    ns: ['login', 'common', 'syncModels', 'integralExtras', 'carTypes'],
+    ns: ['login', 'common', 'syncModels', 'integralExtras', 'carTypes', 'iconRepository'],
     defaultNS: 'login',
     detection: {
       order: ['localStorage', 'cookie'],

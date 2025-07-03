@@ -5,13 +5,7 @@ import {
   type GridPaginationModel,
   type GridRowClassNameParams,
   type GridRowSelectionModel,
-  type GridValidRowModel,
-  Toolbar,
-  ToolbarButton,
-  QuickFilter,
-  QuickFilterControl,
-  QuickFilterClear,
-  QuickFilterTrigger,
+  type GridValidRowModel
 } from '@mui/x-data-grid'
 import i18next from 'i18next'
 import { heIL, enUS } from '@mui/x-data-grid/locales'
@@ -39,6 +33,7 @@ interface Props<T extends GridValidRowModel> {
   hideFooterSelectedRowCount?: boolean,
   headerHeight?: number,
   initialState?: any,
+  columnVisibilityModel?: any,
 }
 
 const AppDataGrid = <T extends GridValidRowModel>({
@@ -59,6 +54,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
   sx,
   hideFooterSelectedRowCount = false,
   initialState,
+  columnVisibilityModel,
 }: Props<T>) => {
   const localeText =
     i18next.language === 'he'
@@ -105,7 +101,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
       pagination
       paginationModel={paginationModel}
       onPaginationModelChange={handlePaginationChange}
-      columnVisibilityModel={tableFields}
+      columnVisibilityModel={{ ...tableFields, ...columnVisibilityModel }}
       onColumnVisibilityModelChange={(e: any) => setTableFields(e)}
       localeText={localeText}
       style={{ width: '100%' }}
@@ -123,6 +119,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
       hideFooterSelectedRowCount={hideFooterSelectedRowCount}
       initialState={initialState}
       showToolbar
+      autosizeOnMount
     />
   )
 }

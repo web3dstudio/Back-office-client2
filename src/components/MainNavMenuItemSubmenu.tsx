@@ -125,14 +125,14 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
           {t('slidebar.values', { ns: 'common' })}
         </MenuItem> */}
 
-        {/* <MenuItem
+        <MenuItem
           onClick={() => {
             navigate({ to: '/repository' })
             handleClose()
           }}
         >
           {t('slidebar.repo', { ns: 'common' })}
-        </MenuItem> */}
+        </MenuItem>
       </Menu>
     </>
   )

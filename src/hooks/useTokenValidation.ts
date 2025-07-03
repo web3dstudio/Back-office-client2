@@ -26,7 +26,6 @@ export function useTokenValidation(token: string): TokenValidationResult {
     if (userData && typeof userData === "string") {
       const parsedUserData = JSON.parse(userData);
       isAuthenticated = parsedUserData.Authenticated || false;
-      console.log('parsedUserData', parsedUserData)
     }
 
     return {

@@ -1,6 +1,6 @@
-import type { TCarType, TPriceListType } from '../../types'
+import type { TCarType, TIcon, TPriceListType } from '../../types'
 import { useTranslation } from 'react-i18next'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Typography, useTheme } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -9,6 +9,10 @@ import { object } from 'yup'
 import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
 import { usePriceListTypesQuery } from '../../query/priceListTypes.querty'
+import { useEffect, useState } from 'react'
+import AppDialog from '../AppDialog/AppDialog'
+import AppIconsSearch from '../AppIconsSearch'
+import AppActionButton from '../AppActionButton'
 
 
 interface Props {
@@ -18,13 +22,21 @@ interface Props {
   onConfirm: (data: TCarType) => void
 }
 
-type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon'>
+type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId'>
 
 function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const { t } = useTranslation()
+  const theme = useTheme()
+  const [openIconDialog, setOpenIconDialog] = useState(false)
+  const [selectedIcon, setSelectedIcon] = useState<TIcon | null>(null)
 
   const { data: priceListTypesList } = usePriceListTypesQuery()
 
+  useEffect(() => {
+    if (data?.iconId) {
+      setSelectedIcon(data?.icon as TIcon)
+    }
+  }, [data?.iconId])
 
   const schema = object()
     .shape({
@@ -67,6 +79,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
           (item) => String(item.id) === String(data.priceListType)
         ) || null;
       })(),
+
     },
   })
 
@@ -74,13 +87,13 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const errors = formState.errors
 
   const onSubmit = (data: any) => {
-    onConfirm(data)
+    onConfirm({ ...data, iconId: selectedIcon?.id || null })
     reset()
   }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container columns={12} sx={{ mt: 1, columnGap: 2 }}>
+      <Grid container columns={12} sx={{ mt: 1, columnGap: 3 }}>
         <Grid size={12}>
           <AppControlledTextField
             required
@@ -123,6 +136,60 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
           />
         </Grid>
 
+        <Grid size={'auto'}>
+          <Box
+            sx={{
+              width: 140,
+              height: 140,
+              border: '1px solid #ccc',
+              borderRadius: theme.shape.borderRadius,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: theme.palette.mode === 'dark' ? '#000' : '#f7f7f9',
+              position: 'relative',
+            }}
+          >
+            {selectedIcon?.downloadUri && (
+              <AppActionButton
+                type='delete'
+                sx={{
+                  position: 'absolute',
+                  top: -10,
+                  right: -10,
+                }}
+                onClick={() => {
+                  setSelectedIcon(null)
+                }} />
+            )}
+
+            {(selectedIcon?.downloadUri) && (
+              <img
+                src={selectedIcon?.downloadUri || ''}
+                alt="preview"
+                style={{
+                  maxWidth: '80%',
+                  maxHeight: '80%',
+                  objectFit: 'contain',
+                  display: 'block',
+                }}
+              />
+            )}
+
+            {(!selectedIcon?.downloadUri) && (
+              <Typography sx={{ textAlign: 'center', fontSize: '12px', color: theme.palette.text.secondary }}>
+                {t('noIcon', { ns: 'common' })}
+              </Typography>
+            )}
+          </Box>
+        </Grid>
+
+        <Grid size={'grow'}>
+          <Button variant='contained' color='primary' onClick={() => setOpenIconDialog(true)}>
+            {t('modals.searchIcon', { ns: 'common' })}
+          </Button>
+        </Grid>
+
         <Grid size={12}>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
             <Button
@@ -148,6 +215,18 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
           </Box>
         </Grid>
       </Grid>
+      <AppDialog
+        open={openIconDialog}
+        onClose={() => setOpenIconDialog(false)}
+        title={t('modals.searchIcon', { ns: 'common' })}
+      >
+        <AppIconsSearch
+          selectedIcon={selectedIcon}
+          onSelect={(icon: TIcon) => {
+            setSelectedIcon(icon)
+            setOpenIconDialog(false)
+          }} />
+      </AppDialog>
     </form>
   )
 }

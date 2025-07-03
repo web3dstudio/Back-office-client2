@@ -119,6 +119,14 @@ export type TModel = {
   carType: TCarType | null
 }
 
+
+export type TIcon = {
+  id: string
+  fileName: string
+  downloadUri: string | null
+  uploadUri: string | null
+}
+
 export type TCarType = {
   id: string
   name: string
@@ -127,7 +135,7 @@ export type TCarType = {
   iconId?: string | null
   licenseType?: string | null
   priceListType: TPriceListType | null
-  icon?: string | null
+  icon?: TIcon | null
 }
 
 export type TPartialModelUpdateParams = {
