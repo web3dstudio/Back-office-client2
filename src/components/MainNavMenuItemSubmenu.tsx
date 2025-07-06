@@ -54,6 +54,15 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
 
         <MenuItem
           onClick={() => {
+            navigate({ to: '/extras' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.extras', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             navigate({ to: '/car-types' })
             handleClose()
           }}

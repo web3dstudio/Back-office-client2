@@ -87,8 +87,6 @@ function RepositoryPage() {
       <StyledPaper
         sx={{
           borderRadius: '24px',
-          boxShadow:
-            '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06);',
           overflow: 'hidden',
           padding: 3,
           width: '100%',

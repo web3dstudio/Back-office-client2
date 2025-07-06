@@ -26,8 +26,13 @@ function AppBackBtn({ children }: Props) {
           }}
         />
       }
+      sx={{
+        padding: '16px',
+        height: '20px',
+        margin: '-12px',
+      }}
     >
-      <Typography color='common.black' sx={{ textTransform: 'none' }}>
+      <Typography color='common.black' sx={{ textTransform: 'none', fontSize: '14px' }}>
         {children ? children : t('back', { ns: 'common' })}
       </Typography>
     </Button>

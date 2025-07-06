@@ -4,9 +4,14 @@ import MUIWrapper from '../utils/MUIWrapper'
 import QueryClientWrapper from '../utils//QueryClientWrapper'
 import { ToastContainer } from 'react-toastify'
 import useAuthInitializer from '../hooks/useAuthInitializer'
+import AppError from '../components/AppError'
+import AppNotFound from '../components/AppNotFound'
+
 
 export const Route = createRootRoute({
   component: Root,
+  errorComponent: AppError,
+  notFoundComponent: AppNotFound,
 })
 
 function Root() {

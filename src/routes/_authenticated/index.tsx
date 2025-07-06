@@ -2,8 +2,8 @@ import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../components/StyledPaper'
 import ReportsStatLineChart from '../../components/ReportsStatLineChart'
 import { useHomePageQuery } from '../../query/homePage.query'
-import Loading from '../../components/Loading'
 import MainPageCards from '../../components/MainPageCards'
+import AppLoading from '../../components/AppLoading'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: mainPage,
@@ -14,7 +14,7 @@ function mainPage() {
   const { data: homePageData, isLoading, isError } = useHomePageQuery()
 
   if (isLoading && !isError) {
-    return <Loading />
+    return <AppLoading />
   }
 
   return (

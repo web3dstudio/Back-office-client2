@@ -1,6 +1,7 @@
 import {
   DataGrid,
   type GridColDef,
+  type GridDensity,
   type GridEditMode,
   type GridPaginationModel,
   type GridRowClassNameParams,
@@ -10,7 +11,7 @@ import {
 import i18next from 'i18next'
 import { heIL, enUS } from '@mui/x-data-grid/locales'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, type SxProps, Typography } from '@mui/material'
 
 
@@ -34,6 +35,7 @@ interface Props<T extends GridValidRowModel> {
   headerHeight?: number,
   initialState?: any,
   columnVisibilityModel?: any,
+  density?: GridDensity,
 }
 
 const AppDataGrid = <T extends GridValidRowModel>({
@@ -55,6 +57,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
   hideFooterSelectedRowCount = false,
   initialState,
   columnVisibilityModel,
+  density = 'standard',
 }: Props<T>) => {
   const localeText =
     i18next.language === 'he'
@@ -92,6 +95,7 @@ const AppDataGrid = <T extends GridValidRowModel>({
 
   return (
     <DataGrid
+      density={density}
       rows={rows}
       columns={columns}
       loading={isLoading}
@@ -104,7 +108,6 @@ const AppDataGrid = <T extends GridValidRowModel>({
       columnVisibilityModel={{ ...tableFields, ...columnVisibilityModel }}
       onColumnVisibilityModelChange={(e: any) => setTableFields(e)}
       localeText={localeText}
-      style={{ width: '100%' }}
       slots={{
         noRowsOverlay: NoRowsOverlay,
       }}

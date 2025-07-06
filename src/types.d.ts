@@ -79,13 +79,18 @@ export type TFuelType = {
 export type TManufacturer = {
   id: string
   name: string
+  engName: string | null
   manufacturerCode: string
+  logoDownloadUri: string | null
   coutry?: string
+  serieses?: TSerie[]
 }
 
 export type TSerie = {
   id: string
   name: string
+  priority?: number
+  models?: TModel[]
 }
 
 export type TModel = {
@@ -170,4 +175,16 @@ export type TAppExtrasItemField = {
   checked: boolean;
   selected: boolean;
   value: number;
+}
+
+export type TExtra = {
+  id: string
+  name: string
+  nameEn: string | null
+  defaultChangePercentage: number
+  tosID?: string
+  apiField?: string | null
+  sortIndex?: number
+  iconId?: string | null
+  icon?: string | null
 }
