@@ -100,7 +100,7 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
                 <Typography component="span" sx={{ fontSize: '14px', fontWeight: 400, color: theme.palette.text.secondary }}>{t('models', { ns: 'newManufacturer' })}</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {/* {isExpanded &&
+                {isExpanded &&
                   <DndContext
                     sensors={sensors}
                     collisionDetection={closestCenter}
@@ -120,7 +120,7 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
                       ))}
                     </SortableContext>
                   </DndContext>
-                } */}
+                }
               </AccordionDetails>
             </Accordion>
           </StyledPaper>

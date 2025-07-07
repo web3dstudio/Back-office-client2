@@ -25,9 +25,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-
 import type { TSerie } from '../../../../types'
-
 
 
 export const Route = createFileRoute('/_authenticated/manufacturers/edit/$id')(
@@ -121,18 +119,16 @@ function MenufacturerEditPage() {
 
 
 
-  // if (isLoading) {
-  //   return <AppLoading />
-  // }
+  if (isLoading && !manufacturer && !isError) {
+    return <AppLoading />
+  }
 
   if (isError && !isLoading) {
     return <AppError />
   }
-  console.log('is loading', isLoading)
 
   return (
     <>
-      {!manufacturer && isLoading && <AppLoading />}
       {manufacturer && (
         <FormProvider {...methods}>
           <form onSubmit={handleSubmit(onSubmit)}>
