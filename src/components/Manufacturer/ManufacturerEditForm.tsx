@@ -20,8 +20,6 @@ function ManufacturerEditForm({ manufacturer }: Props) {
 
   const [files, setFiles] = useState<File[]>([])
 
-  console.log(manufacturer)
-
   return (
     <Grid container columnSpacing={3} rowSpacing={2} columns={12} >
       <Grid size={6}>

@@ -99,6 +99,7 @@ export type TModel = {
   modelType: string
   manufacturerCode: string
   modelCode: string
+  code: string
   yearOfManufacture: number
   finishingLevel: string
   engineCapacity: number

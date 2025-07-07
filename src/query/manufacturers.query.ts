@@ -73,7 +73,6 @@ export function useManufacturerAddMutation(): UseMutationResult<TManufacturer, E
 }
 
 
-
 export function useManufacturerDeleteMutation(): UseMutationResult<string, Error, string> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()

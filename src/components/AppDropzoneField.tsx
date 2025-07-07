@@ -36,8 +36,6 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
     }) as any) || []
   );
 
-  console.log(defaultFiles)
-
   const validateFn = (file: any) => {
     if (file.size > MAX_FILE_SIZE) {
       return {
