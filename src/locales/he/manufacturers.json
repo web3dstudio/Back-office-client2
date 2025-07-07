@@ -13,5 +13,6 @@
   "code": "קוד יצרן",
   "approveDelete": "האם אתה בטוח?",
   "logo": "לוגו יצרן",
-  "Filter": "חיפוש"
+  "Filter": "חיפוש",
+  "manufacturerCode": "קוד יצרן"
 }

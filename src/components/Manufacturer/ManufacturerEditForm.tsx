@@ -9,13 +9,15 @@ import { useRouter } from "@tanstack/react-router"
 
 interface Props {
   manufacturer: TManufacturer
+  isPending: boolean
 }
 
-
-function ManufacturerEditForm({ manufacturer }: Props) {
+function ManufacturerEditForm({ manufacturer, isPending }: Props) {
   const { t } = useTranslation()
   const { control, formState } = useFormContext()
   const errors = formState.errors
+  const isDirty = formState.isDirty
+  const isValid = formState.isValid
   const router = useRouter()
 
   const [files, setFiles] = useState<File[]>([])
@@ -47,8 +49,8 @@ function ManufacturerEditForm({ manufacturer }: Props) {
           name='manufacturerCode'
           control={control}
           errors={errors}
-          label={t('code', { ns: 'manufacturers' })}
-          placeholder={t('code', { ns: 'manufacturers' })}
+          label={t('manufacturerCode', { ns: 'manufacturers' })}
+          placeholder={t('manufacturerCode', { ns: 'manufacturers' })}
         />
       </Grid>
 
@@ -79,7 +81,8 @@ function ManufacturerEditForm({ manufacturer }: Props) {
             color='primary'
             type='submit'
             variant='contained'
-          // loading={isPending}
+            loading={isPending}
+            disabled={!isDirty || !isValid}
           >
             <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
               {t('modals.save', { ns: 'common' })}

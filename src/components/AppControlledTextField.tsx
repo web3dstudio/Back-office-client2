@@ -36,13 +36,19 @@ const ControlledTextField = ({
   const { t } = useTranslation()
   const theme = useTheme()
 
+  // Локальная функция get для вложенных путей
+  const get = (obj: any, path: string) => path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj)
+
+  const errorObj = get(errors, name)
+  const errorMessage = errorObj?.message
+
   return (
     <Controller
       name={name}
       control={control}
       render={({ field }) => (
         <FormControl
-          error={!!errors?.[name]?.message}
+          error={!!errorMessage}
           fullWidth
           variant='outlined'
         >
@@ -57,7 +63,7 @@ const ControlledTextField = ({
             type={type}
             {...field}
             id={name}
-            error={!!errors?.[name]?.message}
+            error={!!errorMessage}
             variant='outlined'
             placeholder={placeholder ? t(placeholder) : ''}
             slotProps={slotProps}
@@ -73,12 +79,12 @@ const ControlledTextField = ({
               ...sx,
             }}
           />
-          {!errors?.[name]?.message && (
+          {!errorMessage && (
             <FormHelperText margin='dense'> </FormHelperText>
           )}
-          {errors?.[name]?.message && (
+          {errorMessage && (
             <FormHelperText margin='dense'>
-              {errors[name]?.message as string}
+              {errorMessage}
             </FormHelperText>
           )}
         </FormControl>

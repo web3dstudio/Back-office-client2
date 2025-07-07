@@ -26,8 +26,6 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
   const { t } = useTranslation()
   const theme = useTheme()
 
-  console.log(defaultFiles)
-
   const [files, setFiles] = useState<FileWithPreview[]>(
     defaultFiles?.map(url => ({
       name: url,

@@ -1,31 +1,43 @@
-import { Accordion, Grid, AccordionSummary, AccordionDetails, Typography, useTheme } from "@mui/material";
+import { Accordion, Grid, AccordionSummary, AccordionDetails, Typography, useTheme, Button } from "@mui/material";
 import AppActionButton from "../AppActionButton";
 import StyledPaper from "../StyledPaper";
-import { arrayMove, SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableContext, useSortable, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { TSerie } from "../../types";
 import { useTranslation } from "react-i18next";
 import AppControlledTextField from "../AppControlledTextField";
-import { useFormContext } from "react-hook-form";
+import { useFormContext, useFieldArray } from "react-hook-form";
 import { useState } from "react";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import { closestCenter, DndContext, PointerSensor, useSensor, useSensors, type DragEndEvent } from "@dnd-kit/core";
 import SortableModel from "./SortableModel";
 import React from "react";
+import { useModelDeleteMutation } from "../../query/models.query";
+import AppConfirmDialog from "../AppDialog/AppConfirmDialog";
 
 
 type Props = {
   serie: TSerie
-  onDelete: (id: string) => void
+  onDelete: (serie: TSerie) => void
   serieIndex: number
+  filterByCode: string
 }
 
-function SortableSerie({ serie, onDelete, serieIndex }: Props) {
+function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
   const { t } = useTranslation('manufacturers')
   const theme = useTheme();
-  const [models, setModels] = useState(serie.models ?? []);
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
-  const { control } = useFormContext();
+  const { mutate: deleteModel } = useModelDeleteMutation()
+
+  const { control, formState } = useFormContext<{ serieses: { models: any[] }[] }>();
+  const { fields: modelFields, move: moveModel, remove: removeModel, prepend: prependModel } = useFieldArray({
+    control,
+    name: `serieses.${serieIndex}.models`
+  });
+
+  const errors = formState.errors
+
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: serie.id });
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -42,13 +54,28 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = models.findIndex(m => m.id === active.id);
-      const newIndex = models.findIndex(m => m.id === over?.id);
-      setModels(arrayMove(models, oldIndex, newIndex));
-      // тут можно вызвать onChange, чтобы сохранить порядок на сервере
+      const getDndId = (m: any, idx: number) => `model-${serieIndex}-${m.id ?? idx}`;
+      const oldIndex = modelFields.findIndex((m, idx) => getDndId(m, idx) === active.id);
+      const newIndex = modelFields.findIndex((m, idx) => getDndId(m, idx) === over?.id);
+      if (oldIndex !== -1 && newIndex !== -1) {
+        moveModel(oldIndex, newIndex);
+      }
     }
   };
 
+  const onModelDelete = (modelIndex: number, model: any) => {
+    console.log('onModelDelete', modelIndex, model.dbId)
+    if (model.dbId == null) {
+      removeModel(modelIndex)
+    } else {
+      console.log('Удаление модели с dbId:', model.dbId)
+      deleteModel({ id: model.dbId }, {
+        onSuccess: () => {
+          removeModel(modelIndex)
+        }
+      })
+    }
+  }
 
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
@@ -56,7 +83,7 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
         <Grid size={'auto'}>
           <AppActionButton
             type='delete'
-            onClick={() => onDelete(serie.id)}
+            onClick={() => setOpenConfirmDialog(true)}
           />
         </Grid>
         <Grid size={'grow'}>
@@ -70,10 +97,10 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
           >
             <Grid container size={12} gap={0}>
               <Grid size={6}>
-
                 <AppControlledTextField
                   name={`serieses.${serieIndex}.name`}
                   control={control}
+                  errors={errors}
                   label={t('seriesName', { ns: 'newManufacturer' })}
                   placeholder={t('seriesName', { ns: 'newManufacturer' })}
                 />
@@ -100,32 +127,65 @@ function SortableSerie({ serie, onDelete, serieIndex }: Props) {
                 <Typography component="span" sx={{ fontSize: '14px', fontWeight: 400, color: theme.palette.text.secondary }}>{t('models', { ns: 'newManufacturer' })}</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                {isExpanded &&
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext
-                      items={models.map(m => m.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      {models.map((model, modelIndex) => (
-                        <SortableModel
-                          key={model.id}
-                          model={model}
-                          serieIndex={serieIndex}
-                          modelIndex={modelIndex}
-                        />
-                      ))}
-                    </SortableContext>
-                  </DndContext>
-                }
+                <Grid container columns={12} gap={3}>
+                  <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+                    <Button
+                      variant="contained"
+                      onClick={() => {
+                        console.log('add model');
+                        prependModel({ name: '', code: '', dbId: null });
+                        console.log('modelFields', modelFields)
+                      }}                    >
+                      {t('addModel', { ns: 'newManufacturer' })}
+                    </Button>
+                  </Grid>
+                  <Grid size={12}>
+                    {isExpanded &&
+                      <DndContext
+                        sensors={sensors}
+                        collisionDetection={closestCenter}
+                        onDragEnd={handleDragEnd}
+                      >
+                        <SortableContext
+                          items={modelFields.map((model, modelIndex) => `model-${serieIndex}-${model.id ?? modelIndex}`)}
+                          strategy={verticalListSortingStrategy}
+                        >
+                          {modelFields.map((model, modelIndex) => {
+                            const show =
+                              !filterByCode ||
+                              (model.code || '').toLowerCase().includes(filterByCode.toLowerCase()) ||
+                              (
+                                filterByCode &&
+                                (!model.code || model.code === '') &&
+                                (!model.dbId || model.dbId === null)
+                              );
+                            if (!show) return null;
+                            return (
+                              <SortableModel
+                                key={`model-${serieIndex}-${model.id ?? modelIndex}`}
+                                serieIndex={serieIndex}
+                                modelIndex={modelIndex}
+                                dndId={`model-${serieIndex}-${model.id ?? modelIndex}`}
+                                onDelete={() => onModelDelete(modelIndex, model)}
+                              />
+                            );
+                          })}
+                        </SortableContext>
+                      </DndContext>
+                    }
+                  </Grid>
+                </Grid>
               </AccordionDetails>
             </Accordion>
           </StyledPaper>
         </Grid>
       </Grid>
+      <AppConfirmDialog
+        title={t('modals.approveDelete', { ns: 'common' })}
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        onSubmit={() => onDelete(serie)}
+      />
     </div>
   );
 }

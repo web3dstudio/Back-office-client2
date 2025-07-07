@@ -15,6 +15,8 @@ function AppActionButton({ type, onClick, sx }: IProps) {
         <Box
             onClick={onClick}
             sx={{
+                width: '24px',
+                height: '24px',
                 backgroundColor: type === 'edit' ? 'primary.main' : 'error.main',
                 color: theme.palette.common.white,
                 borderRadius: '50%',

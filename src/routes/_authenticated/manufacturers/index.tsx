@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next'
 import StyledPaper from '../../../components/StyledPaper'
 import { useManufacturerAddMutation, useManufacturerDeleteMutation, useManufacturersQuery } from '../../../query/manufacturers.query'
 import AppError from '../../../components/AppError'
-import AppLoading from '../../../components/AppLoading'
 import AppDataGrid from '../../../components/AppDataGrid'
 import type { TManufacturer } from '../../../types'
 import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
@@ -51,7 +50,7 @@ function ManufacturersPage() {
     },
     {
       field: 'manufacturerCode',
-      headerName: t('code', { ns: 'manufacturers' }),
+      headerName: t('manufacturerCode', { ns: 'manufacturers' }),
       editable: false,
       hideable: true,
       type: 'string',

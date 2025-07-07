@@ -93,3 +93,20 @@ export function useManufacturerDeleteMutation(): UseMutationResult<string, Error
   })
 }
 
+export default function useManufacturerSeriesModelsMutation(): UseMutationResult<TManufacturer, Error, TManufacturer> {
+  const { t } = useTranslation('notifications')
+  return useMutation({
+    mutationFn: async (manufacturer: TManufacturer): Promise<TManufacturer> => {
+      const response = await axiosAPI.post(`/manufacturers/upsert`, manufacturer)
+      return response.data
+    },
+    onSuccess: (_data) => {
+      toast.success(t('manufacturer_updated_successfully'))
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+

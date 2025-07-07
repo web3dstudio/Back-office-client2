@@ -11,12 +11,12 @@ export function useSeriesDeleteMutation(): UseMutationResult<string, Error, stri
 
   return useMutation({
     mutationFn: async (id: string): Promise<string> => {
-      await axiosAPI.delete(`/manufacturers/${id}`)
+      await axiosAPI.delete(`/series/${id}`)
       return id
     },
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['manufacturers'] })
-      toast.success(t('manufacturer_deleted_successfully'))
+      // queryClient.invalidateQueries({ queryKey: ['manufacturers'] })
+      toast.success(t('series_deleted_successfully'))
     },
     onError: (error) => {
       console.log('ERROR', error.message)
@@ -24,3 +24,4 @@ export function useSeriesDeleteMutation(): UseMutationResult<string, Error, stri
     },
   })
 }
+

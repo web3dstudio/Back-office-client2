@@ -46,3 +46,15 @@ export function useModelPatchMutation(): UseMutationResult<TModel, Error, { id: 
     }
   })
 }
+
+export function useModelDeleteMutation(): UseMutationResult<TModel, Error, { id: string }, unknown> {
+  const queryClient = useQueryClient()
+  const { t } = useTranslation('notifications')
+
+  return useMutation({
+    mutationFn: async ({ id }: { id: string }): Promise<TModel> => {
+      const response = await axiosAPI.delete('/models/' + id)
+      return response.data
+    }
+  })
+}

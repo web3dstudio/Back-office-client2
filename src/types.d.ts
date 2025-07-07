@@ -79,6 +79,7 @@ export type TFuelType = {
 export type TManufacturer = {
   id: string
   name: string
+  dbId?: string | null
   engName: string | null
   manufacturerCode: string
   logoDownloadUri: string | null
@@ -89,6 +90,7 @@ export type TManufacturer = {
 export type TSerie = {
   id: string
   name: string
+  dbId?: string | null
   priority?: number
   models?: TModel[]
 }
@@ -96,6 +98,7 @@ export type TSerie = {
 export type TModel = {
   id: string
   name: string
+  dbId?: string | null
   modelType: string
   manufacturerCode: string
   modelCode: string

@@ -13,5 +13,6 @@
   "save": "Save",
   "approveDelete": "Are you sure?",
   "logo": "Manufacturer logo",
-  "Filter": "Filter"
+  "Filter": "Filter",
+  "manufacturerCode": "Manufacturer Code"
 }
