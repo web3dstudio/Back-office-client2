@@ -1,0 +1,218 @@
+import { createFileRoute } from '@tanstack/react-router'
+import StyledPaper from '../../../components/StyledPaper'
+import { Box, Button, Grid, Typography } from '@mui/material'
+import AppDataGrid from '../../../components/AppDataGrid'
+import type { TEngineType } from '../../../types'
+import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
+import { useTranslation } from 'react-i18next'
+import AppActionButton from '../../../components/AppActionButton'
+import { useState } from 'react'
+import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
+import AppDialog from '../../../components/AppDialog/AppDialog'
+import AppBackBtn from '../../../components/AppBackBtn'
+import AppError from '../../../components/AppError'
+import { useEngineTypesAddMutation, useEngineTypesQuery } from '../../../query/engineTypes.query'
+import { useEngineTypesUpdateMutation } from '../../../query/engineTypes.query'
+import { useEngineTypesDeleteMutation } from '../../../query/engineTypes.query'
+import EngineTypesForm from '../../../components/EngineTypes/EngineTypesForm'
+
+export const Route = createFileRoute('/_authenticated/engine-types/')({
+  component: EngineTypesPage,
+})
+
+function EngineTypesPage() {
+
+  const { t } = useTranslation()
+  const [openFormDialog, setOpenFormDialog] = useState(false)
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [selected, setSelected] = useState<TEngineType | null>(null)
+
+  const { data: engineTypes, isLoading, isError } = useEngineTypesQuery()
+  const { mutate: addMutation } = useEngineTypesAddMutation()
+  const { mutate: updateMutation } = useEngineTypesUpdateMutation()
+  const { mutate: deleteMutation, isPending: isDeleting } = useEngineTypesDeleteMutation()
+
+  const columns = [
+    {
+      field: 'name',
+      headerName: t('name', { ns: 'engineTypes' }),
+      editable: false,
+      hideable: true,
+      type: 'string',
+      flex: 1,
+      valueGetter: (_value: any, row: TEngineType) => row.name,
+    },
+    {
+      field: 'nameEn',
+      headerName: t('nameEn', { ns: 'engineTypes' }),
+      editable: false,
+      hideable: true,
+      type: 'string',
+      flex: 1,
+      valueGetter: (_value: any, row: TEngineType) => row.nameEn,
+    },
+
+    {
+      field: 'priceListBackground',
+      headerName: t('priceListBackground', { ns: 'engineTypes' }),
+      editable: false,
+      hideable: true,
+      type: 'string',
+      flex: 0,
+      renderCell: (params: GridRenderCellParams) => (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            height: '100%',
+            width: '100%',
+          }}
+        >
+          <Box
+            sx={{
+              width: '28px',
+              height: '28px',
+              borderRadius: '8px',
+              backgroundColor: params.row.priceListBackground?.toString() || '#ccc',
+            }}
+          />
+        </Box>
+      ),
+    },
+    {
+      field: 'code',
+      headerName: t('code', { ns: 'engineTypes' }),
+      editable: false,
+      hideable: false,
+      type: 'string',
+      flex: 1,
+    },
+
+    {
+      field: 'actions',
+      type: 'actions',
+      headerName: 'Actions',
+      width: 100,
+      hideable: false,
+      getActions: (params: GridRenderCellParams) => [
+        <AppActionButton type='edit' onClick={() => {
+          setSelected(() => params.row)
+          setOpenFormDialog(true)
+        }} />,
+        <AppActionButton type='delete' onClick={() => {
+          setSelected(() => params.row)
+          setOpenConfirmDialog(true)
+        }} />
+      ],
+    }
+  ]
+
+  const onSubmit = (data: TEngineType) => {
+    if (selected) {
+      updateMutation({ ...data, id: selected.id }, {
+        onSuccess: () => {
+          setOpenFormDialog(false)
+        }
+      })
+    } else {
+      console.log(data)
+      addMutation(data, {
+        onSuccess: () => {
+          setOpenFormDialog(false)
+        }
+      })
+    }
+  }
+
+  const onDelete = () => {
+    if (selected) {
+      deleteMutation(selected?.id)
+    }
+    setOpenConfirmDialog(false)
+  }
+
+  if (isError && !isLoading) {
+    return <AppError />
+  }
+
+  return (
+    <Grid container spacing={3} >
+      <Grid size={12}>
+        <AppBackBtn children={t('back', { ns: 'common' })} />
+      </Grid>
+      <Grid
+        size={12}
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        <Box>
+          <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+            {t('title', { ns: 'engineTypes' })}
+          </Typography>
+        </Box>
+        <Box>
+          <Button variant='contained' onClick={() => {
+            setSelected(null)
+            setOpenFormDialog(true)
+          }
+
+          }>
+            {t('modals.add', { ns: 'common' })}
+          </Button>
+        </Box>
+      </Grid>
+
+      <StyledPaper
+        sx={{
+          overflow: 'hidden',
+          padding: 3,
+          display: 'flex',
+          gap: 2,
+        }}
+      >
+        <AppDataGrid
+          tableName='engineTypesTable'
+          rows={engineTypes ?? []}
+          columns={columns as GridColDef<TEngineType>[]}
+          editMode='row'
+          isLoading={isLoading}
+          hideFooterSelectedRowCount={true}
+          initialState={{
+            filter: {
+              filterModel: {
+                items: [],
+                quickFilterValues: [],
+              },
+            },
+          }}
+        />
+      </StyledPaper>
+
+      <AppConfirmDialog
+        open={openConfirmDialog}
+        onClose={() => setOpenConfirmDialog(false)}
+        onSubmit={onDelete}
+        title={t('modals.approveDelete', { ns: 'common' })}
+        isPending={isDeleting}
+      />
+
+      <AppDialog
+        open={openFormDialog}
+        onClose={() => setOpenFormDialog(false)}
+        title={selected ? t('modals.edit', { ns: 'common' }) : t('modals.add', { ns: 'common' })}
+        maxWidth='sm'
+      >
+        <EngineTypesForm
+          data={selected}
+          isPending={false}
+          onCancel={() => setOpenFormDialog(false)}
+          onConfirm={(data) => onSubmit(data)}
+        />
+      </AppDialog>
+    </Grid>
+  )
+}
+

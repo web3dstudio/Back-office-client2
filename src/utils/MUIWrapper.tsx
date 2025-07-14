@@ -102,7 +102,7 @@ export default function MUIWrapper({
               root: {
                 borderRadius: '24px',
                 textTransform: 'none',
-                height: '48px',
+                height: '40px',
                 fontSize: '16px',
                 fontWeight: 'bold',
                 padding: '0px 24px',
@@ -126,7 +126,7 @@ export default function MUIWrapper({
           MuiOutlinedInput: {
             styleOverrides: {
               root: {
-                height: '48px',
+                height: '40px',
                 borderRadius: '24px',
               },
             },
@@ -147,29 +147,6 @@ export default function MUIWrapper({
               }
             }
           },
-
-          // MuiDataGrid: {
-          //   styleOverrides: {
-          //     row: {
-          //       "&:nth-of-type(even)": {
-          //         backgroundColor: '#FAFAFA',
-          //       },
-          //     },
-          //     cell: {
-          //       borderBottom: '0px solid #D4D5DA',
-          //       "&:focus-within, &:focus": {
-          //         outline: "none !important"
-          //       }
-          //     },
-          //     columnHeader: {
-          //       "&:focus-within, &:focus": {
-          //         outline: "none !important",
-          //       },
-          //       backgroundColor: '#F2F6FF !important',
-
-          //     }
-          //   },
-          // },
         },
       }),
 
@@ -199,6 +176,7 @@ export default function MUIWrapper({
   useEffect(() => {
     document.dir = direction
   }, [direction])
+
 
   return (
     <CacheProvider value={direction === 'rtl' ? cacheRtl : emptyCache}>

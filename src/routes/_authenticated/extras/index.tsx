@@ -16,7 +16,6 @@ import { useState } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
-import IntegralExtrasForm from '../../../components/IntegralExtras/IntegralExtrasForm'
 import AppError from '../../../components/AppError'
 import ExtrasForm from '../../../components/Extras/IntegralExtrasForm'
 

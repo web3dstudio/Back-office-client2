@@ -11,7 +11,7 @@ import {
 import i18next from 'i18next'
 import { heIL, enUS } from '@mui/x-data-grid/locales'
 import { useLocalStorage } from '../hooks/useLocalStorage'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Box, type SxProps, Typography } from '@mui/material'
 
 
@@ -36,6 +36,7 @@ interface Props<T extends GridValidRowModel> {
   initialState?: any,
   columnVisibilityModel?: any,
   density?: GridDensity,
+  onCellEditStop?: (params: any, event: any) => void,
 }
 
 const AppDataGrid = <T extends GridValidRowModel>({
@@ -58,6 +59,8 @@ const AppDataGrid = <T extends GridValidRowModel>({
   initialState,
   columnVisibilityModel,
   density = 'standard',
+  onCellEditStop,
+
 }: Props<T>) => {
   const localeText =
     i18next.language === 'he'
@@ -101,7 +104,6 @@ const AppDataGrid = <T extends GridValidRowModel>({
       loading={isLoading}
       checkboxSelection={checkboxSelection}
       onRowSelectionModelChange={onRowSelectionModelChange}
-      disableVirtualization
       pagination
       paginationModel={paginationModel}
       onPaginationModelChange={handlePaginationChange}
@@ -118,12 +120,19 @@ const AppDataGrid = <T extends GridValidRowModel>({
       onRowEditStop={onRowEditStop}
       processRowUpdate={processRowUpdate}
       getRowClassName={getRowClassName}
-      sx={sx}
+      sx={{
+        '& .MuiDataGrid-row:nth-of-type(odd)': {
+          backgroundColor: '#f5f5f5',
+        },
+        ...sx,
+      }}
       hideFooterSelectedRowCount={hideFooterSelectedRowCount}
       initialState={initialState}
       showToolbar
       autosizeOnMount
+      onCellEditStop={onCellEditStop}
     />
+
   )
 }
 

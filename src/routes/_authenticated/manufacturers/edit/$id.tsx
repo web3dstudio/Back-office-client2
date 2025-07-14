@@ -25,7 +25,7 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable';
-import type { TSerie } from '../../../../types'
+import type { TModel, TSerie } from '../../../../types'
 import useManufacturerSeriesModelsMutation from '../../../../query/manufacturers.query'
 import { useSeriesDeleteMutation } from '../../../../query/series.query'
 
@@ -35,36 +35,6 @@ export const Route = createFileRoute('/_authenticated/manufacturers/edit/$id')(
   },
 )
 
-function getDirtySeriesAndModels(values: TFormInput, dirtyFields: TFormInput) {
-  if (!dirtyFields.serieses) return [];
-
-  return values.serieses
-    .map((serie: TSerie, serieIndex: number) => {
-      const serieDirty = dirtyFields.serieses[serieIndex];
-      if (!serieDirty) return null;
-
-      // Если изменена сама серия или хотя бы одна модель
-      const dirtyModels = (serie.models || []).map((model, modelIndex) => {
-        if (serieDirty.models && serieDirty.models[modelIndex]) {
-          return model;
-        }
-        return null;
-      }).filter(Boolean);
-
-      // Если изменены поля серии или есть изменённые модели
-      if (
-        Object.keys(serieDirty).some(key => key !== 'models') ||
-        dirtyModels.length > 0
-      ) {
-        return {
-          ...serie,
-          models: dirtyModels
-        };
-      }
-      return null;
-    })
-    .filter(Boolean);
-}
 
 type TFormInput = any
 
@@ -90,6 +60,8 @@ function MenufacturerEditPage() {
           yup.object().shape({
             name: yup.string().required(t('form-field.required')),
             code: yup.string().required(t('form-field.required')),
+            modelCode: yup.string(),
+            volume: yup.number().required(t('form-field.required')),
           })
         ),
       })
@@ -107,10 +79,15 @@ function MenufacturerEditPage() {
       serieses: manufacturer?.serieses?.map(serie => ({
         dbId: serie.id,
         name: serie.name,
+        priority: serie.priority ?? 0,
         models: serie.models?.map(model => ({
           dbId: model.id,
           name: model.name,
           code: model.code,
+          modelCode: model.modelCode ?? '',
+          volume: model.volume ?? 0,
+          manufacturerCode: manufacturer?.manufacturerCode ?? '',
+          priority: model.priority ?? 0,
         })) ?? [],
       })) ?? [],
     },
@@ -133,10 +110,15 @@ function MenufacturerEditPage() {
         serieses: manufacturer.serieses?.map(serie => ({
           dbId: serie.id,
           name: serie.name,
+          priority: serie.priority ?? 0,
           models: serie.models?.map(model => ({
             dbId: model.id,
             name: model.name,
             code: model.code,
+            modelCode: model.modelCode ?? '',
+            volume: model.volume ?? 0,
+            manufacturerCode: manufacturer?.manufacturerCode ?? '',
+            priority: model.priority ?? 0,
           })) ?? [],
         })) ?? [],
       });
@@ -144,11 +126,18 @@ function MenufacturerEditPage() {
   }, [manufacturer, reset]);
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
-    const dirtyData = getDirtySeriesAndModels(data, methods.formState.dirtyFields);
+    const seriesesWithPriority = data.serieses.map((serie: TSerie, serieIdx: number) => ({
+      ...serie,
+      priority: serieIdx + 1,
+      models: Array.isArray(serie.models)
+        ? serie.models.map((model: TModel, modelIdx: number) => ({
+          ...model,
+          priority: modelIdx + 1,
+        }))
+        : [],
+    }));
 
-    console.log('dirtyData', { ...data, serieses: dirtyData })
-
-    upsertManufacturer(data, {
+    upsertManufacturer({ ...data, serieses: seriesesWithPriority }, {
       onSuccess: () => {
         refetch()
       }

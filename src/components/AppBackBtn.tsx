@@ -1,15 +1,16 @@
 import { KeyboardBackspaceOutlined } from '@mui/icons-material'
 import { Button, Typography } from '@mui/material'
 import i18next from '../i18next'
-import { useRouter } from '@tanstack/react-router'
-import { t } from 'i18next'
+import { useNavigate } from '@tanstack/react-router'
+import { useTranslation } from 'react-i18next'
 
 type Props = {
   children?: React.ReactNode
 }
 
 function AppBackBtn({ children }: Props) {
-  const router = useRouter()
+  const navigate = useNavigate();
+  const { t } = useTranslation();
   const transform = i18next.dir() === 'rtl' ? 'rotate(180deg)' : ''
 
   return (
@@ -17,7 +18,7 @@ function AppBackBtn({ children }: Props) {
       variant='text'
       size='small'
       onClick={() => {
-        router.history.back()
+        navigate({ to: '..' });
       }}
       startIcon={
         <KeyboardBackspaceOutlined
@@ -33,10 +34,12 @@ function AppBackBtn({ children }: Props) {
       }}
     >
       <Typography color='common.black' sx={{ textTransform: 'none', fontSize: '14px' }}>
-        {children ? children : t('back', { ns: 'common' })}
+        {/* // TODO: add hebrew translation */}
+        {children ? children : t('history-back-button.label', { ns: 'common' })}
       </Typography>
     </Button>
   )
 }
 
 export default AppBackBtn
+

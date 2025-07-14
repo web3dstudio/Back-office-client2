@@ -104,10 +104,10 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
 							type='submit'
 							variant='contained'
 							loading={isPending}
+							sx={{ textTransform: 'capitalize', textWrap: 'nowrap' }}
+
 						>
-							<Typography sx={{ textWrap: 'nowrap' }}>
-								{t('modals.save', { ns: 'common' })}
-							</Typography>
+							{t('modals.save', { ns: 'common' })}
 						</Button>
 					</Box>
 				</Grid>

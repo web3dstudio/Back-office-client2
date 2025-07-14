@@ -33,7 +33,7 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Grid container size={12} columnGap={2} >
-        <Grid size={3}>
+        <Grid size={2}>
           <AppControlledTextField
             required
             name={`serieses.${serieIndex}.models.${modelIndex}.name`}
@@ -43,14 +43,33 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
             placeholder={t('modelName', { ns: 'newManufacturer' })}
           />
         </Grid>
-        <Grid size={3}>
+        <Grid size={2}>
           <AppControlledTextField
             required
             name={`serieses.${serieIndex}.models.${modelIndex}.code`}
             control={control}
             errors={errors}
+            label={t('innerCode', { ns: 'newManufacturer' })}
+            placeholder={t('innerCode', { ns: 'newManufacturer' })}
+          />
+        </Grid>
+        <Grid size={2}>
+          <AppControlledTextField
+            name={`serieses.${serieIndex}.models.${modelIndex}.modelCode`}
+            control={control}
+            errors={errors}
             label={t('modelCode', { ns: 'newManufacturer' })}
             placeholder={t('modelCode', { ns: 'newManufacturer' })}
+          />
+        </Grid>
+        <Grid size={1}>
+          <AppControlledTextField
+            required
+            name={`serieses.${serieIndex}.models.${modelIndex}.volume`}
+            control={control}
+            errors={errors}
+            label={t('volume', { ns: 'newManufacturer' })}
+            placeholder={t('volume', { ns: 'newManufacturer' })}
           />
         </Grid>
         <Grid size={'auto'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>

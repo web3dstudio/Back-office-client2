@@ -132,10 +132,8 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
                     <Button
                       variant="contained"
                       onClick={() => {
-                        console.log('add model');
-                        prependModel({ name: '', code: '', dbId: null });
-                        console.log('modelFields', modelFields)
-                      }}                    >
+                        prependModel({ name: '', code: '', modelCode: '', volume: 0, manufacturerCode: '', dbId: null });
+                      }}>
                       {t('addModel', { ns: 'newManufacturer' })}
                     </Button>
                   </Grid>

@@ -116,23 +116,123 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
           {t('slidebar.markings', { ns: 'common' })}
         </MenuItem> */}
 
-        {/* <MenuItem
+        <MenuItem
           onClick={() => {
-            navigate({ to: '/car-upgrades' })
+            navigate({ to: '/upgrade-packages' })
             handleClose()
           }}
         >
-          {t('slidebar.upgrades', { ns: 'common' })}
-        </MenuItem> */}
+          {t('slidebar.upgradePackages', { ns: 'common' })}
+        </MenuItem>
 
-        {/* <MenuItem
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/service-packages' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.servicePackages', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/mileage-adjustments' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.mileageAdjustments', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/owners' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.owners', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/engine-types' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.engineTypes', { ns: 'common' })}
+        </MenuItem>
+
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/drive-types' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.driveTypes', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/comments-for-opinion' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.commentsForOpinion', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/appraisers' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.appraisers', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/usage-types' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.usageTypes', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/statuses' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.statuses', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/importers' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.importers', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/protectives' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.protectives', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
           onClick={() => {
             navigate({ to: '/values' })
             handleClose()
           }}
         >
           {t('slidebar.values', { ns: 'common' })}
-        </MenuItem> */}
+        </MenuItem>
 
         <MenuItem
           onClick={() => {

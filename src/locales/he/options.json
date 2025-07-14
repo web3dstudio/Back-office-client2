@@ -6,6 +6,7 @@
   "customer": "לפי לקוח",
   "number": "לפי חוות דעת",
   "licenseNumber": "מספר רישוי",
+  "opinion": "Opinion",
   "until": "עד",
   "byDate": "לפי תאריך",
   "byUpdateDate": "לפי תאריך עדכון",
@@ -23,5 +24,7 @@
   "year": "שנת יצור",
   "price": "מחיר",
   "updateDate": "עדכון הבא",
-  "send": "שלח מייל"
+  "send": "שלח מייל",
+  "tozeretNm": "יצרן משרד התחבורה",
+  "degemNm": "דגם משרד התחבורה"
 }

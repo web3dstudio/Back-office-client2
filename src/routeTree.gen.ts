@@ -15,27 +15,38 @@ import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
 import { Route as AuthenticatedValuesIndexRouteImport } from './routes/_authenticated/values/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
+import { Route as AuthenticatedUsageTypesIndexRouteImport } from './routes/_authenticated/usage-types/index'
+import { Route as AuthenticatedUpgradePackagesIndexRouteImport } from './routes/_authenticated/upgrade-packages/index'
 import { Route as AuthenticatedTechSupportIndexRouteImport } from './routes/_authenticated/tech-support/index'
+import { Route as AuthenticatedStatusesIndexRouteImport } from './routes/_authenticated/statuses/index'
 import { Route as AuthenticatedSettingsIndexRouteImport } from './routes/_authenticated/settings/index'
+import { Route as AuthenticatedServicePackagesIndexRouteImport } from './routes/_authenticated/service-packages/index'
 import { Route as AuthenticatedServiceCallsIndexRouteImport } from './routes/_authenticated/service-calls/index'
 import { Route as AuthenticatedRepositoryIndexRouteImport } from './routes/_authenticated/repository/index'
 import { Route as AuthenticatedReportsIndexRouteImport } from './routes/_authenticated/reports/index'
+import { Route as AuthenticatedProtectivesIndexRouteImport } from './routes/_authenticated/protectives/index'
 import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authenticated/profile/index'
 import { Route as AuthenticatedPriceListIndexRouteImport } from './routes/_authenticated/price-list/index'
+import { Route as AuthenticatedOwnersIndexRouteImport } from './routes/_authenticated/owners/index'
 import { Route as AuthenticatedOpinionsIndexRouteImport } from './routes/_authenticated/opinions/index'
 import { Route as AuthenticatedModelsIndexRouteImport } from './routes/_authenticated/models/index'
+import { Route as AuthenticatedMileageAdjustmentsIndexRouteImport } from './routes/_authenticated/mileage-adjustments/index'
 import { Route as AuthenticatedManufacturersIndexRouteImport } from './routes/_authenticated/manufacturers/index'
 import { Route as AuthenticatedIntegralExtrasIndexRouteImport } from './routes/_authenticated/integral-extras/index'
+import { Route as AuthenticatedImportersIndexRouteImport } from './routes/_authenticated/importers/index'
 import { Route as AuthenticatedExtrasIndexRouteImport } from './routes/_authenticated/extras/index'
+import { Route as AuthenticatedEngineTypesIndexRouteImport } from './routes/_authenticated/engine-types/index'
+import { Route as AuthenticatedDriveTypesIndexRouteImport } from './routes/_authenticated/drive-types/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
+import { Route as AuthenticatedCommentsForOpinionIndexRouteImport } from './routes/_authenticated/comments-for-opinion/index'
 import { Route as AuthenticatedCodesIndexRouteImport } from './routes/_authenticated/codes/index'
 import { Route as AuthenticatedClientSupportIndexRouteImport } from './routes/_authenticated/client-support/index'
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedCatalogIndexRouteImport } from './routes/_authenticated/catalog/index'
-import { Route as AuthenticatedCarUpgradesIndexRouteImport } from './routes/_authenticated/car-upgrades/index'
 import { Route as AuthenticatedCarTypesIndexRouteImport } from './routes/_authenticated/car-types/index'
 import { Route as AuthenticatedCarPropertiesIndexRouteImport } from './routes/_authenticated/car-properties/index'
 import { Route as AuthenticatedCarMarksIndexRouteImport } from './routes/_authenticated/car-marks/index'
+import { Route as AuthenticatedAppraisersIndexRouteImport } from './routes/_authenticated/appraisers/index'
 import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
@@ -73,16 +84,40 @@ const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   path: '/users/',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedUsageTypesIndexRoute =
+  AuthenticatedUsageTypesIndexRouteImport.update({
+    id: '/usage-types/',
+    path: '/usage-types/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUpgradePackagesIndexRoute =
+  AuthenticatedUpgradePackagesIndexRouteImport.update({
+    id: '/upgrade-packages/',
+    path: '/upgrade-packages/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedTechSupportIndexRoute =
   AuthenticatedTechSupportIndexRouteImport.update({
     id: '/tech-support/',
     path: '/tech-support/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedStatusesIndexRoute =
+  AuthenticatedStatusesIndexRouteImport.update({
+    id: '/statuses/',
+    path: '/statuses/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedSettingsIndexRoute =
   AuthenticatedSettingsIndexRouteImport.update({
     id: '/settings/',
     path: '/settings/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedServicePackagesIndexRoute =
+  AuthenticatedServicePackagesIndexRouteImport.update({
+    id: '/service-packages/',
+    path: '/service-packages/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedServiceCallsIndexRoute =
@@ -103,6 +138,12 @@ const AuthenticatedReportsIndexRoute =
     path: '/reports/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedProtectivesIndexRoute =
+  AuthenticatedProtectivesIndexRouteImport.update({
+    id: '/protectives/',
+    path: '/protectives/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedProfileIndexRoute =
   AuthenticatedProfileIndexRouteImport.update({
     id: '/profile/',
@@ -113,6 +154,12 @@ const AuthenticatedPriceListIndexRoute =
   AuthenticatedPriceListIndexRouteImport.update({
     id: '/price-list/',
     path: '/price-list/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedOwnersIndexRoute =
+  AuthenticatedOwnersIndexRouteImport.update({
+    id: '/owners/',
+    path: '/owners/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedOpinionsIndexRoute =
@@ -127,6 +174,12 @@ const AuthenticatedModelsIndexRoute =
     path: '/models/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedMileageAdjustmentsIndexRoute =
+  AuthenticatedMileageAdjustmentsIndexRouteImport.update({
+    id: '/mileage-adjustments/',
+    path: '/mileage-adjustments/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedManufacturersIndexRoute =
   AuthenticatedManufacturersIndexRouteImport.update({
     id: '/manufacturers/',
@@ -139,16 +192,40 @@ const AuthenticatedIntegralExtrasIndexRoute =
     path: '/integral-extras/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedImportersIndexRoute =
+  AuthenticatedImportersIndexRouteImport.update({
+    id: '/importers/',
+    path: '/importers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedExtrasIndexRoute =
   AuthenticatedExtrasIndexRouteImport.update({
     id: '/extras/',
     path: '/extras/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedEngineTypesIndexRoute =
+  AuthenticatedEngineTypesIndexRouteImport.update({
+    id: '/engine-types/',
+    path: '/engine-types/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedDriveTypesIndexRoute =
+  AuthenticatedDriveTypesIndexRouteImport.update({
+    id: '/drive-types/',
+    path: '/drive-types/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCustomersIndexRoute =
   AuthenticatedCustomersIndexRouteImport.update({
     id: '/customers/',
     path: '/customers/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedCommentsForOpinionIndexRoute =
+  AuthenticatedCommentsForOpinionIndexRouteImport.update({
+    id: '/comments-for-opinion/',
+    path: '/comments-for-opinion/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedCodesIndexRoute = AuthenticatedCodesIndexRouteImport.update({
@@ -174,12 +251,6 @@ const AuthenticatedCatalogIndexRoute =
     path: '/catalog/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedCarUpgradesIndexRoute =
-  AuthenticatedCarUpgradesIndexRouteImport.update({
-    id: '/car-upgrades/',
-    path: '/car-upgrades/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedCarTypesIndexRoute =
   AuthenticatedCarTypesIndexRouteImport.update({
     id: '/car-types/',
@@ -196,6 +267,12 @@ const AuthenticatedCarMarksIndexRoute =
   AuthenticatedCarMarksIndexRouteImport.update({
     id: '/car-marks/',
     path: '/car-marks/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedAppraisersIndexRoute =
+  AuthenticatedAppraisersIndexRouteImport.update({
+    id: '/appraisers/',
+    path: '/appraisers/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedAdvertisementsIndexRoute =
@@ -248,27 +325,38 @@ export interface FileRoutesByFullPath {
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
+  '/appraisers': typeof AuthenticatedAppraisersIndexRoute
   '/car-marks': typeof AuthenticatedCarMarksIndexRoute
   '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
   '/car-types': typeof AuthenticatedCarTypesIndexRoute
-  '/car-upgrades': typeof AuthenticatedCarUpgradesIndexRoute
   '/catalog': typeof AuthenticatedCatalogIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/client-support': typeof AuthenticatedClientSupportIndexRoute
   '/codes': typeof AuthenticatedCodesIndexRoute
+  '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
+  '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
   '/extras': typeof AuthenticatedExtrasIndexRoute
+  '/importers': typeof AuthenticatedImportersIndexRoute
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/models': typeof AuthenticatedModelsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
+  '/owners': typeof AuthenticatedOwnersIndexRoute
   '/price-list': typeof AuthenticatedPriceListIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/protectives': typeof AuthenticatedProtectivesIndexRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/repository': typeof AuthenticatedRepositoryIndexRoute
   '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
+  '/service-packages': typeof AuthenticatedServicePackagesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/statuses': typeof AuthenticatedStatusesIndexRoute
   '/tech-support': typeof AuthenticatedTechSupportIndexRoute
+  '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
+  '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
@@ -282,27 +370,38 @@ export interface FileRoutesByTo {
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
+  '/appraisers': typeof AuthenticatedAppraisersIndexRoute
   '/car-marks': typeof AuthenticatedCarMarksIndexRoute
   '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
   '/car-types': typeof AuthenticatedCarTypesIndexRoute
-  '/car-upgrades': typeof AuthenticatedCarUpgradesIndexRoute
   '/catalog': typeof AuthenticatedCatalogIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
   '/client-support': typeof AuthenticatedClientSupportIndexRoute
   '/codes': typeof AuthenticatedCodesIndexRoute
+  '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
+  '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
   '/extras': typeof AuthenticatedExtrasIndexRoute
+  '/importers': typeof AuthenticatedImportersIndexRoute
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/models': typeof AuthenticatedModelsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
+  '/owners': typeof AuthenticatedOwnersIndexRoute
   '/price-list': typeof AuthenticatedPriceListIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
+  '/protectives': typeof AuthenticatedProtectivesIndexRoute
   '/reports': typeof AuthenticatedReportsIndexRoute
   '/repository': typeof AuthenticatedRepositoryIndexRoute
   '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
+  '/service-packages': typeof AuthenticatedServicePackagesIndexRoute
   '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/statuses': typeof AuthenticatedStatusesIndexRoute
   '/tech-support': typeof AuthenticatedTechSupportIndexRoute
+  '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
+  '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
@@ -319,27 +418,38 @@ export interface FileRoutesById {
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
   '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
+  '/_authenticated/appraisers/': typeof AuthenticatedAppraisersIndexRoute
   '/_authenticated/car-marks/': typeof AuthenticatedCarMarksIndexRoute
   '/_authenticated/car-properties/': typeof AuthenticatedCarPropertiesIndexRoute
   '/_authenticated/car-types/': typeof AuthenticatedCarTypesIndexRoute
-  '/_authenticated/car-upgrades/': typeof AuthenticatedCarUpgradesIndexRoute
   '/_authenticated/catalog/': typeof AuthenticatedCatalogIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
   '/_authenticated/client-support/': typeof AuthenticatedClientSupportIndexRoute
   '/_authenticated/codes/': typeof AuthenticatedCodesIndexRoute
+  '/_authenticated/comments-for-opinion/': typeof AuthenticatedCommentsForOpinionIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
+  '/_authenticated/drive-types/': typeof AuthenticatedDriveTypesIndexRoute
+  '/_authenticated/engine-types/': typeof AuthenticatedEngineTypesIndexRoute
   '/_authenticated/extras/': typeof AuthenticatedExtrasIndexRoute
+  '/_authenticated/importers/': typeof AuthenticatedImportersIndexRoute
   '/_authenticated/integral-extras/': typeof AuthenticatedIntegralExtrasIndexRoute
   '/_authenticated/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
+  '/_authenticated/mileage-adjustments/': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/_authenticated/models/': typeof AuthenticatedModelsIndexRoute
   '/_authenticated/opinions/': typeof AuthenticatedOpinionsIndexRoute
+  '/_authenticated/owners/': typeof AuthenticatedOwnersIndexRoute
   '/_authenticated/price-list/': typeof AuthenticatedPriceListIndexRoute
   '/_authenticated/profile/': typeof AuthenticatedProfileIndexRoute
+  '/_authenticated/protectives/': typeof AuthenticatedProtectivesIndexRoute
   '/_authenticated/reports/': typeof AuthenticatedReportsIndexRoute
   '/_authenticated/repository/': typeof AuthenticatedRepositoryIndexRoute
   '/_authenticated/service-calls/': typeof AuthenticatedServiceCallsIndexRoute
+  '/_authenticated/service-packages/': typeof AuthenticatedServicePackagesIndexRoute
   '/_authenticated/settings/': typeof AuthenticatedSettingsIndexRoute
+  '/_authenticated/statuses/': typeof AuthenticatedStatusesIndexRoute
   '/_authenticated/tech-support/': typeof AuthenticatedTechSupportIndexRoute
+  '/_authenticated/upgrade-packages/': typeof AuthenticatedUpgradePackagesIndexRoute
+  '/_authenticated/usage-types/': typeof AuthenticatedUsageTypesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
@@ -355,27 +465,38 @@ export interface FileRouteTypes {
     | '/opinions/new'
     | '/accessories'
     | '/advertisements'
+    | '/appraisers'
     | '/car-marks'
     | '/car-properties'
     | '/car-types'
-    | '/car-upgrades'
     | '/catalog'
     | '/categories'
     | '/client-support'
     | '/codes'
+    | '/comments-for-opinion'
     | '/customers'
+    | '/drive-types'
+    | '/engine-types'
     | '/extras'
+    | '/importers'
     | '/integral-extras'
     | '/manufacturers'
+    | '/mileage-adjustments'
     | '/models'
     | '/opinions'
+    | '/owners'
     | '/price-list'
     | '/profile'
+    | '/protectives'
     | '/reports'
     | '/repository'
     | '/service-calls'
+    | '/service-packages'
     | '/settings'
+    | '/statuses'
     | '/tech-support'
+    | '/upgrade-packages'
+    | '/usage-types'
     | '/users'
     | '/values'
     | '/login'
@@ -389,27 +510,38 @@ export interface FileRouteTypes {
     | '/opinions/new'
     | '/accessories'
     | '/advertisements'
+    | '/appraisers'
     | '/car-marks'
     | '/car-properties'
     | '/car-types'
-    | '/car-upgrades'
     | '/catalog'
     | '/categories'
     | '/client-support'
     | '/codes'
+    | '/comments-for-opinion'
     | '/customers'
+    | '/drive-types'
+    | '/engine-types'
     | '/extras'
+    | '/importers'
     | '/integral-extras'
     | '/manufacturers'
+    | '/mileage-adjustments'
     | '/models'
     | '/opinions'
+    | '/owners'
     | '/price-list'
     | '/profile'
+    | '/protectives'
     | '/reports'
     | '/repository'
     | '/service-calls'
+    | '/service-packages'
     | '/settings'
+    | '/statuses'
     | '/tech-support'
+    | '/upgrade-packages'
+    | '/usage-types'
     | '/users'
     | '/values'
     | '/login'
@@ -425,27 +557,38 @@ export interface FileRouteTypes {
     | '/_authenticated/opinions/new'
     | '/_authenticated/accessories/'
     | '/_authenticated/advertisements/'
+    | '/_authenticated/appraisers/'
     | '/_authenticated/car-marks/'
     | '/_authenticated/car-properties/'
     | '/_authenticated/car-types/'
-    | '/_authenticated/car-upgrades/'
     | '/_authenticated/catalog/'
     | '/_authenticated/categories/'
     | '/_authenticated/client-support/'
     | '/_authenticated/codes/'
+    | '/_authenticated/comments-for-opinion/'
     | '/_authenticated/customers/'
+    | '/_authenticated/drive-types/'
+    | '/_authenticated/engine-types/'
     | '/_authenticated/extras/'
+    | '/_authenticated/importers/'
     | '/_authenticated/integral-extras/'
     | '/_authenticated/manufacturers/'
+    | '/_authenticated/mileage-adjustments/'
     | '/_authenticated/models/'
     | '/_authenticated/opinions/'
+    | '/_authenticated/owners/'
     | '/_authenticated/price-list/'
     | '/_authenticated/profile/'
+    | '/_authenticated/protectives/'
     | '/_authenticated/reports/'
     | '/_authenticated/repository/'
     | '/_authenticated/service-calls/'
+    | '/_authenticated/service-packages/'
     | '/_authenticated/settings/'
+    | '/_authenticated/statuses/'
     | '/_authenticated/tech-support/'
+    | '/_authenticated/upgrade-packages/'
+    | '/_authenticated/usage-types/'
     | '/_authenticated/users/'
     | '/_authenticated/values/'
     | '/_public/login/'
@@ -502,6 +645,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/usage-types/': {
+      id: '/_authenticated/usage-types/'
+      path: '/usage-types'
+      fullPath: '/usage-types'
+      preLoaderRoute: typeof AuthenticatedUsageTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/upgrade-packages/': {
+      id: '/_authenticated/upgrade-packages/'
+      path: '/upgrade-packages'
+      fullPath: '/upgrade-packages'
+      preLoaderRoute: typeof AuthenticatedUpgradePackagesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/tech-support/': {
       id: '/_authenticated/tech-support/'
       path: '/tech-support'
@@ -509,11 +666,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedTechSupportIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/statuses/': {
+      id: '/_authenticated/statuses/'
+      path: '/statuses'
+      fullPath: '/statuses'
+      preLoaderRoute: typeof AuthenticatedStatusesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/settings/': {
       id: '/_authenticated/settings/'
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof AuthenticatedSettingsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/service-packages/': {
+      id: '/_authenticated/service-packages/'
+      path: '/service-packages'
+      fullPath: '/service-packages'
+      preLoaderRoute: typeof AuthenticatedServicePackagesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/service-calls/': {
@@ -537,6 +708,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/protectives/': {
+      id: '/_authenticated/protectives/'
+      path: '/protectives'
+      fullPath: '/protectives'
+      preLoaderRoute: typeof AuthenticatedProtectivesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/profile/': {
       id: '/_authenticated/profile/'
       path: '/profile'
@@ -549,6 +727,13 @@ declare module '@tanstack/react-router' {
       path: '/price-list'
       fullPath: '/price-list'
       preLoaderRoute: typeof AuthenticatedPriceListIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/owners/': {
+      id: '/_authenticated/owners/'
+      path: '/owners'
+      fullPath: '/owners'
+      preLoaderRoute: typeof AuthenticatedOwnersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/opinions/': {
@@ -565,6 +750,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedModelsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/mileage-adjustments/': {
+      id: '/_authenticated/mileage-adjustments/'
+      path: '/mileage-adjustments'
+      fullPath: '/mileage-adjustments'
+      preLoaderRoute: typeof AuthenticatedMileageAdjustmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/manufacturers/': {
       id: '/_authenticated/manufacturers/'
       path: '/manufacturers'
@@ -579,6 +771,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIntegralExtrasIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/importers/': {
+      id: '/_authenticated/importers/'
+      path: '/importers'
+      fullPath: '/importers'
+      preLoaderRoute: typeof AuthenticatedImportersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/extras/': {
       id: '/_authenticated/extras/'
       path: '/extras'
@@ -586,11 +785,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedExtrasIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/engine-types/': {
+      id: '/_authenticated/engine-types/'
+      path: '/engine-types'
+      fullPath: '/engine-types'
+      preLoaderRoute: typeof AuthenticatedEngineTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/drive-types/': {
+      id: '/_authenticated/drive-types/'
+      path: '/drive-types'
+      fullPath: '/drive-types'
+      preLoaderRoute: typeof AuthenticatedDriveTypesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/customers/': {
       id: '/_authenticated/customers/'
       path: '/customers'
       fullPath: '/customers'
       preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/comments-for-opinion/': {
+      id: '/_authenticated/comments-for-opinion/'
+      path: '/comments-for-opinion'
+      fullPath: '/comments-for-opinion'
+      preLoaderRoute: typeof AuthenticatedCommentsForOpinionIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/codes/': {
@@ -621,13 +841,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatalogIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/car-upgrades/': {
-      id: '/_authenticated/car-upgrades/'
-      path: '/car-upgrades'
-      fullPath: '/car-upgrades'
-      preLoaderRoute: typeof AuthenticatedCarUpgradesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/car-types/': {
       id: '/_authenticated/car-types/'
       path: '/car-types'
@@ -647,6 +860,13 @@ declare module '@tanstack/react-router' {
       path: '/car-marks'
       fullPath: '/car-marks'
       preLoaderRoute: typeof AuthenticatedCarMarksIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/appraisers/': {
+      id: '/_authenticated/appraisers/'
+      path: '/appraisers'
+      fullPath: '/appraisers'
+      preLoaderRoute: typeof AuthenticatedAppraisersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/advertisements/': {
@@ -708,27 +928,38 @@ interface AuthenticatedRouteChildren {
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
   AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
+  AuthenticatedAppraisersIndexRoute: typeof AuthenticatedAppraisersIndexRoute
   AuthenticatedCarMarksIndexRoute: typeof AuthenticatedCarMarksIndexRoute
   AuthenticatedCarPropertiesIndexRoute: typeof AuthenticatedCarPropertiesIndexRoute
   AuthenticatedCarTypesIndexRoute: typeof AuthenticatedCarTypesIndexRoute
-  AuthenticatedCarUpgradesIndexRoute: typeof AuthenticatedCarUpgradesIndexRoute
   AuthenticatedCatalogIndexRoute: typeof AuthenticatedCatalogIndexRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
   AuthenticatedClientSupportIndexRoute: typeof AuthenticatedClientSupportIndexRoute
   AuthenticatedCodesIndexRoute: typeof AuthenticatedCodesIndexRoute
+  AuthenticatedCommentsForOpinionIndexRoute: typeof AuthenticatedCommentsForOpinionIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
+  AuthenticatedDriveTypesIndexRoute: typeof AuthenticatedDriveTypesIndexRoute
+  AuthenticatedEngineTypesIndexRoute: typeof AuthenticatedEngineTypesIndexRoute
   AuthenticatedExtrasIndexRoute: typeof AuthenticatedExtrasIndexRoute
+  AuthenticatedImportersIndexRoute: typeof AuthenticatedImportersIndexRoute
   AuthenticatedIntegralExtrasIndexRoute: typeof AuthenticatedIntegralExtrasIndexRoute
   AuthenticatedManufacturersIndexRoute: typeof AuthenticatedManufacturersIndexRoute
+  AuthenticatedMileageAdjustmentsIndexRoute: typeof AuthenticatedMileageAdjustmentsIndexRoute
   AuthenticatedModelsIndexRoute: typeof AuthenticatedModelsIndexRoute
   AuthenticatedOpinionsIndexRoute: typeof AuthenticatedOpinionsIndexRoute
+  AuthenticatedOwnersIndexRoute: typeof AuthenticatedOwnersIndexRoute
   AuthenticatedPriceListIndexRoute: typeof AuthenticatedPriceListIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
+  AuthenticatedProtectivesIndexRoute: typeof AuthenticatedProtectivesIndexRoute
   AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
   AuthenticatedRepositoryIndexRoute: typeof AuthenticatedRepositoryIndexRoute
   AuthenticatedServiceCallsIndexRoute: typeof AuthenticatedServiceCallsIndexRoute
+  AuthenticatedServicePackagesIndexRoute: typeof AuthenticatedServicePackagesIndexRoute
   AuthenticatedSettingsIndexRoute: typeof AuthenticatedSettingsIndexRoute
+  AuthenticatedStatusesIndexRoute: typeof AuthenticatedStatusesIndexRoute
   AuthenticatedTechSupportIndexRoute: typeof AuthenticatedTechSupportIndexRoute
+  AuthenticatedUpgradePackagesIndexRoute: typeof AuthenticatedUpgradePackagesIndexRoute
+  AuthenticatedUsageTypesIndexRoute: typeof AuthenticatedUsageTypesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
@@ -742,27 +973,42 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
   AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
+  AuthenticatedAppraisersIndexRoute: AuthenticatedAppraisersIndexRoute,
   AuthenticatedCarMarksIndexRoute: AuthenticatedCarMarksIndexRoute,
   AuthenticatedCarPropertiesIndexRoute: AuthenticatedCarPropertiesIndexRoute,
   AuthenticatedCarTypesIndexRoute: AuthenticatedCarTypesIndexRoute,
-  AuthenticatedCarUpgradesIndexRoute: AuthenticatedCarUpgradesIndexRoute,
   AuthenticatedCatalogIndexRoute: AuthenticatedCatalogIndexRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
   AuthenticatedClientSupportIndexRoute: AuthenticatedClientSupportIndexRoute,
   AuthenticatedCodesIndexRoute: AuthenticatedCodesIndexRoute,
+  AuthenticatedCommentsForOpinionIndexRoute:
+    AuthenticatedCommentsForOpinionIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
+  AuthenticatedDriveTypesIndexRoute: AuthenticatedDriveTypesIndexRoute,
+  AuthenticatedEngineTypesIndexRoute: AuthenticatedEngineTypesIndexRoute,
   AuthenticatedExtrasIndexRoute: AuthenticatedExtrasIndexRoute,
+  AuthenticatedImportersIndexRoute: AuthenticatedImportersIndexRoute,
   AuthenticatedIntegralExtrasIndexRoute: AuthenticatedIntegralExtrasIndexRoute,
   AuthenticatedManufacturersIndexRoute: AuthenticatedManufacturersIndexRoute,
+  AuthenticatedMileageAdjustmentsIndexRoute:
+    AuthenticatedMileageAdjustmentsIndexRoute,
   AuthenticatedModelsIndexRoute: AuthenticatedModelsIndexRoute,
   AuthenticatedOpinionsIndexRoute: AuthenticatedOpinionsIndexRoute,
+  AuthenticatedOwnersIndexRoute: AuthenticatedOwnersIndexRoute,
   AuthenticatedPriceListIndexRoute: AuthenticatedPriceListIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
+  AuthenticatedProtectivesIndexRoute: AuthenticatedProtectivesIndexRoute,
   AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
   AuthenticatedRepositoryIndexRoute: AuthenticatedRepositoryIndexRoute,
   AuthenticatedServiceCallsIndexRoute: AuthenticatedServiceCallsIndexRoute,
+  AuthenticatedServicePackagesIndexRoute:
+    AuthenticatedServicePackagesIndexRoute,
   AuthenticatedSettingsIndexRoute: AuthenticatedSettingsIndexRoute,
+  AuthenticatedStatusesIndexRoute: AuthenticatedStatusesIndexRoute,
   AuthenticatedTechSupportIndexRoute: AuthenticatedTechSupportIndexRoute,
+  AuthenticatedUpgradePackagesIndexRoute:
+    AuthenticatedUpgradePackagesIndexRoute,
+  AuthenticatedUsageTypesIndexRoute: AuthenticatedUsageTypesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,

@@ -97,35 +97,35 @@ export type TSerie = {
 
 export type TModel = {
   id: string
+  priority: number
   name: string
-  dbId?: string | null
-  modelType: string
-  manufacturerCode: string
-  modelCode: string
-  code: string
-  yearOfManufacture: number
-  finishingLevel: string
-  engineCapacity: number
-  bodyType: string
-  numberOfDoors: number
-  numberOfSeats: number
-  horsepower: number
-  driveType: TDriveType
-  driveTechnology: TDriveTechnology
-  fuelType: TFuelType
-  serieId: string
-  serieName: string
-  manufacturerId: string
-  manufacturerName: string
-  manufacturerCountry: string
-  automaticTransmittion: number
+  dbId?: string | null // вспомогательное поле для сортировки
+  code: string // код модели (внутренний)
+  volume: number // объем двигателя
+  modelCode: string // добавить в сущность
 
-  innerCode: number | null
-  fromYear: number | null
-  toYear: number | null
-  basePrice: number | null
+  manufacturerCode: string // код модели (МинТранспорта)
 
-  carType: TCarType | null
+  // modelType: string
+  // yearOfManufacture: number
+  // finishingLevel: string
+  // bodyType: string
+  // numberOfDoors: number
+  // numberOfSeats: number
+  // horsepower: number
+  // driveType: TDriveType
+  // driveTechnology: TDriveTechnology
+  // fuelType: TFuelType
+  // serieId: string
+
+  // automaticTransmittion: number
+
+  // innerCode: number | null
+  // fromYear: number | null
+  // toYear: number | null
+  // basePrice: number | null
+
+  // carType: TCarType | null
 }
 
 
@@ -191,4 +191,156 @@ export type TExtra = {
   sortIndex?: number
   iconId?: string | null
   icon?: string | null
+}
+
+export type TUpgradePackage = {
+  id: string
+  name: string
+  nameEn: string | null
+  defaultChangePercentage: number
+  iconId?: string | null
+}
+
+export type TServicePackage = {
+  id: string
+  name: string
+  nameEn: string | null
+  defaultChangePercentage: number
+  iconId?: string | null
+}
+
+
+export type TAverageMileage = {
+  id: string
+  yearOffset: number
+  averageMileageMin: number
+  averageMileageMax: number
+}
+
+export type TMileageDepreciation = {
+  id: string
+  averageMileageId: string
+  percent: number
+  mileageThreshold: number
+  yearOffset: number
+}
+
+export type TMileageAppreciation = {
+  id: string
+  averageMileageId: string
+  percent: number
+  mileageThreshold: number
+  yearOffset: number
+}
+
+export type TOwner = {
+  id: string
+  name: string
+  nameEn: string | null
+  defaultChangePercentage: number
+  lessThanYearChangePercentage: number
+  ownerCountAdjustmentFactor: number
+  mileageAdjustmentType: number
+  mileageAdjustmentFactor: number
+}
+
+export type TEngineType = {
+  id: string
+  name: string
+  nameEn: string | null
+  priceListBackground: string
+  code: number
+}
+
+export type TCommentsForOpinion = {
+  id: string
+  name: string
+}
+
+export type TAppraiser = {
+  id: string
+  name: string
+  identifier: string
+}
+
+export type TInternalStatus = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TExternalStatus = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TUsageType = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TImporter = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TProtective = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TOpinion = {
+  id: string
+  number: number
+  manufacturerCode: string | null
+  modelCode: string
+  model: string
+  volume: number
+  manufacturerName: string
+  tozeretNm: string
+  degemNm: string
+  ordererName: string
+  inspectionDate: string // ISO date string
+  receptionDate: string  // ISO date string
+  licenseNumber: string
+  manufacturerYear: number
+  price: number
+  nextUpdateDate: string // ISO date string
+  opinionSend: boolean
+  opinionSendDate: string
+  update1Send: boolean
+  update1SendDate: string | null
+  update2Send: boolean
+  update2SendDate: string | null
+  update3Send: boolean
+  update3SendDate: string | null
+}
+
+export type TOpinionResponse = {
+  data: TOpinion[]
+  totalRowsNumber: number
+  totalPagesNumber: number
+  currentPageNumber: number
+  rowsInPage: number
+  status: number
+  message: string | null
+}
+
+export type OpinionsFilters = {
+  FromDate: string
+  ToDate: string
+  Number: string
+  OrdererName: string
+  LicenseNumber: string
+  TozeretName: string
+  DegemName: string
+  ManufacturerCode: string
+  ManufacturerName: string
+  ManufacturerYear: string
+  UpdateFromDate: string
+  UpdateToDate: string
 }
