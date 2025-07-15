@@ -1,17 +1,20 @@
 import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
-import type { TModel, TPartialModelUpdateParams } from "../types"
+import type { TModel, TModelForOpinion, TPartialModelUpdateParams } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 
 
-export function useModelsQuery(): UseQueryResult<TModel[], Error> {
+
+
+export function useModelsByManufacturerQuery(manufacturerId: string): UseQueryResult<TModelForOpinion[], Error> {
   return useQuery({
-    queryKey: ['models'],
-    queryFn: async (): Promise<TModel[]> => {
-      const response = await axiosAPI.get('/models')
+    queryKey: ['models', manufacturerId],
+    queryFn: async (): Promise<TModelForOpinion[]> => {
+      const response = await axiosAPI.get(`/models?manufacturerId=${manufacturerId}`)
       return response.data
     },
+    enabled: !!manufacturerId, // чтобы не делать запрос без id
     refetchOnWindowFocus: false,
     refetchOnMount: false,
     refetchOnReconnect: false,

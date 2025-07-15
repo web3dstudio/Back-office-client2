@@ -1,6 +1,5 @@
-import { FormControl, InputLabel, MenuItem, Select, useTheme, type SxProps, FormHelperText } from '@mui/material';
+import { FormControl, MenuItem, Select, useTheme, type SxProps, FormHelperText, Box, Typography } from '@mui/material';
 import { Controller } from 'react-hook-form';
-import { useTranslation } from 'react-i18next';
 
 interface Option {
   value: string | number;
@@ -26,17 +25,16 @@ export default function AppControlledSelect({
   required = false,
   sx,
 }: AppControlledSelectProps) {
-  const { t } = useTranslation();
   const theme = useTheme();
 
   return (
-    <>
-      <InputLabel sx={{ fontSize: '15px', mb: .5, ml: 2, mt: -1 }}>
-        {t(label)}
+    <Box sx={{ pt: 3, mt: -1, position: 'relative' }}>
+      <Typography variant="body2" sx={{ position: 'absolute', top: 0, left: 0, marginInlineStart: 2, color: theme.palette.text.secondary }}>
+        {label ?? ""}
         {required && (
           <span style={{ color: 'red', marginBlockStart: '4px' }}>*</span>
         )}
-      </InputLabel>
+      </Typography>
       <Controller
         name={name}
         control={control}
@@ -78,6 +76,6 @@ export default function AppControlledSelect({
           </FormControl>
         )}
       />
-    </>
+    </Box>
   );
 } 

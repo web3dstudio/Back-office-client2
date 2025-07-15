@@ -104,6 +104,8 @@ export type TModel = {
   volume: number // объем двигателя
   modelCode: string // добавить в сущность
 
+
+
   manufacturerCode: string // код модели (МинТранспорта)
 
   // modelType: string
@@ -126,6 +128,13 @@ export type TModel = {
   // basePrice: number | null
 
   // carType: TCarType | null
+}
+
+export type TModelForOpinion = {
+  id: string
+  name: string
+  seriesName: string
+  code: string
 }
 
 
@@ -293,7 +302,7 @@ export type TProtective = {
   nameEn: string | null
 }
 
-export type TOpinion = {
+export type TOpinionList = {
   id: string
   number: number
   manufacturerCode: string | null
@@ -321,7 +330,7 @@ export type TOpinion = {
 }
 
 export type TOpinionResponse = {
-  data: TOpinion[]
+  data: TOpinionList[]
   totalRowsNumber: number
   totalPagesNumber: number
   currentPageNumber: number
@@ -343,4 +352,129 @@ export type OpinionsFilters = {
   ManufacturerYear: string
   UpdateFromDate: string
   UpdateToDate: string
+}
+
+export type TOpinion = {
+  id: string
+  number: number,
+  receptionDate: string,
+  inspectionDate: string,
+  ordererType: number,
+  customerId: string,
+  carType: string,
+  manufacturerCode: string,
+  manufacturer: any,
+  tozeretNm: string,
+  degemNm: string,
+  modelCode: string,
+  model: any,
+  name: string,
+  lastName: string,
+  tz: string,
+  licenseNumber: string,
+  parallelImport: boolean,
+  tinyImport: boolean,
+  personalImport: boolean,
+  temporary: boolean,
+  email: string,
+  phone: string,
+  fax: string,
+  manufacturerYear: number,
+  volume: number
+  isCorrection: boolean
+  numberOfSeats: number
+  numberOfOwners: number
+  gearbox: string
+  odometer: number
+  dateOfRegistration: string
+  specialModelCode: string
+  usageTypeId: string
+  importerId: string | null
+  driveTypeId: string
+  importerName: string
+  statementPrice: number | null
+  horsepower: number
+  priceDelta: number
+  odometerDelta: number
+  specialAdditionsDelta: number
+  roadEntryDelta: number | null
+  priceDeltaType: string
+  odometerDeltaType: string
+  specialAdditionsDeltaType: string
+  roadEntryDeltaType: string
+  price: number
+  extraPrice: number
+  showPriceWithoutVAT: boolean
+  internalStatus: string
+  externalStatus: string
+  tyresStatus: number
+  comments: string
+  commentsForOpinion: string
+  licenseImageFileName: string | null
+  deposition: string
+  carDescription: string
+  integralAdditions: string
+  specialAdditions: string
+  protectiveMeasures: string
+  summary: string
+  update1Price: number
+  update1ExtraPrice: number
+  update1Date: string
+  update2Price: number | null
+  update2ExtraPrice: number | null
+  update2Date: string | null
+  update3Price: number | null
+  update3ExtraPrice: number | null
+  update3Date: string | null
+  claimNumber: string
+  update1Visible: boolean
+  update2Visible: boolean
+  update3Visible: boolean
+  opinionSend: boolean
+  opinionSendDate: string
+  update1Send: boolean
+  update1SendDate: string | null
+  update2Send: boolean
+  update2SendDate: string | null
+  update3Send: boolean
+  update3SendDate: string | null
+  licenseImageDownloadUri: string | null
+  licenseImageUploadUri: string | null
+  carImages: string[]
+  opinionAppraisers: TAppraiser[]
+  opinionOwners: TOwner[]
+}
+
+export type TCustomer = {
+  id: string
+  parentId: string
+  firstName: string
+  middleName: string
+  lastName: string
+  tz: string
+  email: string
+  mobileNumber: string
+  phoneNumber: string
+  city: string
+  street: string
+  houseNumber: string
+  zipCode: string
+  department: string | null
+  company: string
+  companyTZ: string
+  position: string
+  branch: string
+  password: string
+  dailyQueries: number
+  numberOfUsers: number
+  type: number
+  createDate: string
+  subscriptionValidity: string
+  subscriptionExclusion: boolean
+  comments: string
+  imageFileName: string | null
+  allowedMonths: number | null
+  imageDownloadUri: string | null
+  imageUploadUri: string | null
+
 }

@@ -47,7 +47,7 @@ function AppActionButton({ type, onClick, sx }: IProps) {
         >
             {type === 'edit' && <EditTwoToneIcon fontSize="small" />}
             {type === 'delete' && <ClearTwoToneIcon fontSize="small" />}
-            {type === 'send' && <SendTwoToneIcon fontSize="small" sx={{ transform: 'rotate(-45deg) translate(2px, 0px)' }} />
+            {type === 'send' && <SendTwoToneIcon fontSize="small" />
             }
         </Box>
     )

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import type { TDriveType, TEngineType, TImporter } from "../../types"
+import type { TImporter } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'

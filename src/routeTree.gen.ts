@@ -29,7 +29,6 @@ import { Route as AuthenticatedProfileIndexRouteImport } from './routes/_authent
 import { Route as AuthenticatedPriceListIndexRouteImport } from './routes/_authenticated/price-list/index'
 import { Route as AuthenticatedOwnersIndexRouteImport } from './routes/_authenticated/owners/index'
 import { Route as AuthenticatedOpinionsIndexRouteImport } from './routes/_authenticated/opinions/index'
-import { Route as AuthenticatedModelsIndexRouteImport } from './routes/_authenticated/models/index'
 import { Route as AuthenticatedMileageAdjustmentsIndexRouteImport } from './routes/_authenticated/mileage-adjustments/index'
 import { Route as AuthenticatedManufacturersIndexRouteImport } from './routes/_authenticated/manufacturers/index'
 import { Route as AuthenticatedIntegralExtrasIndexRouteImport } from './routes/_authenticated/integral-extras/index'
@@ -52,7 +51,6 @@ import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
-import { Route as AuthenticatedModelsSyncIndexRouteImport } from './routes/_authenticated/models/sync/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 
 const PublicRoute = PublicRouteImport.update({
@@ -166,12 +164,6 @@ const AuthenticatedOpinionsIndexRoute =
   AuthenticatedOpinionsIndexRouteImport.update({
     id: '/opinions/',
     path: '/opinions/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedModelsIndexRoute =
-  AuthenticatedModelsIndexRouteImport.update({
-    id: '/models/',
-    path: '/models/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedMileageAdjustmentsIndexRoute =
@@ -305,12 +297,6 @@ const AuthenticatedCatalogNewCarRoute =
     path: '/catalog/new-car',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedModelsSyncIndexRoute =
-  AuthenticatedModelsSyncIndexRouteImport.update({
-    id: '/models/sync/',
-    path: '/models/sync/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedManufacturersEditIdRoute =
   AuthenticatedManufacturersEditIdRouteImport.update({
     id: '/manufacturers/edit/$id',
@@ -342,7 +328,6 @@ export interface FileRoutesByFullPath {
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
   '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
-  '/models': typeof AuthenticatedModelsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
   '/owners': typeof AuthenticatedOwnersIndexRoute
   '/price-list': typeof AuthenticatedPriceListIndexRoute
@@ -361,7 +346,6 @@ export interface FileRoutesByFullPath {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/models/sync': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -387,7 +371,6 @@ export interface FileRoutesByTo {
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
   '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
-  '/models': typeof AuthenticatedModelsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
   '/owners': typeof AuthenticatedOwnersIndexRoute
   '/price-list': typeof AuthenticatedPriceListIndexRoute
@@ -406,7 +389,6 @@ export interface FileRoutesByTo {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/models/sync': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -435,7 +417,6 @@ export interface FileRoutesById {
   '/_authenticated/integral-extras/': typeof AuthenticatedIntegralExtrasIndexRoute
   '/_authenticated/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
   '/_authenticated/mileage-adjustments/': typeof AuthenticatedMileageAdjustmentsIndexRoute
-  '/_authenticated/models/': typeof AuthenticatedModelsIndexRoute
   '/_authenticated/opinions/': typeof AuthenticatedOpinionsIndexRoute
   '/_authenticated/owners/': typeof AuthenticatedOwnersIndexRoute
   '/_authenticated/price-list/': typeof AuthenticatedPriceListIndexRoute
@@ -454,7 +435,6 @@ export interface FileRoutesById {
   '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/_authenticated/models/sync/': typeof AuthenticatedModelsSyncIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -482,7 +462,6 @@ export interface FileRouteTypes {
     | '/integral-extras'
     | '/manufacturers'
     | '/mileage-adjustments'
-    | '/models'
     | '/opinions'
     | '/owners'
     | '/price-list'
@@ -501,7 +480,6 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
-    | '/models/sync'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -527,7 +505,6 @@ export interface FileRouteTypes {
     | '/integral-extras'
     | '/manufacturers'
     | '/mileage-adjustments'
-    | '/models'
     | '/opinions'
     | '/owners'
     | '/price-list'
@@ -546,7 +523,6 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
-    | '/models/sync'
   id:
     | '__root__'
     | '/_authenticated'
@@ -574,7 +550,6 @@ export interface FileRouteTypes {
     | '/_authenticated/integral-extras/'
     | '/_authenticated/manufacturers/'
     | '/_authenticated/mileage-adjustments/'
-    | '/_authenticated/models/'
     | '/_authenticated/opinions/'
     | '/_authenticated/owners/'
     | '/_authenticated/price-list/'
@@ -593,7 +568,6 @@ export interface FileRouteTypes {
     | '/_authenticated/values/'
     | '/_public/login/'
     | '/_authenticated/manufacturers/edit/$id'
-    | '/_authenticated/models/sync/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -741,13 +715,6 @@ declare module '@tanstack/react-router' {
       path: '/opinions'
       fullPath: '/opinions'
       preLoaderRoute: typeof AuthenticatedOpinionsIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/models/': {
-      id: '/_authenticated/models/'
-      path: '/models'
-      fullPath: '/models'
-      preLoaderRoute: typeof AuthenticatedModelsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/mileage-adjustments/': {
@@ -904,13 +871,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatalogNewCarRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/models/sync/': {
-      id: '/_authenticated/models/sync/'
-      path: '/models/sync'
-      fullPath: '/models/sync'
-      preLoaderRoute: typeof AuthenticatedModelsSyncIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/manufacturers/edit/$id': {
       id: '/_authenticated/manufacturers/edit/$id'
       path: '/manufacturers/edit/$id'
@@ -945,7 +905,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIntegralExtrasIndexRoute: typeof AuthenticatedIntegralExtrasIndexRoute
   AuthenticatedManufacturersIndexRoute: typeof AuthenticatedManufacturersIndexRoute
   AuthenticatedMileageAdjustmentsIndexRoute: typeof AuthenticatedMileageAdjustmentsIndexRoute
-  AuthenticatedModelsIndexRoute: typeof AuthenticatedModelsIndexRoute
   AuthenticatedOpinionsIndexRoute: typeof AuthenticatedOpinionsIndexRoute
   AuthenticatedOwnersIndexRoute: typeof AuthenticatedOwnersIndexRoute
   AuthenticatedPriceListIndexRoute: typeof AuthenticatedPriceListIndexRoute
@@ -963,7 +922,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
-  AuthenticatedModelsSyncIndexRoute: typeof AuthenticatedModelsSyncIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -992,7 +950,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedManufacturersIndexRoute: AuthenticatedManufacturersIndexRoute,
   AuthenticatedMileageAdjustmentsIndexRoute:
     AuthenticatedMileageAdjustmentsIndexRoute,
-  AuthenticatedModelsIndexRoute: AuthenticatedModelsIndexRoute,
   AuthenticatedOpinionsIndexRoute: AuthenticatedOpinionsIndexRoute,
   AuthenticatedOwnersIndexRoute: AuthenticatedOwnersIndexRoute,
   AuthenticatedPriceListIndexRoute: AuthenticatedPriceListIndexRoute,
@@ -1012,7 +969,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
-  AuthenticatedModelsSyncIndexRoute: AuthenticatedModelsSyncIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

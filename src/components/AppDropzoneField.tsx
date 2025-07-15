@@ -120,21 +120,20 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
   return (
     <>
 
-      <Grid container columns={12} sx={{ gap: 3, position: 'relative', mt: 2 }} >
+      <Grid container columns={12} sx={{ gap: 2, position: 'relative', mt: 0 }} >
         {label && (
-
           <Typography sx={{ position: 'absolute', top: -28, left: 14, fontSize: '14.5px', fontWeight: 400, color: theme.palette.text.secondary }}>
             {label}
           </Typography>
-
         )}
 
-        <Grid size={12}>
+        <Grid size={'auto'}>
           <Box
             {...getRootProps()}
             sx={{
               backgroundColor: theme.palette.background.paper,
               height: "100px",
+              width: "150px",
               display: "flex",
               alignItems: "center",
               justifyContent: "space-around",
@@ -155,7 +154,7 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
               <Box textAlign="center" color={theme.palette.grey[500]}>
                 <CloudUploadOutlinedIcon fontSize="medium" />
               </Box>
-              <Box textAlign="center">
+              {/* <Box textAlign="center">
                 <Typography variant="subtitle2" color={theme.palette.text.disabled}>
                   <span
                     dangerouslySetInnerHTML={{ __html: t("filepondLabelIdle") }}
@@ -167,7 +166,7 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
                   })}
                   {" MB"}
                 </Typography>
-              </Box>
+              </Box> */}
             </Box>
             <input
               name={name}
@@ -175,11 +174,13 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
             />
           </Box>
         </Grid>
+
         {files.length > 0 && (
-          <Grid size={12} sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
+          <Grid size={'grow'} sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
             {Previews}
           </Grid>
         )}
+
         {fileRejections.length > 0 && (
           <Grid size={12}>
             <List dense>

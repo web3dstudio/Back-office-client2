@@ -72,7 +72,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 					/>
 				</Grid>
 
-				<Grid size={12} sx={{ mb: 3 }}>
+				<Grid size={12} sx={{ mb: 3, pt: 2 }}>
 					<AppDropzoneField
 						name='manufacturerLogo'
 						label={t('logo', { ns: 'manufacturers' })}

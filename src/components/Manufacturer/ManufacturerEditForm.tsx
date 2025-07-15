@@ -54,7 +54,7 @@ function ManufacturerEditForm({ manufacturer, isPending }: Props) {
         />
       </Grid>
 
-      <Grid size={6}>
+      <Grid size={6} sx={{ pt: 2 }}>
         <AppDropzoneField
           name='manufacturerLogo'
           label={t('logo', { ns: 'manufacturers' })}

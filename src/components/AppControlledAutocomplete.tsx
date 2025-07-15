@@ -11,14 +11,7 @@ import {
 import { type Control, Controller, type FieldErrors } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-interface GenericOption {
-  id: string | number
-  name: string
-}
-
-interface ControlledAutocompleteProps<
-  T extends GenericOption | number | string,
-> {
+interface ControlledAutocompleteProps<T> {
   name: string
   control: Control<any>
   options: T[]
@@ -32,18 +25,17 @@ interface ControlledAutocompleteProps<
   disabled?: boolean
   required?: boolean
   sx?: SxProps
+  groupBy?: (option: T) => string
+  loading?: boolean
 }
 
-export function AppControlledAutocomplete<
-  T extends GenericOption | number | string,
->({
+export function AppControlledAutocomplete<T>({
   name,
   control,
   options,
   errors,
-  getOptionLabel = (option) => (option as GenericOption)?.name || '',
-  isOptionEqualToValue = (option, value) =>
-    (option as GenericOption).id === (value as GenericOption)?.id,
+  getOptionLabel = () => '',
+  isOptionEqualToValue = (option, value) => option === value,
   label = undefined,
   placeholder,
   defaultValue,
@@ -51,6 +43,8 @@ export function AppControlledAutocomplete<
   disabled = false,
   required = false,
   sx,
+  groupBy,
+  loading,
 }: ControlledAutocompleteProps<T>) {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -65,6 +59,8 @@ export function AppControlledAutocomplete<
           fullWidth
           disableClearable={disableClearable}
           disabled={disabled}
+          groupBy={groupBy}
+          loading={loading}
           autoHighlight
           clearOnEscape
           {...field}
