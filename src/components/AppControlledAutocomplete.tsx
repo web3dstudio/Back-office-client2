@@ -100,11 +100,6 @@ export function AppControlledAutocomplete<T>({
               {!errors?.[name]?.message && (
                 <FormHelperText margin='dense'> </FormHelperText>
               )}
-              {errors?.[name]?.message && (
-                <FormHelperText margin='dense'>
-                  {errors[name]?.message as string}
-                </FormHelperText>
-              )}
             </FormControl>
           )}
           renderOption={(props, option) => {

@@ -13,7 +13,7 @@ import AppControlledTextField from "../AppControlledTextField"
 import AppDropzoneField from "../AppDropzoneField"
 import { useImportersQuery } from "../../query/importer.query"
 import { useCarTypesQuery } from "../../query/carTypes.query"
-import { useManufacturersQuery } from "../../query/manufacturers.query"
+// import { useManufacturersQuery } from "../../query/manufacturers.query"
 // import { useModelsByManufacturerQuery } from "../../query/models.query"
 import { useEffect, useMemo } from "react"
 import { useDriveTypesQuery } from "../../query/driveTypes.query"
@@ -72,13 +72,13 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
     },
   ]
 
-  const { data: usageTypes } = useUsageTypesQuery()
-  const { data: internalStatuses } = useInternalStatusesQuery()
-  const { data: externalStatuses } = useExternalStatusesQuery()
-  const { data: owners } = useOwnersQuery()
-  const { data: integralExtras } = useIntegralExtrasQuery()
-  const { data: extras } = useExtrasQuery()
-  const { data: protectives } = useProtectivesQuery()
+  const { data: usageTypes, isLoading: isUsageTypesLoading } = useUsageTypesQuery()
+  const { data: internalStatuses, isLoading: isInternalStatusesLoading } = useInternalStatusesQuery()
+  const { data: externalStatuses, isLoading: isExternalStatusesLoading } = useExternalStatusesQuery()
+  const { data: owners, isLoading: isOwnersLoading } = useOwnersQuery()
+  const { data: integralExtras, isLoading: isIntegralExtrasLoading } = useIntegralExtrasQuery()
+  const { data: extras, isLoading: isExtrasLoading } = useExtrasQuery()
+  const { data: protectives, isLoading: isProtectivesLoading } = useProtectivesQuery()
   const { data: commentsForOpinion, isLoading: isCommentsForOpinionLoading } = useCommentsForOpinionQuery()
   const { data: appraisers, isLoading: isAppraisersLoading } = useAppraisersQuery()
 
@@ -99,7 +99,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
     customer: data?.customer || undefined,
     receptionDate: data?.receptionDate || '',
     inspectionDate: data?.inspectionDate || '',
-    number: data?.number || null,
+    number: data?.number || 0,
     ordererType: data?.ordererType || ORDERED_TYPE_PRIVATE,
     name: data?.name || '',
     lastName: data?.lastName || '',
@@ -122,20 +122,20 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
     manufacturer: data?.manufacturer || undefined,
     model: data?.model || undefined,
     modelCode: data?.modelCode || '',
-    manufacturerYear: data?.manufacturerYear || null,
+    manufacturerYear: data?.manufacturerYear || new Date().getFullYear(),
     driveType: data?.driveType || undefined,
     gearbox: data?.gearbox || undefined,
-    volume: data?.volume || null,
-    horsepower: data?.horsepower || null,
-    numberOfSeats: data?.numberOfSeats || null,
+    volume: data?.volume || 0,
+    horsepower: data?.horsepower || 0,
+    numberOfSeats: data?.numberOfSeats || 0,
     specialModelCode: data?.specialModelCode || '',
 
     dateOfRegistration: data?.dateOfRegistration || '',
-    odometer: data?.odometer || null,
+    odometer: data?.odometer || 0,
     usageType: data?.usageType || undefined,
     internalStatus: data?.internalStatus || undefined,
     externalStatus: data?.externalStatus || undefined,
-    tyresStatus: data?.tyresStatus || null,
+    tyresStatus: data?.tyresStatus || 0,
 
     numberOfOwners: data?.numberOfOwners || 0,
     owners: data?.owners || [],
@@ -164,11 +164,21 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
 
     appraisers: data?.appraisers || [],
 
-  }), [integralExtras]);
+  }), [integralExtras, extras, protectives]);
+
+
 
   const schema = object()
     .shape({
-      name: yup.string().required(t('form-field.required')),
+      customer: yup.object().required(t('form-field.required')),
+      receptionDate: yup.string().required(t('form-field.required')).nullable().min(1, t('form-field.required')),
+      inspectionDate: yup.string().required(t('form-field.required')).nullable().min(1, t('form-field.required')),
+      email: yup.string().email(t('form-field.email')),
+      licenseNumber: yup.string().required(t('form-field.required')).min(1, t('form-field.required')),
+      manufacturerYear: yup.number().required(t('form-field.required')).min(1960, t('form-field.required')),
+      volume: yup.number().required(t('form-field.required')).min(0, t('form-field.required')),
+      horsepower: yup.number().required(t('form-field.required')).min(0, t('form-field.required')),
+      dateOfRegistration: yup.string().required(t('form-field.required')).nullable().min(1, t('form-field.required')),
     })
     .required()
 
@@ -182,33 +192,11 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const { handleSubmit, control, formState, reset, watch, setValue } = methods
   const errors = formState.errors
 
-  // useEffect(() => {
-  //   if (integralExtras) {
-  //     reset(defaultValues);
-  //   }
-  // }, [integralExtras, reset, defaultValues]);
+  useEffect(() => {
+    reset(defaultValues);
+  }, [reset, defaultValues]);
 
-
-  // 
-  // const manufacturer = watch('manufacturer')
-  // const { data: models } = useModelsByManufacturerQuery(manufacturer?.id || undefined)
-
-  // useEffect(() => {
-  //   if (manufacturer) {
-  //     setValue('model', null)
-  //   }
-  // }, [manufacturer])
-
-  // const model = watch('model')
-  // useEffect(() => {
-  //   if (model && model.code) {
-  //     setValue('modelCode', model.code)
-  //   }
-  // }, [model])
-
-
-
-  const { fields, append, remove, update } = useFieldArray({
+  const { fields, append, remove } = useFieldArray({
     control,
     name: 'selectedOwners'
   })
@@ -245,18 +233,20 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
 
   const ordererType = watch('ordererType')
 
-
-
   const onSubmit = (data: any) => {
+    console.log(data)
+
     // onConfirm(data)
     // reset()
   }
 
 
 
+
+
   return (<>
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Grid container columns={12} columnSpacing={2} rowSpacing={0} sx={{ width: '100%' }}>
           <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
             <Box>
@@ -557,19 +547,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
             />
           </Grid>
 
-          {/* <Grid size={2}>
-            <AppControlledAutocomplete<TManufacturer>
-              name='manufacturer'
-              options={manufacturers as TManufacturer[] || []}
-              getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.engName ?? option.name}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              control={control}
-              errors={errors}
-              label={t('manufacturer', { ns: 'opinion' })}
-            // placeholder={t('manufacturer', { ns: 'opinion' })}
-            />
-          </Grid> */}
-
           <Grid size={4}>
             <AppControlledTextField
               name="model"
@@ -578,21 +555,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
               label={t('model', { ns: 'opinion' })}
             />
           </Grid>
-
-          {/* <Grid size={4}>
-            <AppControlledAutocomplete<TModelForOpinion>
-              name='model'
-              options={models as TModelForOpinion[] || []}
-              loading={isManufacturersLoading}
-              getOptionLabel={(option) => option.name}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              groupBy={(option) => option.seriesName}
-              control={control}
-              errors={errors}
-              label={t('model', { ns: 'opinion' })}
-            // placeholder={t('model', { ns: 'opinion' })}
-            />
-          </Grid> */}
 
           <Grid size={2}>
             <AppControlledTextField
@@ -726,6 +688,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledAutocomplete<TUsageType>
               name='usageType'
+              loading={isUsageTypesLoading}
               options={usageTypes as TUsageType[] || []}
               getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.nameEn ?? option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -739,6 +702,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledAutocomplete<TInternalStatus>
               name='internalStatus'
+              loading={isInternalStatusesLoading}
               options={internalStatuses as TInternalStatus[] || []}
               getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.nameEn ?? option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -752,6 +716,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledAutocomplete<TExternalStatus>
               name='externalStatus'
+              loading={isExternalStatusesLoading}
               options={externalStatuses as TExternalStatus[] || []}
               getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.nameEn ?? option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -779,6 +744,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledSelect
               name="numberOfOwners"
+              loading={isOwnersLoading}
               control={control}
               errors={errors}
               label={t('numberOfOwners', { ns: 'opinion' })}
@@ -869,17 +835,17 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           </Grid>
           <Grid size={12} sx={{ mt: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>{t('integralExtras', { ns: 'opinion' })}</Typography>
-            <AppExtrasMultiselectSimple name="integralExtras" />
+            <AppExtrasMultiselectSimple name="integralExtras" loading={isIntegralExtrasLoading} />
           </Grid>
 
           <Grid size={12} sx={{ mt: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>{t('extras', { ns: 'opinion' })}</Typography>
-            <AppExtrasMultiselectSimple name="extras" />
+            <AppExtrasMultiselectSimple name="extras" loading={isExtrasLoading} />
           </Grid>
 
           <Grid size={12} sx={{ mt: 3 }}>
             <Typography variant="h6" sx={{ mb: 2 }}>{t('protectives', { ns: 'opinion' })}</Typography>
-            <AppExtrasMultiselectSimple name="protectives" />
+            <AppExtrasMultiselectSimple name="protectives" loading={isProtectivesLoading} />
           </Grid>
 
           <Grid size={12} sx={{ mt: 4 }}>
@@ -1090,7 +1056,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
 
         <Grid container columns={12} columnSpacing={2} rowSpacing={0} sx={{ width: '100%' }}>
           <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button variant="contained" color="primary" onClick={() => {
+            <Button type="submit" variant="contained" color="primary" onClick={() => {
 
             }}>
               {t('save', { ns: 'opinion' })}

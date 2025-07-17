@@ -4,7 +4,6 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import i18next from '../i18next';
 import dayjs from 'dayjs';
-import { useTranslation } from 'react-i18next';
 import { Box, useTheme } from '@mui/material';
 import { Typography } from '@mui/material';
 
@@ -26,11 +25,10 @@ export function AppControlledDatePicker({
   required = false,
   ...rest
 }: IProps) {
-  const { t } = useTranslation();
   const theme = useTheme();
 
   return (
-    <Box sx={{ pt: 3, mt: -1, position: 'relative', mb: 3 }}>
+    <Box sx={{ pt: 3, mt: -1, position: 'relative' }}>
       <Typography variant="body2" sx={{ position: 'absolute', top: 0, left: 0, marginInlineStart: 2, color: theme.palette.text.secondary }}>
         {label ?? ""}
         {required && (
@@ -56,7 +54,7 @@ export function AppControlledDatePicker({
                   variant: 'outlined',
                   fullWidth: true,
                   error: !!errors?.[name],
-                  helperText: typeof errors?.[name]?.message === 'string' ? errors[name]?.message : undefined,
+                  helperText: typeof errors?.[name]?.message === 'string' ? errors[name]?.message : " ",
                   required,
                   sx: {
                     '&.MuiPickersTextField-root fieldset': {
@@ -66,7 +64,7 @@ export function AppControlledDatePicker({
                       boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.05)',
                     },
                   },
-                  placeholder: t('date', { ns: 'search' }),
+                  // placeholder: t('date', { ns: 'search' }),
                 },
               }}
             />

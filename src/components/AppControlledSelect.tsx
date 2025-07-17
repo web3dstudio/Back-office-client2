@@ -1,4 +1,4 @@
-import { FormControl, MenuItem, Select, useTheme, type SxProps, FormHelperText, Box, Typography } from '@mui/material';
+import { FormControl, MenuItem, Select, useTheme, type SxProps, FormHelperText, Box, Typography, Skeleton } from '@mui/material';
 import { Controller } from 'react-hook-form';
 
 interface Option {
@@ -14,6 +14,7 @@ interface AppControlledSelectProps {
   options: Option[];
   required?: boolean;
   sx?: SxProps;
+  loading?: boolean;
 }
 
 export default function AppControlledSelect({
@@ -24,6 +25,7 @@ export default function AppControlledSelect({
   options,
   required = false,
   sx,
+  loading = false,
 }: AppControlledSelectProps) {
   const theme = useTheme();
 
@@ -46,25 +48,29 @@ export default function AppControlledSelect({
             error={!!errors?.[name]}
             sx={{ ...sx }}
           >
-            <Select
-              {...field}
-              displayEmpty
-              inputProps={{ 'aria-label': 'Without label' }}
-              sx={{
-                '& .MuiOutlinedInput-root': {
-                  '&.Mui-focused fieldset': {
-                    boxShadow: '0px 0px 30px rgba(0, 0, 0, 1)',
+            {loading ? (
+              <Skeleton variant="rectangular" width="100%" height={40} sx={{ borderRadius: '20px' }} />
+            ) : (
+              <Select
+                {...field}
+                displayEmpty
+                inputProps={{ 'aria-label': 'Without label' }}
+                sx={{
+                  '& .MuiOutlinedInput-root': {
+                    '&.Mui-focused fieldset': {
+                      boxShadow: '0px 0px 30px rgba(0, 0, 0, 1)',
+                    },
+                    'label + &': {
+                      marginTop: theme.spacing(2),
+                    },
                   },
-                  'label + &': {
-                    marginTop: theme.spacing(2),
-                  },
-                },
-              }}
-            >
-              {options.map(opt => (
-                <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
-              ))}
-            </Select>
+                }}
+              >
+                {options.map(opt => (
+                  <MenuItem key={opt.value} value={opt.value}>{opt.label}</MenuItem>
+                ))}
+              </Select>
+            )}
             {errors?.[name] && (
               <FormHelperText margin='dense'>
                 {errors[name].message}
