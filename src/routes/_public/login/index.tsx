@@ -85,9 +85,7 @@ function LoginPage() {
     <>
       <StyledPaper
         sx={{
-          borderRadius: '42px',
-          boxShadow:
-            '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06);',
+          // borderRadius: '42px',
           overflow: 'hidden',
           padding: 0,
           mx: 2,
@@ -146,8 +144,10 @@ function LoginPage() {
                         error={!!errors.userName?.message}
                         fullWidth
                         variant='outlined'
+                        size='small'
                       >
                         <TextField
+                          size='small'
                           sx={{
                             '& .MuiInputBase-formControl': {
                               backgroundColor: '#FFF',
@@ -182,8 +182,10 @@ function LoginPage() {
                         error={!!errors.password?.message}
                         fullWidth
                         variant='outlined'
+                        size='small'
                       >
                         <TextField
+                          size='small'
                           sx={{
                             '& .MuiInputBase-formControl': {
                               backgroundColor: '#FFF',

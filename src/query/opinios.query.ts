@@ -26,6 +26,21 @@ export function useOpinionsQuery(page: number, filters: Record<string, string>):
   })
 }
 
+export function useOpinionQuery(id: string): UseQueryResult<TOpinion, Error> {
+  return useQuery({
+    queryKey: ['opinion', id],
+    queryFn: async (): Promise<TOpinion> => {
+      const response = await axiosAPI.get(`/opinions/${id}`)
+      return response.data
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    retry: 3,
+  })
+}
+
 export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, Omit<TOpinion, 'id'>> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
@@ -46,7 +61,7 @@ export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, Omi
   })
 }
 
-export function useOpinionsUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinion> {
+export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinion> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
@@ -55,8 +70,8 @@ export function useOpinionsUpdateMutation(): UseMutationResult<TOpinion, Error, 
       const response = await axiosAPI.put(`/opinions/${updatedOpinion.id}`, updatedOpinion)
       return response.data
     },
-    onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['opinions'] })
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['opinion', data.id] })
       toast.success(t('opinion_updated_successfully'))
     },
     onError: (error) => {

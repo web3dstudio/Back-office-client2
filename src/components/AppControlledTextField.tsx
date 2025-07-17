@@ -20,6 +20,8 @@ interface ControlledTextFieldProps {
   type?: 'text' | 'password' | 'number'
   required?: boolean
   slotProps?: TextFieldProps['slotProps']
+  multiline?: boolean
+  minRows?: number
 }
 
 const ControlledTextField = ({
@@ -32,6 +34,8 @@ const ControlledTextField = ({
   type = 'text',
   required = false,
   slotProps,
+  multiline = false,
+  minRows = 1,
 }: ControlledTextFieldProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -42,6 +46,7 @@ const ControlledTextField = ({
   const errorObj = get(errors, name)
   const errorMessage = errorObj?.message
 
+
   return (
     <Controller
       name={name}
@@ -51,6 +56,7 @@ const ControlledTextField = ({
           error={!!errorMessage}
           fullWidth
           variant='outlined'
+          size='small'
         >
           <InputLabel shrink htmlFor={name} sx={{ fontSize: '20px' }}>
             {t(label)}
@@ -61,12 +67,15 @@ const ControlledTextField = ({
           <TextField
             required={required}
             type={type}
+            multiline={multiline}
+            minRows={minRows}
             {...field}
             id={name}
             error={!!errorMessage}
             variant='outlined'
             placeholder={placeholder ? t(placeholder) : ''}
             slotProps={slotProps}
+            size='small'
             sx={{
               '& .MuiOutlinedInput-root': {
                 '&.Mui-focused fieldset': {

@@ -100,7 +100,7 @@ export default function MUIWrapper({
           MuiButton: {
             styleOverrides: {
               root: {
-                borderRadius: '24px',
+                borderRadius: '20px',
                 textTransform: 'none',
                 height: '40px',
                 fontSize: '16px',
@@ -126,8 +126,8 @@ export default function MUIWrapper({
           MuiOutlinedInput: {
             styleOverrides: {
               root: {
-                height: '40px',
-                borderRadius: '24px',
+                // height: '40px',
+                borderRadius: '20px',
               },
             },
           },
@@ -143,7 +143,7 @@ export default function MUIWrapper({
           MuiDialog: {
             styleOverrides: {
               paper: {
-                borderRadius: '24px'
+                borderRadius: '20px'
               }
             }
           },

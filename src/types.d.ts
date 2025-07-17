@@ -1,4 +1,5 @@
 import { type } from "os"
+import { ORDERED_TYPE_PRIVATE, ORDERED_TYPE_COMPANY } from "./constants"
 
 interface IUser {
   id: string
@@ -354,84 +355,109 @@ export type OpinionsFilters = {
   UpdateToDate: string
 }
 
+export type TGearbox = {
+  id: string
+  name: string
+  nameEn: string | null
+  automaticInd: number
+}
+
 export type TOpinion = {
   id: string
-  number: number,
-  receptionDate: string,
-  inspectionDate: string,
-  ordererType: number,
-  customerId: string,
-  carType: string,
-  manufacturerCode: string,
-  manufacturer: any,
-  tozeretNm: string,
-  degemNm: string,
-  modelCode: string,
-  model: any,
-  name: string,
-  lastName: string,
-  tz: string,
-  licenseNumber: string,
-  parallelImport: boolean,
-  tinyImport: boolean,
-  personalImport: boolean,
-  temporary: boolean,
-  email: string,
-  phone: string,
-  fax: string,
-  manufacturerYear: number,
-  volume: number
   isCorrection: boolean
-  numberOfSeats: number
-  numberOfOwners: number
-  gearbox: string
-  odometer: number
-  dateOfRegistration: string
-  specialModelCode: string
-  usageTypeId: string
-  importerId: string | null
-  driveTypeId: string
-  importerName: string
+  temporary: boolean
+  customer: TCustomer | undefined
+  receptionDate: string | null
+  inspectionDate: string | null
+  number: number | null
+  ordererType: typeof ORDERED_TYPE_PRIVATE | typeof ORDERED_TYPE_COMPANY
+  name: string | null
+  lastName: string | null
+  tz: string | null
+  email: string | null
+  phone: string | null
+  fax: string | null
+  licenseNumber: string | null
+  parallelImport: boolean
+  tinyImport: boolean
+  personalImport: boolean
+  importer: TImporter | undefined
   statementPrice: number | null
-  horsepower: number
+  claimNumber: string | null
+
+  carType: TCarType | undefined
+
+  degemNm: string | null
+  tozeretNm: string | null
+
+  manufacturer: TManufacturer | undefined
+  model: TModel | undefined
+  modelCode: string | null
+  manufacturerYear: number | null
+
+  driveType: TDriveType | undefined
+  gearbox: TGearbox | undefined
+
+  volume: number | null
+  horsepower: number | null
+  numberOfSeats: number | null
+  specialModelCode: string | null
+
+  dateOfRegistration: string | null
+  odometer: number | null
+  usageType: TUsageType | undefined
+  internalStatus: TInternalStatus | undefined
+  externalStatus: TExternalStatus | undefined
+  tyresStatus: number | null
+  numberOfOwners: number | null
+  owners: TOwner[] | null
+  carDescription: string | null
+
+  integralExtras: TIntegralExtra[]
+  extras: TExtra[]
+  protectives: TProtective[]
+
+  comments: string | null
+  priceDeltaType: 'percent' | 'amount'
   priceDelta: number
+  odometerDeltaType: 'percent' | 'amount'
   odometerDelta: number
+  specialAdditionsDeltaType: 'percent' | 'amount'
   specialAdditionsDelta: number
-  roadEntryDelta: number | null
-  priceDeltaType: string
-  odometerDeltaType: string
-  specialAdditionsDeltaType: string
-  roadEntryDeltaType: string
+  roadEntryDeltaType: 'percent' | 'amount'
+  roadEntryDelta: number
+
   price: number
   extraPrice: number
   showPriceWithoutVAT: boolean
-  internalStatus: string
-  externalStatus: string
-  tyresStatus: number
-  comments: string
-  commentsForOpinion: string
+
+  opinionAppraisers: TAppraiser[]
+
+
+  commentsForOpinion: string | null
   licenseImageFileName: string | null
-  deposition: string
-  carDescription: string
-  integralAdditions: string
-  specialAdditions: string
-  protectiveMeasures: string
-  summary: string
+  deposition: string | null
+  carDescription: string | null
+  integralAdditions: string | null
+  specialAdditions: string | null
+  protectiveMeasures: string | null
+  summary: string | null
   update1Price: number
   update1ExtraPrice: number
-  update1Date: string
+  update1Date: string | null
   update2Price: number | null
   update2ExtraPrice: number | null
   update2Date: string | null
   update3Price: number | null
   update3ExtraPrice: number | null
   update3Date: string | null
-  claimNumber: string
+
+
   update1Visible: boolean
   update2Visible: boolean
   update3Visible: boolean
   opinionSend: boolean
-  opinionSendDate: string
+  opinionSendDate: string | null
   update1Send: boolean
   update1SendDate: string | null
   update2Send: boolean
@@ -440,9 +466,11 @@ export type TOpinion = {
   update3SendDate: string | null
   licenseImageDownloadUri: string | null
   licenseImageUploadUri: string | null
-  carImages: string[]
-  opinionAppraisers: TAppraiser[]
-  opinionOwners: TOwner[]
+  carImages: string[] | null
+
+  appraisers: TAppraiser[]
+
+  opinionOwners: TOwner[] | null
 }
 
 export type TCustomer = {
@@ -477,4 +505,9 @@ export type TCustomer = {
   imageDownloadUri: string | null
   imageUploadUri: string | null
 
+}
+
+export type TOpinionOwner = {
+  ownerId: string;
+  changePercentage: number;
 }

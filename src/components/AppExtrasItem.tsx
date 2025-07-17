@@ -44,11 +44,16 @@ function AppExtrasItem({ index, name, field }: IProps) {
 						color='primary'
 						variant={selectedField.value ? 'contained' : 'outlined'}
 						disableElevation
+						fullWidth
 						sx={{
-							borderRadius: '24px 0 0 24px',
+							borderRadius: '20px 0 0 20px',
 							color: selectedField.value ? 'white' : theme.palette.text.primary,
-							fontSize: '16px',
+							fontSize: '14px',
 							fontWeight: 'normal',
+							textWrap: 'nowrap',
+							textOverflow: 'ellipsis',
+							overflow: 'hidden',
+							textAlign: 'left',
 						}}
 					>
 						{i18n.language === 'he' ? field?.fieldName : field?.fieldNameEn || field?.fieldName}
@@ -63,14 +68,14 @@ function AppExtrasItem({ index, name, field }: IProps) {
 					<OutlinedInput
 						{...field}
 						color='primary'
+						size='small'
 						disabled={!selected}
 						value={value ?? 0}
 						type="number"
 						sx={{
-							borderRadius: '0 24px 24px 0 !important',
-							border: `.5px solid ${theme.palette.primary.main}`,
+							borderRadius: '0 20px 20px 0 !important',
+							border: `0px solid ${theme.palette.primary.main}`,
 							borderLeft: 'none',
-							height: '48px',
 							maxWidth: '60px',
 							outline: 'none',
 						}} />

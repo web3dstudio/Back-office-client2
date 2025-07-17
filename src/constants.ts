@@ -1,0 +1,2 @@
+export const ORDERED_TYPE_PRIVATE = 1
+export const ORDERED_TYPE_COMPANY = 2

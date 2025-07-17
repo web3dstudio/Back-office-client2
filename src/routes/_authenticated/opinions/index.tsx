@@ -3,7 +3,7 @@ import StyledPaper from '../../../components/StyledPaper'
 import { useOpinionsQuery } from '../../../query/opinios.query';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import type { OpinionsFilters, TOpinion } from '../../../types';
+import type { OpinionsFilters, TOpinionList } from '../../../types';
 import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
@@ -56,7 +56,7 @@ function OpinionsPage() {
       hideable: false,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TOpinion) => row.number,
+      valueGetter: (_value: any, row: TOpinionList) => row.number,
     },
     {
       field: 'manufacturerName',
@@ -105,7 +105,7 @@ function OpinionsPage() {
       hideable: true,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TOpinion) => dateTimeFormat(row.inspectionDate),
+      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.inspectionDate),
     },
     {
       field: 'receptionDate',
@@ -114,7 +114,7 @@ function OpinionsPage() {
       hideable: true,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TOpinion) => dateTimeFormat(row.receptionDate),
+      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.receptionDate),
     },
     {
       field: 'manufacturerYear',
@@ -131,7 +131,7 @@ function OpinionsPage() {
       hideable: true,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TOpinion) => formatCurrency(row.price),
+      valueGetter: (_value: any, row: TOpinionList) => formatCurrency(row.price),
     },
     {
       field: 'nextUpdateDate',
@@ -140,7 +140,7 @@ function OpinionsPage() {
       hideable: true,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TOpinion) => dateTimeFormat(row.nextUpdateDate),
+      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.nextUpdateDate),
     },
     {
       field: 'sendDate',
@@ -150,7 +150,7 @@ function OpinionsPage() {
       sortable: true,
       type: 'string',
       width: 100,
-      renderCell: ({ row }: { row: TOpinion }) => {
+      renderCell: ({ row }: { row: TOpinionList }) => {
         const icons = [
           { show: !!row?.opinionSend, tip: row?.opinionSendDate },
           { show: !!row?.update1Send, tip: row?.update1SendDate },
@@ -181,8 +181,7 @@ function OpinionsPage() {
       hideable: false,
       getActions: (params: GridRenderCellParams) => [
         <AppActionButton type='edit' onClick={() => {
-          // setSelected(() => params.row)
-          // setOpenFormDialog(true)
+          navigate({ to: '/opinions/edit/$id', params: { id: params.row.id } })
         }} />,
         <AppActionButton type='send' onClick={() => {
           // setSelected(() => params.row)
@@ -250,7 +249,7 @@ function OpinionsPage() {
       >
         <DataGrid
           rows={opinions?.data ?? []}
-          columns={columns as GridColDef<TOpinion>[]}
+          columns={columns as GridColDef<TOpinionList>[]}
           rowCount={opinions?.totalRowsNumber ?? 0}
           loading={isLoading}
           pagination

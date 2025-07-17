@@ -1,14 +1,14 @@
 import { type UseMutationResult, type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
-import type { TDriveType } from "../types"
+import type { TGearbox } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 
-export function useDriveTypesQuery(): UseQueryResult<TDriveType[], Error> {
+export function useGearboxesQuery(): UseQueryResult<TGearbox[], Error> {
   return useQuery({
-    queryKey: ['drive-types'],
-    queryFn: async (): Promise<TDriveType[]> => {
-      const response = await axiosAPI.get('/driveTypes')
+    queryKey: ['gearboxes'],
+    queryFn: async (): Promise<TGearbox[]> => {
+      const response = await axiosAPI.get('/gearboxes')
       return response.data
     },
     refetchOnWindowFocus: false,
@@ -19,18 +19,18 @@ export function useDriveTypesQuery(): UseQueryResult<TDriveType[], Error> {
   })
 }
 
-export function useDriveTypesAddMutation(): UseMutationResult<TDriveType, Error, Omit<TDriveType, 'id'>> {
+export function useGearboxesAddMutation(): UseMutationResult<TGearbox, Error, Omit<TGearbox, 'id'>> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (newDriveType: Omit<TDriveType, 'id'>): Promise<TDriveType> => {
-      const response = await axiosAPI.post('/driveTypes', newDriveType)
+    mutationFn: async (newGearbox: Omit<TGearbox, 'id'>): Promise<TGearbox> => {
+      const response = await axiosAPI.post('/gearboxes', newGearbox)
       return response.data
     },
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['drive-types'] })
-      toast.success(t('drive_type_added_successfully'))
+      queryClient.invalidateQueries({ queryKey: ['gearboxes'] })
+      toast.success(t('gearbox_added_successfully'))
     },
     onError: (error) => {
       console.log('ERROR', error.message)
@@ -39,18 +39,18 @@ export function useDriveTypesAddMutation(): UseMutationResult<TDriveType, Error,
   })
 }
 
-export function useDriveTypesUpdateMutation(): UseMutationResult<TDriveType, Error, TDriveType> {
+export function useGearboxesUpdateMutation(): UseMutationResult<TGearbox, Error, TGearbox> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (updatedDriveType: TDriveType): Promise<TDriveType> => {
-      const response = await axiosAPI.put(`/driveTypes/${updatedDriveType.id}`, updatedDriveType)
+    mutationFn: async (updatedGearbox: TGearbox): Promise<TGearbox> => {
+      const response = await axiosAPI.put(`/gearboxes/${updatedGearbox.id}`, updatedGearbox)
       return response.data
     },
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['drive-types'] })
-      toast.success(t('drive_type_updated_successfully'))
+      queryClient.invalidateQueries({ queryKey: ['gearboxes'] })
+      toast.success(t('gearbox_updated_successfully'))
     },
     onError: (error) => {
       console.log('ERROR', error.message)
@@ -59,18 +59,18 @@ export function useDriveTypesUpdateMutation(): UseMutationResult<TDriveType, Err
   })
 }
 
-export function useDriveTypesDeleteMutation(): UseMutationResult<string, Error, string> {
+export function useGearboxesDeleteMutation(): UseMutationResult<string, Error, string> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
     mutationFn: async (id: string): Promise<string> => {
-      await axiosAPI.delete(`/driveTypes/${id}`)
+      await axiosAPI.delete(`/gearboxes/${id}`)
       return id
     },
     onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['drive-types'] })
-      toast.success(t('drive_type_deleted_successfully'))
+      queryClient.invalidateQueries({ queryKey: ['gearboxes'] })
+      toast.success(t('gearbox_deleted_successfully'))
     },
     onError: (error) => {
       console.log('ERROR', error.message)

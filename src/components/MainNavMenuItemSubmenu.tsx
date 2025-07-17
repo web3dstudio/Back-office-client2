@@ -173,6 +173,15 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
 
         <MenuItem
           onClick={() => {
+            navigate({ to: '/gearboxes' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.gearboxes', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             navigate({ to: '/comments-for-opinion' })
             handleClose()
           }}

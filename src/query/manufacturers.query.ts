@@ -27,6 +27,12 @@ export function useManufacturerQuery(id: string): UseQueryResult<TManufacturer, 
       const response = await axiosAPI.get(`/manufacturers/${id}`)
       return response.data
     },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    placeholderData: keepPreviousData,
+    retry: 3,
   })
 }
 

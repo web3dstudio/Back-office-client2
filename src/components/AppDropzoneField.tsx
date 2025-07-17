@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/alt-text */
-import { Box, Grid, List, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material"
+import { Box, Grid, IconButton, List, ListItem, ListItemIcon, ListItemText, Typography } from "@mui/material"
 import { useDropzone, type FileWithPath } from "react-dropzone"
 import { useTranslation } from "react-i18next"
 import CloudUploadOutlinedIcon from '@mui/icons-material/CloudUploadOutlined';
@@ -7,6 +7,10 @@ import { useTheme } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import AppActionButton from "./AppActionButton";
 import ErrorTwoToneIcon from '@mui/icons-material/ErrorTwoTone';
+import AppDialog from "./AppDialog/AppDialog";
+import DownloadIcon from '@mui/icons-material/Download';
+import ZoomInIcon from '@mui/icons-material/ZoomIn';
+
 
 interface DropZoneFieldProps {
   name?: string
@@ -25,6 +29,9 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
 
   const { t } = useTranslation()
   const theme = useTheme()
+  const [openPreview, setOpenPreview] = useState(false);
+  const [previewImg, setPreviewImg] = useState<string | null>(null);
+
 
   const [files, setFiles] = useState<FileWithPreview[]>(
     defaultFiles?.map(url => ({
@@ -61,6 +68,11 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
     setFiles(files => files.filter(file => file !== fileToRemove));
   };
 
+  const handlePreview = (preview: string) => {
+    setOpenPreview(true);
+    setPreviewImg(preview);
+  };
+
   const Previews = files.map((file: FileWithPreview, index: number) => (
     <Box
       key={index}
@@ -75,6 +87,29 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
         background: theme.palette.mode === 'dark' ? '#000' : '#f7f7f9',
         position: 'relative',
       }}>
+      {/* Кнопка скачать */}
+      <IconButton
+        size="small"
+        sx={{ position: 'absolute', bottom: 2, right: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
+        component="a"
+        href={file.preview}
+        download={file.name}
+        onClick={e => e.stopPropagation()}
+      >
+        <DownloadIcon fontSize="small" />
+      </IconButton>
+
+      {/* Кнопка увеличить */}
+      <IconButton
+        size="small"
+        sx={{ position: 'absolute', bottom: 2, left: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
+        onClick={e => {
+          e.stopPropagation();
+          handlePreview(file.preview);
+        }}
+      >
+        <ZoomInIcon fontSize="small" />
+      </IconButton>
 
       <AppActionButton
         type='delete'
@@ -119,7 +154,6 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
 
   return (
     <>
-
       <Grid container columns={12} sx={{ gap: 2, position: 'relative', mt: 0 }} >
         {label && (
           <Typography sx={{ position: 'absolute', top: -28, left: 14, fontSize: '14.5px', fontWeight: 400, color: theme.palette.text.secondary }}>
@@ -189,6 +223,15 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
           </Grid>
         )}
       </Grid>
+      <AppDialog
+        open={openPreview}
+        onClose={() => setOpenPreview(false)}
+        title={t('carPhoto', { ns: 'opinion' })}
+      >
+        {previewImg && (
+          <img src={previewImg} alt="preview" style={{ maxWidth: '90vw', maxHeight: '90vh', display: 'block', margin: 'auto' }} />
+        )}
+      </AppDialog>
     </>
   );
 }

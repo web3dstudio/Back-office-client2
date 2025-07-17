@@ -8,6 +8,7 @@ import * as yup from 'yup'
 import { useIntegralExtrasQuery } from '../../../query/integralExtras.query'
 import { useMemo, useEffect } from 'react';
 import type { TAppExtrasItemField } from '../../../types';
+import type { TIntegralExtra } from '../types';
 
 
 
@@ -23,7 +24,7 @@ function OpinionsPage() {
 
   const defaultValues = useMemo(() => ({
     extras: integralExtrasData
-      ? integralExtrasData.map(item => ({
+      ? integralExtrasData.map((item: TIntegralExtra) => ({
         id: item.id,
         checked: false,
         fieldName: item.name,
@@ -72,9 +73,7 @@ function OpinionsPage() {
   return (<>
     <StyledPaper
       sx={{
-        borderRadius: '42px',
-        boxShadow:
-          '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06);',
+        borderRadius: '20px',
         overflow: 'hidden',
         padding: 3,
         width: '100%',
