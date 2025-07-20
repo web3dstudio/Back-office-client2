@@ -3,10 +3,11 @@ import axiosAPI from "../utils/axiosAPI"
 import type { TOpinion, TOpinionResponse } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
+import type { GridSortModel } from "@mui/x-data-grid"
 
-export function useOpinionsQuery(page: number, filters: Record<string, string>): UseQueryResult<TOpinionResponse, Error> {
+export function useOpinionsQuery(page: number, filters: Record<string, string>, sortModel?: GridSortModel): UseQueryResult<TOpinionResponse, Error> {
   return useQuery({
-    queryKey: ['opinions', page, filters],
+    queryKey: ['opinions', page, filters, sortModel],
     queryFn: async (): Promise<TOpinionResponse> => {
       const params = new URLSearchParams({
         Page: String(page + 1),
@@ -14,6 +15,14 @@ export function useOpinionsQuery(page: number, filters: Record<string, string>):
           Object.entries(filters).filter(([_, v]) => v !== '')
         ),
       });
+
+      // Добавляем параметры сортировки
+      if (sortModel && sortModel.length > 0) {
+        const sort = sortModel[0];
+        params.append('sortField', sort.field);
+        params.append('sortDirection', sort.sort || 'asc');
+      }
+
       const response = await axiosAPI.get(`/opinions?${params.toString()}`);
       return response.data;
     },

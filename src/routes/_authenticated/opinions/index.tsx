@@ -4,7 +4,7 @@ import { useOpinionsQuery } from '../../../query/opinios.query';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import type { OpinionsFilters, TOpinionList } from '../../../types';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel, type GridColumnVisibilityModel } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 import useCurrencyFormat from '../../../hooks/useCurrencyFormat';
@@ -12,7 +12,7 @@ import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import AppBackBtn from '../../../components/AppBackBtn';
 import OpinionsFilter from '../../../components/Opinions/OpinionsFilter';
-
+import { useLocalStorage } from '../../../hooks/useLocalStorage';
 
 
 export const Route = createFileRoute('/_authenticated/opinions/')({
@@ -29,6 +29,8 @@ function OpinionsPage() {
     page: 0,
     pageSize: 10,
   });
+  const [sortModel, setSortModel] = useState<GridSortModel>([]);
+  const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('opinionsTable', {});
 
   const [filtersDraft, setFiltersDraft] = useState<OpinionsFilters>({
     FromDate: '',
@@ -46,7 +48,7 @@ function OpinionsPage() {
   });
   const [filters, setFilters] = useState<OpinionsFilters>(filtersDraft);
 
-  const { data: opinions, isLoading } = useOpinionsQuery(paginationModel.page, filters)
+  const { data: opinions, isLoading } = useOpinionsQuery(paginationModel.page, filters, sortModel)
 
   const columns = [
     {
@@ -191,6 +193,8 @@ function OpinionsPage() {
     },
   ]
 
+  console.log(sortModel)
+
   return (<>
     <Grid container spacing={3} >
       <Grid size={12}>
@@ -255,6 +259,16 @@ function OpinionsPage() {
           pagination
           paginationMode="server"
           paginationModel={paginationModel}
+          sortingMode="server"
+          sortModel={sortModel}
+          disableColumnMenu
+          columnVisibilityModel={columnVisibilityModel}
+          onColumnVisibilityModelChange={(newModel) => {
+            setColumnVisibilityModel(newModel);
+          }}
+          onSortModelChange={(model: GridSortModel) => {
+            setSortModel(model)
+          }}
           onPaginationModelChange={(model: GridPaginationModel) => {
             setPaginationModel(model)
           }}

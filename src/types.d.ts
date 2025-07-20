@@ -362,14 +362,27 @@ export type TGearbox = {
   automaticInd: number
 }
 
+
+export type TOpinionOwner = {
+  id: string;
+  name: string;
+  changePercentage: number;
+  sortIndex: number;
+}
+
+export type TSelectedOwner = {
+  ownerId: string;
+  changePercentage: number;
+}
+
 export type TOpinion = {
   id: string
   isCorrection: boolean
   temporary: boolean
   customer: TCustomer | undefined
+  number: number | null
   receptionDate: string | null
   inspectionDate: string | null
-  number: number | null
   ordererType: typeof ORDERED_TYPE_PRIVATE | typeof ORDERED_TYPE_COMPANY
   name: string | null
   lastName: string | null
@@ -384,40 +397,38 @@ export type TOpinion = {
   importer: TImporter | undefined
   statementPrice: number | null
   claimNumber: string | null
-
   carType: TCarType | undefined
-
-  degemNm: string | null
-  tozeretNm: string | null
-
   manufacturer: TManufacturer | undefined
+  manufacturerCode: string | null
   model: TModel | undefined
   modelCode: string | null
   manufacturerYear: number | null
-
+  degemNm: string | null
+  tozeretNm: string | null
   driveType: TDriveType | undefined
   gearbox: TGearbox | undefined
-
   volume: number | null
   horsepower: number | null
   numberOfSeats: number | null
   specialModelCode: string | null
-
   dateOfRegistration: string | null
   odometer: number | null
   usageType: TUsageType | undefined
   internalStatus: TInternalStatus | undefined
   externalStatus: TExternalStatus | undefined
   tyresStatus: number | null
+  appraisers: TAppraiser[] | null
   numberOfOwners: number | null
-  owners: TOwner[] | null
+  owners: TOpinionOwner[] | null
+  commentsForOpinion: TCommentsForOpinion[] | null
+  integralExtras: TIntegralExtra[] | null
+  extras: TExtra[] | null
+  protectives: TProtective[] | null
   carDescription: string | null
-
+  comments: string | null
   integralExtras: TIntegralExtra[]
   extras: TExtra[]
   protectives: TProtective[]
-
-  comments: string | null
   priceDeltaType: 'percent' | 'amount'
   priceDelta: number
   odometerDeltaType: 'percent' | 'amount'
@@ -426,21 +437,11 @@ export type TOpinion = {
   specialAdditionsDelta: number
   roadEntryDeltaType: 'percent' | 'amount'
   roadEntryDelta: number
-
   price: number
   extraPrice: number
   showPriceWithoutVAT: boolean
-
-  opinionAppraisers: TAppraiser[]
-
-
-  commentsForOpinion: string | null
-  licenseImageFileName: string | null
   deposition: string | null
-  carDescription: string | null
-  integralAdditions: string | null
-  specialAdditions: string | null
-  protectiveMeasures: string | null
+
   summary: string | null
   update1Price: number
   update1ExtraPrice: number
@@ -451,7 +452,6 @@ export type TOpinion = {
   update3Price: number | null
   update3ExtraPrice: number | null
   update3Date: string | null
-
 
   update1Visible: boolean
   update2Visible: boolean
@@ -464,13 +464,7 @@ export type TOpinion = {
   update2SendDate: string | null
   update3Send: boolean
   update3SendDate: string | null
-  licenseImageDownloadUri: string | null
-  licenseImageUploadUri: string | null
-  carImages: string[] | null
 
-  appraisers: TAppraiser[]
-
-  opinionOwners: TOwner[] | null
 }
 
 export type TCustomer = {
@@ -505,9 +499,4 @@ export type TCustomer = {
   imageDownloadUri: string | null
   imageUploadUri: string | null
 
-}
-
-export type TOpinionOwner = {
-  ownerId: string;
-  changePercentage: number;
 }

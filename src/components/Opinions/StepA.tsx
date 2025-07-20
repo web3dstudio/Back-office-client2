@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import type { TCarType, TCustomer, TDriveType, TExternalStatus, TGearbox, TImporter, TInternalStatus, TManufacturer, TModelForOpinion, TOpinion, TOpinionOwner, TUsageType } from "../../types"
+import type { TCarType, TCustomer, TDriveType, TExternalStatus, TGearbox, TImporter, TInternalStatus, TManufacturer, TModelForOpinion, TOpinion, TSelectedOwner, TUsageType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -31,6 +31,7 @@ import AppControlledCheckboxesTags from "../AppControlledCheckboxesTags"
 import { useAppraisersQuery } from "../../query/appraisers.query"
 import { ORDERED_TYPE_PRIVATE, ORDERED_TYPE_COMPANY } from "../../constants"
 import { useGearboxesQuery } from "../../query/gearboxes.query"
+import { useOpinionsAddMutation } from "../../query/opinios.query"
 
 
 interface TProps {
@@ -40,8 +41,8 @@ interface TProps {
 }
 
 type TFormInput = Omit<TOpinion, 'id'> & {
-  selectedOwners: TOpinionOwner[]
-  opinionOwners: TOpinionOwner[]
+  selectedOwners: TSelectedOwner[]
+  opinionOwners: TSelectedOwner[]
 }
 
 
@@ -54,12 +55,12 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const { t, i18n } = useTranslation()
   const theme = useTheme()
 
-  const { data: customers } = useCustomersQuery()
-  const { data: importers } = useImportersQuery()
-  const { data: carTypes } = useCarTypesQuery()
+  const { data: customers, isLoading: isCustomersLoading } = useCustomersQuery()
+  const { data: importers, isLoading: isImportersLoading } = useImportersQuery()
+  const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
   // const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersQuery()
-  const { data: driveTypes } = useDriveTypesQuery()
-  const { data: gearboxes } = useGearboxesQuery()
+  const { data: driveTypes, isLoading: isDriveTypesLoading } = useDriveTypesQuery()
+  const { data: gearboxes, isLoading: isGearboxesLoading } = useGearboxesQuery()
 
   const typeOptions = [
     {
@@ -82,6 +83,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const { data: commentsForOpinion, isLoading: isCommentsForOpinionLoading } = useCommentsForOpinionQuery()
   const { data: appraisers, isLoading: isAppraisersLoading } = useAppraisersQuery()
 
+  const { mutate: createOpinion } = useOpinionsAddMutation()
 
   function getDefaultExtras<T extends { id: string; name: string; nameEn?: string | null }>(allExtras: T[], selectedExtras: T[]) {
     const selectedIds = (selectedExtras || []).map(item => item.id)
@@ -120,6 +122,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
     carType: data?.carType || undefined,
 
     manufacturer: data?.manufacturer || undefined,
+    manufacturerCode: data?.manufacturerCode || '',
     model: data?.model || undefined,
     modelCode: data?.modelCode || '',
     manufacturerYear: data?.manufacturerYear || new Date().getFullYear(),
@@ -139,8 +142,11 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
 
     numberOfOwners: data?.numberOfOwners || 0,
     owners: data?.owners || [],
-    selectedOwners: [] as TOpinionOwner[],
-    opinionOwners: [] as TOpinionOwner[],
+    selectedOwners: (data?.owners || []).map(owner => ({
+      ownerId: owner.id,
+      changePercentage: owner.changePercentage
+    })),
+    opinionOwners: [] as TSelectedOwner[],
 
     carDescription: data?.carDescription || '',
 
@@ -148,6 +154,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
     extras: getDefaultExtras(extras || [], data?.extras || []),
     protectives: getDefaultExtras(protectives || [], data?.protectives || []),
 
+    commentsForOpinion: data?.commentsForOpinion || [],
     comments: data?.comments || '',
 
     priceDeltaType: data?.priceDeltaType || 'percent',
@@ -221,7 +228,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   }, [numberOfOwners])
 
   useEffect(() => {
-    const result: TOpinionOwner[] = selectedOwners
+    const result: TSelectedOwner[] = selectedOwners
       .filter(item => !!item.ownerId)
       .map(item => ({
         ownerId: item.ownerId,
@@ -236,6 +243,21 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const onSubmit = (data: any) => {
     console.log(data)
 
+    // Фильтруем только выбранные элементы
+    const selectedIntegralExtras = data.integralExtras?.filter((item: any) => item.selected) || [];
+    const selectedExtras = data.extras?.filter((item: any) => item.selected) || [];
+    const selectedProtectives = data.protectives?.filter((item: any) => item.selected) || [];
+
+    const finalData = {
+      ...data,
+      integralExtras: selectedIntegralExtras,
+      extras: selectedExtras,
+      protectives: selectedProtectives,
+      owners: data.opinionOwners || [],
+      numberOfOwners: data.opinionOwners?.length || 0,
+    };
+
+    createOpinion(finalData)
     // onConfirm(data)
     // reset()
   }
@@ -301,6 +323,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
             <AppControlledAutocomplete<TCustomer>
               name='customer'
               required
+              loading={isCustomersLoading}
               options={customers as TCustomer[] || []}
               getOptionLabel={(option) => option.firstName + ' ' + option.lastName}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -490,6 +513,7 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={6}>
             <AppControlledAutocomplete<TImporter>
               name='importer'
+              loading={isImportersLoading}
               options={importers as TImporter[] || []}
               getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.nameEn ?? option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
@@ -528,13 +552,13 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledAutocomplete<TCarType>
               name='carType'
+              loading={isCarTypesLoading}
               options={carTypes as TCarType[] || []}
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               control={control}
               errors={errors}
               label={t('carType', { ns: 'opinion' })}
-            // placeholder={t('carType', { ns: 'opinion' })}
             />
           </Grid>
 
@@ -546,8 +570,16 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
               label={t('manufacturer', { ns: 'opinion' })}
             />
           </Grid>
+          <Grid size={2}>
+            <AppControlledTextField
+              name="manufacturerCode"
+              control={control}
+              errors={errors}
+              label={t('manufacturerCode', { ns: 'opinion' })}
+            />
+          </Grid>
 
-          <Grid size={4}>
+          <Grid size={2}>
             <AppControlledTextField
               name="model"
               control={control}
@@ -575,7 +607,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
               control={control}
               errors={errors}
               label={t('manYear', { ns: 'opinion' })}
-            // placeholder={t('manYear', { ns: 'opinion' })}
             />
           </Grid>
 
@@ -600,26 +631,26 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
           <Grid size={2}>
             <AppControlledAutocomplete<TDriveType>
               name='driveType'
+              loading={isDriveTypesLoading}
               options={driveTypes as TDriveType[] || []}
               getOptionLabel={(option) => option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               control={control}
               errors={errors}
               label={t('driveType', { ns: 'opinion' })}
-            // placeholder={t('driveType', { ns: 'opinion' })}
             />
           </Grid>
 
           <Grid size={2}>
             <AppControlledAutocomplete<TGearbox>
               name='gearbox'
+              loading={isGearboxesLoading}
               options={gearboxes as unknown as TGearbox[] || []}
               getOptionLabel={(option) => i18n.language === 'he' ? option.name : option.nameEn ?? option.name}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               control={control}
               errors={errors}
               label={t('gearbox', { ns: 'opinion' })}
-            // placeholder={t('gearbox', { ns: 'opinion' })}
             />
           </Grid>
 
@@ -709,7 +740,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
               control={control}
               errors={errors}
               label={t('internalStatus', { ns: 'opinion' })}
-            // placeholder={t('internalStatus', { ns: 'opinion' })}
             />
           </Grid>
 
@@ -723,7 +753,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
               control={control}
               errors={errors}
               label={t('externalStatus', { ns: 'opinion' })}
-            // placeholder={t('externalStatus', { ns: 'opinion' })}
             />
           </Grid>
 
