@@ -31,7 +31,6 @@ import AppControlledCheckboxesTags from "../AppControlledCheckboxesTags"
 import { useAppraisersQuery } from "../../query/appraisers.query"
 import { ORDERED_TYPE_PRIVATE, ORDERED_TYPE_COMPANY } from "../../constants"
 import { useGearboxesQuery } from "../../query/gearboxes.query"
-import { useOpinionsAddMutation } from "../../query/opinios.query"
 
 
 interface TProps {

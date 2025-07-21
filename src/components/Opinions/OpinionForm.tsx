@@ -77,6 +77,7 @@ export default function OpinionForm({ data, onSave, title }: TProps) {
           display: 'flex',
           gap: 2,
         }}>
+
           <TabPanel value="a" sx={{ width: '100%', p: 0 }}>
             <StepA
               data={data}
