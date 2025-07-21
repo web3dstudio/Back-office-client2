@@ -45,8 +45,6 @@ type TFormInput = Omit<TOpinion, 'id'> & {
   opinionOwners: TSelectedOwner[]
 }
 
-
-
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: currentYear - 1960 + 1 }, (_, i) => currentYear - i);
 
@@ -82,8 +80,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const { data: protectives, isLoading: isProtectivesLoading } = useProtectivesQuery()
   const { data: commentsForOpinion, isLoading: isCommentsForOpinionLoading } = useCommentsForOpinionQuery()
   const { data: appraisers, isLoading: isAppraisersLoading } = useAppraisersQuery()
-
-  const { mutate: createOpinion } = useOpinionsAddMutation()
 
   function getDefaultExtras<T extends { id: string; name: string; nameEn?: string | null }>(allExtras: T[], selectedExtras: T[]) {
     const selectedIds = (selectedExtras || []).map(item => item.id)
