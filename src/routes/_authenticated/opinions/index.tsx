@@ -183,7 +183,7 @@ function OpinionsPage() {
       hideable: false,
       getActions: (params: GridRenderCellParams) => [
         <AppActionButton type='edit' onClick={() => {
-          navigate({ to: '/opinions/edit/$id', params: { id: params.row.id } })
+          navigate({ to: '/opinions/$id', params: { id: params.row.id } })
         }} />,
         <AppActionButton type='send' onClick={() => {
           // setSelected(() => params.row)

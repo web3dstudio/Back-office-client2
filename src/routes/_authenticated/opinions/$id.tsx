@@ -1,18 +1,18 @@
 import { Box, Button, Grid, Tab, Typography } from '@mui/material'
 import { createFileRoute } from '@tanstack/react-router'
-import AppBackBtn from '../../../../components/AppBackBtn'
+import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
-import StyledPaper from '../../../../components/StyledPaper'
-import StepA from '../../../../components/Opinions/StepA'
+import StyledPaper from '../../../components/StyledPaper'
+import StepA from '../../../components/Opinions/StepA'
 import { useState } from 'react'
 import TabContext from '@mui/lab/TabContext'
 import TabList from '@mui/lab/TabList'
 import TabPanel from '@mui/lab/TabPanel'
-import { useOpinionQuery } from '../../../../query/opinios.query'
-import AppLoading from '../../../../components/AppLoading'
+import { useOpinionQuery } from '../../../query/opinios.query'
+import AppLoading from '../../../components/AppLoading'
 
 
-export const Route = createFileRoute('/_authenticated/opinions/edit/$id')({
+export const Route = createFileRoute('/_authenticated/opinions/$id')({
   component: EditOpinionPage,
 })
 
@@ -78,7 +78,7 @@ function EditOpinionPage() {
         }}>
           <TabPanel value="a" sx={{ width: '100%', p: 0 }}>
             {opinion && !isLoading ?
-              <StepA data={opinion} onSave={() => { }} setIsTemporary={setIsTemporary} />
+              <StepA data={opinion} onSave={(data) => { console.log('EDIT', data) }} setIsTemporary={setIsTemporary} />
               : <AppLoading />}
           </TabPanel>
           <TabPanel value="b">Item Two</TabPanel>

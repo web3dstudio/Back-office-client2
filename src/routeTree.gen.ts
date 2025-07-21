@@ -50,9 +50,9 @@ import { Route as AuthenticatedAppraisersIndexRouteImport } from './routes/_auth
 import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
+import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
-import { Route as AuthenticatedOpinionsEditIdRouteImport } from './routes/_authenticated/opinions/edit/$id'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 
 const PublicRoute = PublicRouteImport.update({
@@ -293,6 +293,11 @@ const AuthenticatedOpinionsNewRoute =
     path: '/opinions/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedOpinionsIdRoute = AuthenticatedOpinionsIdRouteImport.update({
+  id: '/opinions/$id',
+  path: '/opinions/$id',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedCustomersNewRoute =
   AuthenticatedCustomersNewRouteImport.update({
     id: '/customers/new',
@@ -303,12 +308,6 @@ const AuthenticatedCatalogNewCarRoute =
   AuthenticatedCatalogNewCarRouteImport.update({
     id: '/catalog/new-car',
     path: '/catalog/new-car',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedOpinionsEditIdRoute =
-  AuthenticatedOpinionsEditIdRouteImport.update({
-    id: '/opinions/edit/$id',
-    path: '/opinions/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedManufacturersEditIdRoute =
@@ -322,6 +321,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
@@ -361,12 +361,12 @@ export interface FileRoutesByFullPath {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/opinions/edit/$id': typeof AuthenticatedOpinionsEditIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
@@ -406,7 +406,6 @@ export interface FileRoutesByTo {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/opinions/edit/$id': typeof AuthenticatedOpinionsEditIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -415,6 +414,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
   '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
@@ -454,7 +454,6 @@ export interface FileRoutesById {
   '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/_authenticated/opinions/edit/$id': typeof AuthenticatedOpinionsEditIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -462,6 +461,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog/new-car'
     | '/customers/new'
+    | '/opinions/$id'
     | '/opinions/new'
     | '/accessories'
     | '/advertisements'
@@ -501,12 +501,12 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
-    | '/opinions/edit/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/catalog/new-car'
     | '/customers/new'
+    | '/opinions/$id'
     | '/opinions/new'
     | '/accessories'
     | '/advertisements'
@@ -546,7 +546,6 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
-    | '/opinions/edit/$id'
   id:
     | '__root__'
     | '/_authenticated'
@@ -554,6 +553,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/catalog/new-car'
     | '/_authenticated/customers/new'
+    | '/_authenticated/opinions/$id'
     | '/_authenticated/opinions/new'
     | '/_authenticated/accessories/'
     | '/_authenticated/advertisements/'
@@ -593,7 +593,6 @@ export interface FileRouteTypes {
     | '/_authenticated/values/'
     | '/_public/login/'
     | '/_authenticated/manufacturers/edit/$id'
-    | '/_authenticated/opinions/edit/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -890,6 +889,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedOpinionsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/opinions/$id': {
+      id: '/_authenticated/opinions/$id'
+      path: '/opinions/$id'
+      fullPath: '/opinions/$id'
+      preLoaderRoute: typeof AuthenticatedOpinionsIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/customers/new': {
       id: '/_authenticated/customers/new'
       path: '/customers/new'
@@ -902,13 +908,6 @@ declare module '@tanstack/react-router' {
       path: '/catalog/new-car'
       fullPath: '/catalog/new-car'
       preLoaderRoute: typeof AuthenticatedCatalogNewCarRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/opinions/edit/$id': {
-      id: '/_authenticated/opinions/edit/$id'
-      path: '/opinions/edit/$id'
-      fullPath: '/opinions/edit/$id'
-      preLoaderRoute: typeof AuthenticatedOpinionsEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/manufacturers/edit/$id': {
@@ -925,6 +924,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
+  AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
   AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
@@ -963,13 +963,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
-  AuthenticatedOpinionsEditIdRoute: typeof AuthenticatedOpinionsEditIdRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
+  AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
   AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
@@ -1012,7 +1012,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
-  AuthenticatedOpinionsEditIdRoute: AuthenticatedOpinionsEditIdRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

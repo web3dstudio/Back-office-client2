@@ -69,7 +69,7 @@ function NewOpinionPage() {
           gap: 2,
         }}>
           <TabPanel value="a" sx={{ width: '100%', p: 0 }}>
-            <StepA data={null} onSave={() => { }} setIsTemporary={setIsTemporary} />
+            <StepA data={null} onSave={(data) => { console.log('NEW', data) }} setIsTemporary={setIsTemporary} />
           </TabPanel>
           <TabPanel value="b">Item Two</TabPanel>
           <TabPanel value="c">Item Three</TabPanel>

@@ -173,8 +173,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
 
   }), [integralExtras, extras, protectives]);
 
-
-
   const schema = object()
     .shape({
       customer: yup.object().required(t('form-field.required')),
@@ -241,7 +239,6 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
   const ordererType = watch('ordererType')
 
   const onSubmit = (data: any) => {
-    console.log(data)
 
     // Фильтруем только выбранные элементы
     const selectedIntegralExtras = data.integralExtras?.filter((item: any) => item.selected) || [];
@@ -257,7 +254,8 @@ export default function StepA({ data, onSave, setIsTemporary }: TProps) {
       numberOfOwners: data.opinionOwners?.length || 0,
     };
 
-    createOpinion(finalData)
+    onSave(finalData)
+    // createOpinion(finalData)
     // onConfirm(data)
     // reset()
   }
