@@ -56,7 +56,11 @@ export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, Omi
 
   return useMutation({
     mutationFn: async (newOpinion: Omit<TOpinion, 'id'>): Promise<TOpinion> => {
-      const response = await axiosAPI.post('/opinions', newOpinion)
+      const response = await axiosAPI.post('/opinions', newOpinion, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data
     },
     onSuccess: (_data) => {
@@ -70,13 +74,44 @@ export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, Omi
   })
 }
 
-export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinion> {
+type TOpinionWithFiles = TOpinion & {
+  licenseFiles?: File[]
+  carFiles?: File[]
+  deleteLicenseImage?: boolean
+}
+
+export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinionWithFiles> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (updatedOpinion: TOpinion): Promise<TOpinion> => {
-      const response = await axiosAPI.put(`/opinions/${updatedOpinion.id}`, updatedOpinion)
+    mutationFn: async (updatedOpinion: TOpinionWithFiles): Promise<TOpinion> => {
+
+      const formData = new FormData();
+
+      const { licenseFiles, carFiles, ...opinionData } = updatedOpinion;
+
+
+      console.log('updatedOpinion', updatedOpinion)
+
+      formData.append('data', JSON.stringify(opinionData));
+
+      if (licenseFiles) {
+        licenseFiles.forEach((file: File) => {
+          formData.append('licenseFiles', file);
+        });
+      }
+      if (carFiles) {
+        carFiles.forEach((file: File) => {
+          formData.append('carFiles', file);
+        });
+      }
+
+      const response = await axiosAPI.put(`/opinions/${updatedOpinion.id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data
     },
     onSuccess: (data) => {

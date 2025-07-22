@@ -11,10 +11,6 @@ export const Route = createFileRoute('/_authenticated/opinions/new')({
 function NewOpinionPage() {
   const { t } = useTranslation()
 
-  const handleSave = (data: any) => {
-    console.log('NEW', data)
-  }
-
   return (
     <Grid container spacing={3}>
       <Grid size={12}>
@@ -22,8 +18,7 @@ function NewOpinionPage() {
       </Grid>
       <Grid size={12}>
         <OpinionForm
-          data={null}
-          onSave={handleSave}
+          opinion={null}
           title={t('title', { ns: 'opinion' })}
         />
       </Grid>

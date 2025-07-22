@@ -456,6 +456,7 @@ export type TOpinion = {
   update1Visible: boolean
   update2Visible: boolean
   update3Visible: boolean
+
   opinionSend: boolean
   opinionSendDate: string | null
   update1Send: boolean
@@ -464,6 +465,9 @@ export type TOpinion = {
   update2SendDate: string | null
   update3Send: boolean
   update3SendDate: string | null
+
+  licenseImageName: string | null
+  licenseImageDownloadUri: string | null
 
 }
 

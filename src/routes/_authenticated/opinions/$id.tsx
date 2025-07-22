@@ -15,10 +15,6 @@ function EditOpinionPage() {
   const { t } = useTranslation()
   const { data: opinion, isLoading } = useOpinionQuery(id)
 
-  const handleSave = (data: any) => {
-    console.log('EDIT', data)
-  }
-
   if (isLoading) return <AppLoading />
 
   return (
@@ -28,8 +24,7 @@ function EditOpinionPage() {
       </Grid>
       <Grid size={12}>
         <OpinionForm
-          data={opinion || null}
-          onSave={handleSave}
+          opinion={opinion || null}
           title={`${t('editTitle', { ns: 'opinion' })} ${opinion?.number}`}
         />
       </Grid>

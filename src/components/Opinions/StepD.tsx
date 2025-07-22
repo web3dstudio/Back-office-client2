@@ -1,0 +1,85 @@
+import { useTranslation } from "react-i18next"
+import { useFormContext } from "react-hook-form"
+import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment } from "@mui/material"
+import { AppControlledDatePicker } from "../AppControlledDatePicker"
+import AppControlledTextField from "../AppControlledTextField"
+
+
+interface TProps {
+  onStepComplete: (stepData: any) => void
+}
+
+export default function StepD({ onStepComplete }: TProps) {
+  const { t } = useTranslation()
+  const { control, formState } = useFormContext()
+  const errors = formState.errors
+
+
+  return (
+    <Box sx={{ width: '100%' }}>
+      <Grid container columns={12} columnSpacing={2} rowSpacing={1} sx={{ width: '100%' }}>
+        <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <FormControlLabel
+            labelPlacement="bottom"
+            control={
+              <Checkbox
+                name="update3Visible"
+                defaultChecked={false}
+              />
+            }
+            label={t('visible', { ns: 'opinion' })}
+          />
+        </Grid>
+
+        <Grid size={4}>
+          <AppControlledDatePicker
+            name="update3Date"
+            control={control}
+            errors={errors}
+            label={t('updateDate', { ns: 'opinion' })}
+          />
+        </Grid>
+
+        <Grid size={4}>
+          <AppControlledTextField
+            name="update3ExtraPrice"
+            control={control}
+            type="number"
+            errors={errors}
+            label={t('xPrice', { ns: 'opinion' })}
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="end">
+                  {'₪'}
+                </InputAdornment>,
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid size={4}>
+          <AppControlledTextField
+            name="update3Price"
+            control={control}
+            type="number"
+            errors={errors}
+            label={t('updatePrice', { ns: 'opinion' })}
+            slotProps={{
+              input: {
+                endAdornment: <InputAdornment position="end">
+                  {'₪'}
+                </InputAdornment>,
+              },
+            }}
+          />
+        </Grid>
+
+        <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+          <Button type="submit" variant="contained" color="primary" onClick={onStepComplete}>
+            {t('save', { ns: 'opinion' })}
+          </Button>
+        </Grid>
+      </Grid>
+    </Box>
+  )
+} 
