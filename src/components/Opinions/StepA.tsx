@@ -31,7 +31,7 @@ import { useGearboxesQuery } from "../../query/gearboxes.query"
 
 interface TProps {
   opinion: TOpinion | null
-  onStepComplete: ({ licenseFiles, carFiles, deleteLicenseFile }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean }) => void
+  onStepComplete: ({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean, changeLicenseFile?: boolean }) => void
   setIsTemporary: (isTemporary: boolean) => void
 }
 
@@ -110,10 +110,12 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
 
   const ordererType = watch('ordererType')
 
-
   const [licenseFiles, setLicenseFiles] = useState<File[]>([])
   const [userDeletedLicenseFile, setUserDeletedLicenseFile] = useState(false)
-  console.log('userDeletedLicenseFile', userDeletedLicenseFile)
+  const [userChangedLicenseFile, setUserChangedLicenseFile] = useState(false)
+
+  // console.log('userDeletedLicenseFile', userDeletedLicenseFile)
+  // console.log('userChangedLicenseFile', userChangedLicenseFile)
 
   const [carFiles, setCarFiles] = useState<File[]>([])
 
@@ -350,11 +352,24 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
           label={t('licPhoto', { ns: 'opinion' })}
           maxFiles={1}
           defaultFiles={opinion?.licenseImageDownloadUri ? [opinion.licenseImageDownloadUri] : []}
+          // onChange={(files) => {
+          //   setLicenseFiles(files)
+          //   if (files.length === 0 && opinion?.licenseImageDownloadUri) {
+          //     setUserDeletedLicenseFile(true)
+          //   }
+          // }}
           onChange={(files) => {
             setLicenseFiles(files)
-            if (files.length === 0 && opinion?.licenseImageDownloadUri) {
-              setUserDeletedLicenseFile(true)
-            }
+          }}
+          onRemoveFile={() => {
+            console.log('onRemoveFile')
+            setUserDeletedLicenseFile(true)
+            setUserChangedLicenseFile(false)
+          }}
+          onDrop={() => {
+            console.log('onDrop')
+            setUserChangedLicenseFile(true)
+            setUserDeletedLicenseFile(false)
           }}
         />
       </Grid>
@@ -579,7 +594,6 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
           control={control}
           errors={errors}
           label={t('usageType', { ns: 'opinion' })}
-        // placeholder={t('usageType', { ns: 'opinion' })}
         />
       </Grid>
 
@@ -938,11 +952,16 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
     <Grid container columns={12} columnSpacing={2} rowSpacing={0} sx={{ width: '100%' }}>
       <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
         <Button variant="contained" color="primary" onClick={() => {
+          // console.log('userDeletedLicenseFile', userDeletedLicenseFile)
+          // console.log('userChangedLicenseFile', userChangedLicenseFile)
           onStepComplete({
             licenseFiles: licenseFiles.length > 0 ? licenseFiles : undefined,
             carFiles: carFiles.length > 0 ? carFiles : undefined,
             deleteLicenseFile: userDeletedLicenseFile,
+            changeLicenseFile: userChangedLicenseFile,
           })
+          setUserChangedLicenseFile(false)
+          setUserDeletedLicenseFile(false)
         }}>
           {t('save', { ns: 'opinion' })}
         </Button>

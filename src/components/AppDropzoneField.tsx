@@ -20,11 +20,12 @@ interface DropZoneFieldProps {
   maxFileSize?: number
   defaultFiles?: string[]
   onRemoveFile?: (file: FileWithPath) => void
+  onDrop?: () => void
 }
 
 type FileWithPreview = FileWithPath & { preview: string };
 
-const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFiles, onRemoveFile }: DropZoneFieldProps) => {
+const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFiles, onRemoveFile, onDrop }: DropZoneFieldProps) => {
 
   const MAX_FILE_SIZE = maxFileSize || 204800 // 200 килобайт
 
@@ -57,6 +58,7 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
       setFiles(acceptedFiles.map(file => Object.assign(file, {
         preview: URL.createObjectURL(file)
       })));
+      onDrop?.()
     },
     accept: {
       'image/*': ['.png', '.jpg', '.jpeg', '.gif', '.svg'],

@@ -78,6 +78,7 @@ type TOpinionWithFiles = TOpinion & {
   licenseFiles?: File[]
   carFiles?: File[]
   deleteLicenseImage?: boolean
+  changeLicenseFile?: boolean
 }
 
 export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinionWithFiles> {
@@ -86,14 +87,8 @@ export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, T
 
   return useMutation({
     mutationFn: async (updatedOpinion: TOpinionWithFiles): Promise<TOpinion> => {
-
       const formData = new FormData();
-
       const { licenseFiles, carFiles, ...opinionData } = updatedOpinion;
-
-
-      console.log('updatedOpinion', updatedOpinion)
-
       formData.append('data', JSON.stringify(opinionData));
 
       if (licenseFiles) {
