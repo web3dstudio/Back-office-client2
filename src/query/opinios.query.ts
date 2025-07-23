@@ -79,6 +79,8 @@ type TOpinionWithFiles = TOpinion & {
   carFiles?: File[]
   deleteLicenseImage?: boolean
   changeLicenseFile?: boolean
+  changeCarFiles?: boolean
+  carImageIds?: string[]
 }
 
 export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, TOpinionWithFiles> {
@@ -101,6 +103,8 @@ export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, T
           formData.append('carFiles', file);
         });
       }
+
+      console.log('formData carFiles', formData.get('carFiles'))
 
       const response = await axiosAPI.put(`/opinions/${updatedOpinion.id}`, formData, {
         headers: {

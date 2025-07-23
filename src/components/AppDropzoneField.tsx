@@ -10,6 +10,7 @@ import ErrorTwoToneIcon from '@mui/icons-material/ErrorTwoTone';
 import AppDialog from "./AppDialog/AppDialog";
 import DownloadIcon from '@mui/icons-material/Download';
 import ZoomInIcon from '@mui/icons-material/ZoomIn';
+import { AnimatePresence, motion } from "motion/react"
 
 
 interface DropZoneFieldProps {
@@ -54,10 +55,30 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
   }
 
   const { getRootProps, getInputProps, fileRejections, isDragActive } = useDropzone({
+
+
     onDrop: acceptedFiles => {
-      setFiles(acceptedFiles.map(file => Object.assign(file, {
-        preview: URL.createObjectURL(file)
-      })));
+
+      setFiles(prevFiles => {
+        const maxFilesCount = maxFiles || 1;
+        const currentCount = prevFiles.length;
+        const canAddCount = Math.max(0, maxFilesCount - currentCount);
+
+        const filesToAdd = acceptedFiles.slice(0, canAddCount);
+
+        return [
+          ...prevFiles,
+          ...filesToAdd.map(file => Object.assign(file, {
+            preview: URL.createObjectURL(file)
+          }))
+        ];
+      });
+
+      // setFiles(acceptedFiles.map(file => Object.assign(file, {
+      //   preview: URL.createObjectURL(file)
+      // })));
+
+
       onDrop?.()
     },
     accept: {
@@ -77,66 +98,78 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
     setPreviewImg(preview);
   };
 
-  const Previews = files.map((file: FileWithPreview, index: number) => (
-    <Box
-      key={index}
-      sx={{
-        width: 100,
-        height: 100,
-        border: '1px solid #ccc',
-        borderRadius: theme.shape.borderRadius,
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        background: theme.palette.mode === 'dark' ? '#000' : '#f7f7f9',
-        position: 'relative',
-      }}>
-      {/* Кнопка скачать */}
-      <IconButton
-        size="small"
-        sx={{ position: 'absolute', bottom: 2, right: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
-        component="a"
-        href={file.preview}
-        download={file.name}
-        onClick={e => e.stopPropagation()}
-      >
-        <DownloadIcon fontSize="small" />
-      </IconButton>
+  const Previews = (
+    <AnimatePresence mode="popLayout">
+      {files.map((file: FileWithPreview) => (
+        <motion.div
+          key={file.name}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.8 }}
+          transition={{ duration: 0.1 }}
+          layout
+        >
+          <Box
+            sx={{
+              width: 100,
+              height: 100,
+              border: '1px solid #ccc',
+              borderRadius: theme.shape.borderRadius,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              background: theme.palette.mode === 'dark' ? '#000' : '#f7f7f9',
+              position: 'relative',
+            }}>
+            {/* Кнопка скачать */}
+            <IconButton
+              size="small"
+              sx={{ position: 'absolute', bottom: 2, right: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
+              component="a"
+              href={file.preview}
+              download={file.name}
+              onClick={e => e.stopPropagation()}
+            >
+              <DownloadIcon fontSize="small" />
+            </IconButton>
 
-      {/* Кнопка увеличить */}
-      <IconButton
-        size="small"
-        sx={{ position: 'absolute', bottom: 2, left: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
-        onClick={e => {
-          e.stopPropagation();
-          handlePreview(file.preview);
-        }}
-      >
-        <ZoomInIcon fontSize="small" />
-      </IconButton>
+            {/* Кнопка увеличить */}
+            <IconButton
+              size="small"
+              sx={{ position: 'absolute', bottom: 2, left: 2, zIndex: 2, backgroundColor: theme.palette.background.paper }}
+              onClick={e => {
+                e.stopPropagation();
+                handlePreview(file.preview);
+              }}
+            >
+              <ZoomInIcon fontSize="small" />
+            </IconButton>
 
-      <AppActionButton
-        type='delete'
-        sx={{
-          position: 'absolute',
-          top: -10,
-          right: -10,
-        }}
-        onClick={() => {
-          handleRemoveFile(file)
-        }} />
-      <img
-        src={file?.preview || ''}
-        alt={file.name}
-        style={{
-          maxWidth: '80%',
-          maxHeight: '80%',
-          objectFit: 'contain',
-          display: 'block',
-        }}
-      />
-    </Box>
-  ));
+            <AppActionButton
+              type='delete'
+              sx={{
+                position: 'absolute',
+                top: -10,
+                right: -10,
+              }}
+              onClick={() => {
+                handleRemoveFile(file)
+              }} />
+            <img
+              src={file?.preview || ''}
+              alt={file.name}
+              style={{
+                width: '80%',
+                height: '80%',
+                objectFit: 'cover',
+                display: 'block',
+              }}
+            />
+          </Box>
+        </motion.div>
+      ))}
+    </AnimatePresence>
+  )
 
   const RejectedFiles = fileRejections.map(({ file, errors }, index: number) => (
     <ListItem alignItems="flex-start" disableGutters disablePadding key={index}>
@@ -213,11 +246,13 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
           </Box>
         </Grid>
 
+
         {files.length > 0 && (
           <Grid size={'grow'} sx={{ display: 'flex', flexWrap: 'wrap', gap: 3 }}>
             {Previews}
           </Grid>
         )}
+
 
         {fileRejections.length > 0 && (
           <Grid size={12}>
@@ -226,11 +261,12 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
             </List>
           </Grid>
         )}
+
       </Grid>
       <AppDialog
         open={openPreview}
         onClose={() => setOpenPreview(false)}
-        title={t('carPhoto', { ns: 'opinion' })}
+        title={label || ''}
       >
         {previewImg && (
           <img src={previewImg} alt="preview" style={{ maxWidth: '90vw', maxHeight: '90vh', display: 'block', margin: 'auto' }} />

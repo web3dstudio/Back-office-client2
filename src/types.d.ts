@@ -468,6 +468,12 @@ export type TOpinion = {
 
   licenseImageName: string | null
   licenseImageDownloadUri: string | null
+  carImages: {
+    id: string
+    carImageFileName: string
+    carImageDownloadUri: string
+    carImageOriginalFileName: string | null
+  }[] | []
 
 }
 

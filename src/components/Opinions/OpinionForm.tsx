@@ -46,23 +46,35 @@ export default function OpinionForm({ opinion, title }: TProps) {
     setSelectedTab(newValue)
   }
 
-  const handleStepComplete = ({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean, changeLicenseFile?: boolean }) => {
-    console.log('handleStepComplete deleteLicenseFile', deleteLicenseFile)
-    console.log('handleStepComplete changeLicenseFile', changeLicenseFile)
+  const handleStepComplete = ({
+    licenseFiles,
+    carFiles,
+    deleteLicenseFile,
+    changeLicenseFile,
+    changeCarFiles,
+    remainingCarImageIds
+  }: {
+    licenseFiles?: File[],
+    carFiles?: File[],
+    deleteLicenseFile?: boolean,
+    changeLicenseFile?: boolean,
+    changeCarFiles?: boolean,
+    remainingCarImageIds?: string[]
+  }) => {
 
     if (selectedTab === 'a') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }))()
+      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
       // setSelectedTab('b')
     } else if (selectedTab === 'b') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }))()
+      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
       // handleSubmit(onSubmit)()
       setSelectedTab('c')
     } else if (selectedTab === 'c') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }))()
+      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
       // handleSubmit(onSubmit)()
       setSelectedTab('d')
     } else if (selectedTab === 'd') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }))()
+      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
       // handleSubmit(onSubmit)()
     }
   }
@@ -193,10 +205,6 @@ export default function OpinionForm({ opinion, title }: TProps) {
     const selectedExtras = data.extras?.filter((item: any) => item.selected) || [];
     const selectedProtectives = data.protectives?.filter((item: any) => item.selected) || [];
 
-    // console.log('data', data)
-
-    console.log('onSubmit deleteLicenseFile', data.deleteLicenseFile)
-    console.log('onSubmit changeLicenseFile', data.changeLicenseFile)
 
     const finalData = {
       ...data,
@@ -207,6 +215,8 @@ export default function OpinionForm({ opinion, title }: TProps) {
       numberOfOwners: data.opinionOwners?.length || 0,
       deleteLicenseFile: data.deleteLicenseFile || false,
       changeLicenseFile: data.changeLicenseFile || false,
+      changeCarFiles: data.changeCarFiles || false,
+      remainingCarImageIds: data.remainingCarImageIds || [],
     };
 
     if (data.licenseFiles && data.licenseFiles.length > 0) {
@@ -296,7 +306,7 @@ export default function OpinionForm({ opinion, title }: TProps) {
               <TabPanel value="a" sx={{ p: 0 }}>
                 <StepA
                   opinion={opinion}
-                  onStepComplete={({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }) => handleStepComplete({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile })}
+                  onStepComplete={({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }) => handleStepComplete({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds })}
                   setIsTemporary={setIsTemporary}
                 />
               </TabPanel>

@@ -31,7 +31,7 @@ import { useGearboxesQuery } from "../../query/gearboxes.query"
 
 interface TProps {
   opinion: TOpinion | null
-  onStepComplete: ({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean, changeLicenseFile?: boolean }) => void
+  onStepComplete: ({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean, changeLicenseFile?: boolean, changeCarFiles?: boolean, remainingCarImageIds?: string[] }) => void
   setIsTemporary: (isTemporary: boolean) => void
 }
 
@@ -114,13 +114,15 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
   const [userDeletedLicenseFile, setUserDeletedLicenseFile] = useState(false)
   const [userChangedLicenseFile, setUserChangedLicenseFile] = useState(false)
 
-  // console.log('userDeletedLicenseFile', userDeletedLicenseFile)
-  // console.log('userChangedLicenseFile', userChangedLicenseFile)
-
   const [carFiles, setCarFiles] = useState<File[]>([])
+  const [userChangeCarFiles, setUserChangeCarFiles] = useState(false)
+
+  // Cостояние для отслеживания оставшихся ID картинок
+  const [remainingCarImageIds, setRemainingCarImageIds] = useState<string[]>(
+    opinion?.carImages?.map(img => img.id) || []
+  )
 
   return (<>
-
     <Grid container columns={12} columnSpacing={2} rowSpacing={0} sx={{ width: '100%' }}>
       <Grid size={12} sx={{ display: 'flex', gap: 2, justifyContent: 'space-between' }}>
         <Box>
@@ -352,22 +354,14 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
           label={t('licPhoto', { ns: 'opinion' })}
           maxFiles={1}
           defaultFiles={opinion?.licenseImageDownloadUri ? [opinion.licenseImageDownloadUri] : []}
-          // onChange={(files) => {
-          //   setLicenseFiles(files)
-          //   if (files.length === 0 && opinion?.licenseImageDownloadUri) {
-          //     setUserDeletedLicenseFile(true)
-          //   }
-          // }}
           onChange={(files) => {
             setLicenseFiles(files)
           }}
           onRemoveFile={() => {
-            console.log('onRemoveFile')
             setUserDeletedLicenseFile(true)
             setUserChangedLicenseFile(false)
           }}
           onDrop={() => {
-            console.log('onDrop')
             setUserChangedLicenseFile(true)
             setUserDeletedLicenseFile(false)
           }}
@@ -710,11 +704,27 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
       <Grid size={'grow'} sx={{ pt: 3 }}>
         <AppDropzoneField
           name='carPhoto'
+          defaultFiles={opinion?.carImages?.map(img => img.carImageDownloadUri) || []}
           maxFileSize={1024 * 1024 * 10} // 10MB
           label={t('carPhoto', { ns: 'opinion' })}
           maxFiles={8}
           onChange={(files) => {
             setCarFiles(files)
+          }}
+          onRemoveFile={(file) => {
+            console.log('onRemoveFile Cars')
+            setUserChangeCarFiles(true)
+            // Если это существующий файл (есть preview URL), удаляем его ID
+            if ((file as any).preview && opinion?.carImages?.some(img => img.carImageDownloadUri === (file as any).preview)) {
+              const imageToRemove = opinion.carImages.find(img => img.carImageDownloadUri === (file as any).preview)
+              if (imageToRemove) {
+                setRemainingCarImageIds(prev => prev.filter(id => id !== imageToRemove.id))
+              }
+            }
+          }}
+          onDrop={() => {
+            console.log('onDrop Cars')
+            setUserChangeCarFiles(true)
           }}
         />
       </Grid>
@@ -959,6 +969,8 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
             carFiles: carFiles.length > 0 ? carFiles : undefined,
             deleteLicenseFile: userDeletedLicenseFile,
             changeLicenseFile: userChangedLicenseFile,
+            changeCarFiles: userChangeCarFiles,
+            remainingCarImageIds: remainingCarImageIds,
           })
           setUserChangedLicenseFile(false)
           setUserDeletedLicenseFile(false)
