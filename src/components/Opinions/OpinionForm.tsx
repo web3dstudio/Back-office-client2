@@ -11,7 +11,7 @@ import { ORDERED_TYPE_PRIVATE } from '../../constants'
 import { useProtectivesQuery } from '../../query/protectives.query'
 import { useExtrasQuery } from '../../query/extras.query'
 import { useIntegralExtrasQuery } from '../../query/integralExtras.query'
-import { useOpinionsAddMutation, useOpinionUpdateMutation } from '../../query/opinios.query'
+import { useOpinionsAddMutation, useOpinionsGetPdfQuery, useOpinionUpdateMutation } from '../../query/opinios.query'
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -20,6 +20,8 @@ import StepB from './StepB'
 import StepC from './StepC'
 import StepD from './StepD'
 import { Add } from '@mui/icons-material'
+import { useNavigate } from '@tanstack/react-router'
+import { toast } from 'react-toastify'
 
 interface TProps {
   opinion: TOpinion | null
@@ -33,6 +35,7 @@ type TFormInput = Omit<TOpinion, 'id'> & {
 
 export default function OpinionForm({ opinion, title }: TProps) {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const [selectedTab, setSelectedTab] = useState('a')
   const [isTemporary, setIsTemporary] = useState(opinion?.temporary || false)
   const [showTabD, setShowTabD] = useState(
@@ -40,7 +43,7 @@ export default function OpinionForm({ opinion, title }: TProps) {
   )
 
   const { mutate: createOpinion } = useOpinionsAddMutation()
-  const { mutate: updateOpinion } = useOpinionUpdateMutation()
+  const { mutate: updateOpinion, isPending: isUpdatingOpinion } = useOpinionUpdateMutation()
 
   const handleTabChange = (_event: React.SyntheticEvent, newValue: string) => {
     setSelectedTab(newValue)
@@ -61,22 +64,34 @@ export default function OpinionForm({ opinion, title }: TProps) {
     changeCarFiles?: boolean,
     remainingCarImageIds?: string[]
   }) => {
+    handleSubmit((data) => {
+      onSubmit({
+        ...data,
+        licenseFiles,
+        carFiles,
+        deleteLicenseFile,
+        changeLicenseFile,
+        changeCarFiles,
+        remainingCarImageIds,
+      })
+    })()
 
-    if (selectedTab === 'a') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
-      // setSelectedTab('b')
-    } else if (selectedTab === 'b') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
-      // handleSubmit(onSubmit)()
-      setSelectedTab('c')
-    } else if (selectedTab === 'c') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
-      // handleSubmit(onSubmit)()
-      setSelectedTab('d')
-    } else if (selectedTab === 'd') {
-      handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
-      // handleSubmit(onSubmit)()
-    }
+
+    // if (selectedTab === 'a') {
+    //   handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
+    //   // setSelectedTab('b')
+    // } else if (selectedTab === 'b') {
+    //   handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
+    //   // handleSubmit(onSubmit)()
+    //   setSelectedTab('c')
+    // } else if (selectedTab === 'c') {
+    //   handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
+    //   // handleSubmit(onSubmit)()
+    //   setSelectedTab('d')
+    // } else if (selectedTab === 'd') {
+    //   handleSubmit((data) => onSubmit({ ...data, licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }))()
+    //   // handleSubmit(onSubmit)()
+    // }
   }
 
   const { data: integralExtras } = useIntegralExtrasQuery()
@@ -170,6 +185,21 @@ export default function OpinionForm({ opinion, title }: TProps) {
 
     appraisers: opinion?.appraisers || [],
 
+    update1Visible: opinion?.update1Visible || true,
+    update1Date: opinion?.update1Date || '',
+    update1ExtraPrice: opinion?.update1ExtraPrice || undefined,
+    update1Price: opinion?.update1Price || undefined,
+
+    update2Visible: opinion?.update2Visible || true,
+    update2Date: opinion?.update2Date || '',
+    update2ExtraPrice: opinion?.update2ExtraPrice || undefined,
+    update2Price: opinion?.update2Price || undefined,
+
+    update3Visible: opinion?.update3Visible || true,
+    update3Date: opinion?.update3Date || '',
+    update3ExtraPrice: opinion?.update3ExtraPrice || undefined,
+    update3Price: opinion?.update3Price || undefined,
+
   }), [integralExtras, extras, protectives]);
 
   const schema = object()
@@ -205,7 +235,6 @@ export default function OpinionForm({ opinion, title }: TProps) {
     const selectedExtras = data.extras?.filter((item: any) => item.selected) || [];
     const selectedProtectives = data.protectives?.filter((item: any) => item.selected) || [];
 
-
     const finalData = {
       ...data,
       integralExtras: selectedIntegralExtras,
@@ -226,19 +255,33 @@ export default function OpinionForm({ opinion, title }: TProps) {
       finalData.carFiles = data.carFiles;
     }
 
-
     if (opinion?.id) {
-      // Обновление существующего opinion
-      // console.log('finalData UPDATE', { ...finalData, id: opinion.id })
-      updateOpinion({ ...finalData, id: opinion.id }, {
-        onSuccess: () => {
-
-        }
-      })
+      updateOpinion({ ...finalData, id: opinion.id })
     } else {
-      // Создание нового opinion
-      console.log('finalData CREATE', finalData)
-      // createOpinion(finalData)
+      createOpinion(finalData, {
+        onSuccess(data) {
+          navigate({ to: `/opinions/${data.id}` })
+        },
+      })
+    }
+  }
+
+  const { refetch: refetchPdf, isFetching: isDownloadingPdf } = useOpinionsGetPdfQuery(opinion?.id || '')
+
+  const downloadPdf = async () => {
+    if (methods.formState.isDirty) {
+      toast.warning(t('form_is_dirty', { ns: 'opinion' }))
+      // return
+    }
+    const result = await refetchPdf()
+    if (result.data) {
+      const url = window.URL.createObjectURL(result.data)
+      const link = document.createElement('a')
+      link.href = url
+      link.setAttribute('download', `Opinion_${opinion?.number}.pdf`)
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 
@@ -258,9 +301,13 @@ export default function OpinionForm({ opinion, title }: TProps) {
           </Typography>
         </Box>
         <Box>
-          <Button variant='contained' onClick={() => {
-            console.log('DOWNLOAD')
-          }}>
+          <Button
+            disabled={!opinion?.id}
+            loading={isDownloadingPdf}
+            variant='contained'
+            onClick={() => {
+              downloadPdf()
+            }}>
             {t('download', { ns: 'opinion' })}
           </Button>
         </Box>
@@ -308,16 +355,17 @@ export default function OpinionForm({ opinion, title }: TProps) {
                   opinion={opinion}
                   onStepComplete={({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }) => handleStepComplete({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds })}
                   setIsTemporary={setIsTemporary}
+                  isLoading={isUpdatingOpinion}
                 />
               </TabPanel>
               <TabPanel value="b" sx={{ p: 0 }}>
-                <StepB onStepComplete={handleStepComplete} />
+                <StepB onStepComplete={() => handleStepComplete({})} />
               </TabPanel>
               <TabPanel value="c" sx={{ p: 0 }}>
-                <StepC onStepComplete={handleStepComplete} />
+                <StepC onStepComplete={() => handleStepComplete({})} />
               </TabPanel>
               <TabPanel value="d" sx={{ p: 0 }}>
-                <StepD onStepComplete={handleStepComplete} />
+                <StepD onStepComplete={() => handleStepComplete({})} />
               </TabPanel>
             </form>
           </FormProvider>

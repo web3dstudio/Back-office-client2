@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
-import { useOpinionsQuery } from '../../../query/opinios.query';
+import { useOpinionsQuery, useOpinionsSendMutation } from '../../../query/opinios.query';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import type { OpinionsFilters, TOpinionList } from '../../../types';
@@ -27,10 +27,13 @@ function OpinionsPage() {
 
   const [paginationModel, setPaginationModel] = useState({
     page: 0,
-    pageSize: 10,
+    pageSize: 20,
   });
+
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('opinionsTable', {});
+  const [sendingOpinionId, setSendingOpinionId] = useState<string | null>(null)
+
 
   const [filtersDraft, setFiltersDraft] = useState<OpinionsFilters>({
     FromDate: '',
@@ -49,6 +52,8 @@ function OpinionsPage() {
   const [filters, setFilters] = useState<OpinionsFilters>(filtersDraft);
 
   const { data: opinions, isLoading } = useOpinionsQuery(paginationModel.page, filters, sortModel)
+
+  const { mutate: sendOpinion, isPending: isSendingOpinion } = useOpinionsSendMutation()
 
   const columns = [
     {
@@ -185,15 +190,17 @@ function OpinionsPage() {
         <AppActionButton type='edit' onClick={() => {
           navigate({ to: '/opinions/$id', params: { id: params.row.id } })
         }} />,
-        <AppActionButton type='send' onClick={() => {
-          // setSelected(() => params.row)
-          // setOpenConfirmDialog(true)
-        }} />
+        <AppActionButton
+          type='send'
+          onClick={() => {
+            setSendingOpinionId(params.row.id)
+            sendOpinion(params.row.id)
+          }}
+          loading={isSendingOpinion && sendingOpinionId === params.row.id}
+        />
       ],
     },
   ]
-
-  console.log(sortModel)
 
   return (<>
     <Grid container spacing={3} >
@@ -273,7 +280,7 @@ function OpinionsPage() {
             setPaginationModel(model)
           }}
           getRowId={(row) => row.id}
-          pageSizeOptions={[10]}
+          pageSizeOptions={[20]}
           sx={{
             '& .MuiDataGrid-row:nth-of-type(odd)': {
               backgroundColor: '#f5f5f5',

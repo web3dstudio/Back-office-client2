@@ -375,6 +375,13 @@ export type TSelectedOwner = {
   changePercentage: number;
 }
 
+export type TCarImage = {
+  id: string
+  carImageFileName: string
+  carImageDownloadUri: string
+  carImageOriginalFileName: string | null
+}
+
 export type TOpinion = {
   id: string
   isCorrection: boolean
@@ -468,13 +475,7 @@ export type TOpinion = {
 
   licenseImageName: string | null
   licenseImageDownloadUri: string | null
-  carImages: {
-    id: string
-    carImageFileName: string
-    carImageDownloadUri: string
-    carImageOriginalFileName: string | null
-  }[] | []
-
+  carImages: TCarImage[] | []
 }
 
 export type TCustomer = {
@@ -508,5 +509,32 @@ export type TCustomer = {
   allowedMonths: number | null
   imageDownloadUri: string | null
   imageUploadUri: string | null
+}
 
+export type TCustomerList = {
+  id: string
+  firstName: string
+  middleName: string
+  lastName: string
+  company: string
+  mobileNumber: string
+  email: string
+  city: string
+  street: string
+  houseNumber: string
+  zipCode: string
+  type: number
+  subscriptionValidity: string
+  dailyQueries: number
+  subscriptionExclusion: boolean
+}
+
+export type TCustomerListResponse = {
+  data: TCustomerList[]
+  totalRowsNumber: number
+  totalPagesNumber: number
+  currentPageNumber: number
+  rowsInPage: number
+  status: number
+  message: string | null
 }

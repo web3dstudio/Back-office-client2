@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { useFormContext } from "react-hook-form"
+import { Controller, useFormContext } from "react-hook-form"
 import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment } from "@mui/material"
 import { AppControlledDatePicker } from "../AppControlledDatePicker"
 import AppControlledTextField from "../AppControlledTextField"
@@ -9,7 +9,7 @@ interface TProps {
   onStepComplete: (stepData: any) => void
 }
 
-export default function StepC({ onStepComplete }: TProps) {
+export default function StepС({ onStepComplete }: TProps) {
   const { t } = useTranslation()
   const { control, formState } = useFormContext()
   const errors = formState.errors
@@ -19,12 +19,22 @@ export default function StepC({ onStepComplete }: TProps) {
     <Box sx={{ width: '100%' }}>
       <Grid container columns={12} columnSpacing={2} rowSpacing={1} sx={{ width: '100%' }}>
         <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+
           <FormControlLabel
             labelPlacement="bottom"
             control={
-              <Checkbox
+              <Controller
                 name="update2Visible"
-                defaultChecked={false}
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    {...field}
+                    checked={!!field.value}
+                    onChange={e => {
+                      field.onChange(e.target.checked)
+                    }}
+                  />
+                )}
               />
             }
             label={t('visible', { ns: 'opinion' })}
@@ -43,8 +53,8 @@ export default function StepC({ onStepComplete }: TProps) {
         <Grid size={4}>
           <AppControlledTextField
             name="update2ExtraPrice"
-            control={control}
             type="number"
+            control={control}
             errors={errors}
             label={t('xPrice', { ns: 'opinion' })}
             slotProps={{
@@ -60,8 +70,8 @@ export default function StepC({ onStepComplete }: TProps) {
         <Grid size={4}>
           <AppControlledTextField
             name="update2Price"
-            control={control}
             type="number"
+            control={control}
             errors={errors}
             label={t('updatePrice', { ns: 'opinion' })}
             slotProps={{
@@ -75,7 +85,7 @@ export default function StepC({ onStepComplete }: TProps) {
         </Grid>
 
         <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" color="primary" onClick={onStepComplete}>
+          <Button variant="contained" color="primary" onClick={onStepComplete}>
             {t('save', { ns: 'opinion' })}
           </Button>
         </Grid>

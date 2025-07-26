@@ -9,8 +9,10 @@ export function useOpinionsQuery(page: number, filters: Record<string, string>, 
   return useQuery({
     queryKey: ['opinions', page, filters, sortModel],
     queryFn: async (): Promise<TOpinionResponse> => {
+
       const params = new URLSearchParams({
         Page: String(page + 1),
+        PageSize: '20',
         ...Object.fromEntries(
           Object.entries(filters).filter(([_, v]) => v !== '')
         ),
@@ -50,13 +52,30 @@ export function useOpinionQuery(id: string): UseQueryResult<TOpinion, Error> {
   })
 }
 
-export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, Omit<TOpinion, 'id'>> {
+export function useOpinionsAddMutation(): UseMutationResult<TOpinion, Error, TOpinionWithFiles> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (newOpinion: Omit<TOpinion, 'id'>): Promise<TOpinion> => {
-      const response = await axiosAPI.post('/opinions', newOpinion, {
+    mutationFn: async (newOpinion: TOpinionWithFiles): Promise<TOpinion> => {
+      const formData = new FormData()
+
+      const { licenseFiles, carFiles, ...opinionData } = newOpinion;
+      formData.append('data', JSON.stringify(opinionData));
+
+      if (licenseFiles) {
+        licenseFiles.forEach(file => {
+          formData.append('licenseFiles', file)
+        })
+      }
+
+      if (carFiles) {
+        carFiles.forEach(file => {
+          formData.append('carFiles', file)
+        })
+      }
+
+      const response = await axiosAPI.post('/opinions', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -104,8 +123,6 @@ export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, T
         });
       }
 
-      console.log('formData carFiles', formData.get('carFiles'))
-
       const response = await axiosAPI.put(`/opinions/${updatedOpinion.id}`, formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
@@ -113,8 +130,8 @@ export function useOpinionUpdateMutation(): UseMutationResult<TOpinion, Error, T
       })
       return response.data
     },
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['opinion', data.id] })
+    onSuccess: (_data, updatedOpinion) => {
+      queryClient.invalidateQueries({ queryKey: ['opinion', updatedOpinion.id] })
       toast.success(t('opinion_updated_successfully'))
     },
     onError: (error) => {
@@ -141,5 +158,39 @@ export function useOpinionsDeleteMutation(): UseMutationResult<string, Error, st
       console.log('ERROR', error.message)
       toast.error(t('error_occurred') || 'Error!')
     },
+  })
+}
+
+export function useOpinionsSendMutation(): UseMutationResult<string, Error, string> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string): Promise<string> => {
+      await axiosAPI.post(`/opinions/${id}/send`)
+      return id
+    },
+    onSuccess: (_data) => {
+      queryClient.invalidateQueries({ queryKey: ['opinions'] })
+      toast.success(t('opinion_sent_successfully'))
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+
+
+export function useOpinionsGetPdfQuery(id: string): UseQueryResult<Blob, Error> {
+  return useQuery({
+    queryKey: ['opinions', 'pdf', id],
+    queryFn: async (): Promise<Blob> => {
+      const response = await axiosAPI.get(`/opinions/${id}/pdf`, {
+        responseType: 'blob',
+      })
+      return response.data
+    },
+    enabled: false,
   })
 }

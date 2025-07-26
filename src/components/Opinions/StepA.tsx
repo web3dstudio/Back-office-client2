@@ -33,12 +33,13 @@ interface TProps {
   opinion: TOpinion | null
   onStepComplete: ({ licenseFiles, carFiles, deleteLicenseFile, changeLicenseFile, changeCarFiles, remainingCarImageIds }: { licenseFiles?: File[], carFiles?: File[], deleteLicenseFile?: boolean, changeLicenseFile?: boolean, changeCarFiles?: boolean, remainingCarImageIds?: string[] }) => void
   setIsTemporary: (isTemporary: boolean) => void
+  isLoading: boolean
 }
 
 const currentYear = new Date().getFullYear();
 const years = Array.from({ length: currentYear - 1960 + 1 }, (_, i) => currentYear - i);
 
-export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProps) {
+export default function StepA({ opinion, onStepComplete, setIsTemporary, isLoading }: TProps) {
 
   const { t, i18n } = useTranslation()
   const theme = useTheme()
@@ -961,20 +962,23 @@ export default function StepA({ opinion, onStepComplete, setIsTemporary }: TProp
 
     <Grid container columns={12} columnSpacing={2} rowSpacing={0} sx={{ width: '100%' }}>
       <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <Button variant="contained" color="primary" onClick={() => {
-          // console.log('userDeletedLicenseFile', userDeletedLicenseFile)
-          // console.log('userChangedLicenseFile', userChangedLicenseFile)
-          onStepComplete({
-            licenseFiles: licenseFiles.length > 0 ? licenseFiles : undefined,
-            carFiles: carFiles.length > 0 ? carFiles : undefined,
-            deleteLicenseFile: userDeletedLicenseFile,
-            changeLicenseFile: userChangedLicenseFile,
-            changeCarFiles: userChangeCarFiles,
-            remainingCarImageIds: remainingCarImageIds,
-          })
-          setUserChangedLicenseFile(false)
-          setUserDeletedLicenseFile(false)
-        }}>
+        <Button
+          variant="contained"
+          color="primary"
+          loading={isLoading}
+          disabled={!formState.isValid}
+          onClick={() => {
+            onStepComplete({
+              licenseFiles: licenseFiles.length > 0 ? licenseFiles : undefined,
+              carFiles: carFiles.length > 0 ? carFiles : undefined,
+              deleteLicenseFile: userDeletedLicenseFile,
+              changeLicenseFile: userChangedLicenseFile,
+              changeCarFiles: userChangeCarFiles,
+              remainingCarImageIds: remainingCarImageIds,
+            })
+            setUserChangedLicenseFile(false)
+            setUserDeletedLicenseFile(false)
+          }}>
           {t('save', { ns: 'opinion' })}
         </Button>
       </Grid>

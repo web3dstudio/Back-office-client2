@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import { useFormContext } from "react-hook-form"
+import { Controller, useFormContext } from "react-hook-form"
 import { Box, Button, Checkbox, FormControlLabel, Grid, InputAdornment } from "@mui/material"
 import { AppControlledDatePicker } from "../AppControlledDatePicker"
 import AppControlledTextField from "../AppControlledTextField"
@@ -19,12 +19,22 @@ export default function StepB({ onStepComplete }: TProps) {
     <Box sx={{ width: '100%' }}>
       <Grid container columns={12} columnSpacing={2} rowSpacing={1} sx={{ width: '100%' }}>
         <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+
           <FormControlLabel
             labelPlacement="bottom"
             control={
-              <Checkbox
+              <Controller
                 name="update1Visible"
-                defaultChecked={false}
+                control={control}
+                render={({ field }) => (
+                  <Checkbox
+                    {...field}
+                    checked={!!field.value}
+                    onChange={e => {
+                      field.onChange(e.target.checked)
+                    }}
+                  />
+                )}
               />
             }
             label={t('visible', { ns: 'opinion' })}
@@ -75,7 +85,7 @@ export default function StepB({ onStepComplete }: TProps) {
         </Grid>
 
         <Grid size={12} sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button type="submit" variant="contained" color="primary" onClick={onStepComplete}>
+          <Button variant="contained" color="primary" onClick={onStepComplete}>
             {t('save', { ns: 'opinion' })}
           </Button>
         </Grid>
