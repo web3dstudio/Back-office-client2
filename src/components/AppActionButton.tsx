@@ -3,10 +3,12 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import ClearTwoToneIcon from '@mui/icons-material/ClearTwoTone';
 import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import ContentCopyTwoToneIcon from '@mui/icons-material/ContentCopyTwoTone';
+import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import DownloadTwoToneIcon from '@mui/icons-material/DownloadTwoTone';
 
 
 interface IProps {
-    type: 'edit' | 'delete' | 'send' | 'duplicate'
+    type: 'edit' | 'delete' | 'send' | 'duplicate' | 'view' | 'download'
     onClick: () => void
     sx?: SxProps
     loading?: boolean
@@ -21,7 +23,7 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                 width: '28px',
                 height: '28px',
                 backgroundColor:
-                    type === 'edit' || type === 'duplicate'
+                    type === 'edit' || type === 'duplicate' || type === 'view' || type === 'download'
                         ? 'primary.main'
                         : type === 'delete'
                             ? 'error.main'
@@ -55,6 +57,8 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                     {type === 'delete' && <ClearTwoToneIcon fontSize="small" />}
                     {type === 'send' && <SendTwoToneIcon fontSize="small" />}
                     {type === 'duplicate' && <ContentCopyTwoToneIcon fontSize="small" />}
+                    {type === 'view' && <VisibilityTwoToneIcon fontSize="small" />}
+                    {type === 'download' && <DownloadTwoToneIcon fontSize="small" />}
                 </>
             )}
         </Box>

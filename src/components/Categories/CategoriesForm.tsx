@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import type { TDriveType } from "../../types"
+import type { TCategory } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -8,21 +8,22 @@ import { useForm } from "react-hook-form"
 import AppControlledTextField from "../AppControlledTextField"
 
 interface Props {
-  data: TDriveType | null
+  data: TCategory | null
   isPending: boolean
   onCancel: () => void
-  onConfirm: (data: TDriveType) => void
+  onConfirm: (data: TCategory) => void
 }
 
-type TFormInput = Omit<TDriveType, 'id'>
+type TFormInput = Omit<TCategory, 'id'>
 
-function DriveTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
+function CategoriesForm({ data, isPending, onCancel, onConfirm }: Props) {
   const { t } = useTranslation()
 
   const schema = object()
     .shape({
       name: yup.string().required(t('form-field.required')),
-      code: yup.number().min(0).max(999).required(t('form-field.required')),
+      nameEn: yup.string().nullable(),
+      categoryID: yup.string().nullable(),
     })
     .required()
 
@@ -32,7 +33,8 @@ function DriveTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
     mode: 'onChange',
     defaultValues: {
       name: data?.name || '',
-      code: data?.code || 0,
+      nameEn: data?.nameEn || '',
+      categoryID: data?.categoryID || '',
     },
   })
 
@@ -53,21 +55,29 @@ function DriveTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
             name='name'
             control={control}
             errors={errors}
-            label={t('name', { ns: 'driveTypes' })}
-            placeholder={t('name', { ns: 'driveTypes' })}
+            label={t('name', { ns: 'categories' })}
+            placeholder={t('name', { ns: 'categories' })}
           />
         </Grid>
         <Grid size={12}>
           <AppControlledTextField
-            required
-            name='code'
+            name='nameEn'
             control={control}
             errors={errors}
-            label={t('code', { ns: 'driveTypes' })}
-            placeholder={t('code', { ns: 'driveTypes' })}
+            label={t('nameEn', { ns: 'categories' })}
+            placeholder={t('nameEn', { ns: 'categories' })}
           />
         </Grid>
-
+        <Grid size={12}>
+          <AppControlledTextField
+            type='text'
+            name='categoryID'
+            control={control}
+            errors={errors}
+            label={t('categoryID', { ns: 'categories' })}
+            placeholder={t('categoryID', { ns: 'categories' })}
+          />
+        </Grid>
 
         <Grid size={12}>
           <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
@@ -101,4 +111,4 @@ function DriveTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
   )
 }
 
-export default DriveTypesForm
+export default CategoriesForm

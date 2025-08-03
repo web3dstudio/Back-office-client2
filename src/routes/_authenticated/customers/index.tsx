@@ -1,33 +1,33 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
-import { useOpinionsQuery, useOpinionsSendMutation } from '../../../query/opinios.query';
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
-import type { OpinionsFilters, TCustomer, TCustomerList, TOpinionList } from '../../../types';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel, type GridColumnVisibilityModel } from '@mui/x-data-grid';
+import type { TCustomerList, TCustomerType } from '../../../types';
+import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel, } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
-import useCurrencyFormat from '../../../hooks/useCurrencyFormat';
-import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
-import CheckIcon from '@mui/icons-material/Check';
+import { Box, Button, Grid, Typography } from '@mui/material';
 import AppBackBtn from '../../../components/AppBackBtn';
-import OpinionsFilter from '../../../components/Opinions/OpinionsFilter';
 import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { useCustomersListQuery } from '../../../query/customers.query';
+import { useCustomersDeleteMutation, useCustomersListQuery } from '../../../query/customers.query';
 import CustomerFilter from '../../../components/Customers/CustomerFilter';
+import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog';
 
 export const Route = createFileRoute('/_authenticated/customers/')({
   component: CustomersPage,
 })
 
-type CustomersFilters = {
-  Name: string
+export type CustomersFilters = {
+  Fullname: string,
+  CustomerTypeIds: string[]
 }
 
 function CustomersPage() {
   const { t } = useTranslation()
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [selected, setSelected] = useState<TCustomerList | null>(null)
+
   const dateTimeFormat = useDateTimeFormat()
-  const { formatCurrency } = useCurrencyFormat()
   const navigate = useNavigate({ from: '/customers' })
 
 
@@ -38,27 +38,40 @@ function CustomersPage() {
 
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('customersTable', {});
-  const [sendingOpinionId, setSendingOpinionId] = useState<string | null>(null)
 
   const [filtersDraft, setFiltersDraft] = useState<CustomersFilters>({
-    Name: '',
-
+    Fullname: '',
+    CustomerTypeIds: [],
   });
   const [filters, setFilters] = useState<CustomersFilters>(filtersDraft);
 
-  const { data: customers, isLoading } = useCustomersListQuery(paginationModel.page, filters, sortModel)
+  const { data: customers, isLoading } = useCustomersListQuery(paginationModel.page, {
+    Fullname: filters.Fullname,
+    CustomerTypeIds: filters.CustomerTypeIds.join(',')
+  }, sortModel)
+  const { mutate: deleteCustomer, isPending: isDeleting } = useCustomersDeleteMutation()
+
+  const handleDeleteCustomer = () => {
+    if (selected?.id) {
+      deleteCustomer(selected?.id, {
+        onSuccess: () => {
+          setOpenConfirmDialog(false)
+          setSelected(null)
+        }
+      })
+    }
+  }
 
   const columns = [
     {
       field: 'fullname',
-      headerName: t('fullname', { ns: 'customers' }),
+      headerName: t('fullName', { ns: 'customers' }),
       editable: false,
       hideable: false,
       type: 'string',
       flex: 1,
       valueGetter: (_value: any, row: TCustomerList) => row.firstName + ' ' + row.middleName + ' ' + row.lastName,
     },
-
     {
       field: 'company',
       headerName: t('company', { ns: 'customers' }),
@@ -69,7 +82,7 @@ function CustomersPage() {
     },
     {
       field: 'mobileNumber',
-      headerName: t('mobileNumber', { ns: 'customers' }),
+      headerName: t('mobile', { ns: 'customers' }),
       editable: false,
       hideable: true,
       type: 'string',
@@ -99,11 +112,11 @@ function CustomersPage() {
       hideable: true,
       type: 'string',
       flex: 1,
-      valueGetter: (_value: any, row: TCustomerList) => row.type,
+      valueGetter: (_value: any, row: TCustomerList) => row.customerTypes.map((type: TCustomerType) => type.name).join(', '),
     },
     {
       field: 'subscriptionValidity',
-      headerName: t('subscriptionValidity', { ns: 'customers' }),
+      headerName: t('subValidity', { ns: 'customers' }),
       editable: false,
       hideable: true,
       type: 'string',
@@ -112,28 +125,33 @@ function CustomersPage() {
     },
     {
       field: 'dailyQueries',
-      headerName: t('dailyQueries', { ns: 'customers' }),
+      headerName: t('queries', { ns: 'customers' }),
       editable: false,
       hideable: true,
       type: 'string',
       flex: 1,
     },
-
     {
       field: 'actions',
       type: 'actions',
       headerName: 'Actions',
-      width: 100,
+      width: 140,
       hideable: false,
       getActions: (params: GridRenderCellParams) => [
+        <AppActionButton type='edit' onClick={() => {
+          navigate({ to: '/customers/$id', params: { id: params.row.id } })
+        }} />,
         <AppActionButton type='duplicate' onClick={() => {
-          // navigate({ to: '/customers/$id', params: { id: params.row.id } })
+          navigate({
+            to: '/customers/new',
+            search: { duplicateId: params.row.id }
+          })
         }} />,
         <AppActionButton
           type='delete'
           onClick={() => {
-            // setSendingOpinionId(params.row.id)
-            // sendOpinion(params.row.id)
+            setSelected(() => params.row)
+            setOpenConfirmDialog(true)
           }}
         />
       ],
@@ -228,5 +246,13 @@ function CustomersPage() {
         />
       </StyledPaper>
     </Grid>
+
+    <AppConfirmDialog
+      open={openConfirmDialog}
+      onClose={() => setOpenConfirmDialog(false)}
+      onSubmit={handleDeleteCustomer}
+      title={t('modals.approveDelete', { ns: 'common' })}
+      isPending={isDeleting}
+    />
   </>)
 }

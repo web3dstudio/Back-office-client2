@@ -22,6 +22,7 @@ interface ControlledTextFieldProps {
   slotProps?: TextFieldProps['slotProps']
   multiline?: boolean
   minRows?: number
+  disabled?: boolean
 }
 
 const ControlledTextField = ({
@@ -36,6 +37,7 @@ const ControlledTextField = ({
   slotProps,
   multiline = false,
   minRows = 1,
+  disabled = false,
 }: ControlledTextFieldProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -50,6 +52,7 @@ const ControlledTextField = ({
   return (
     <Controller
       name={name}
+      disabled={disabled}
       control={control}
       render={({ field }) => (
         <FormControl
@@ -69,6 +72,7 @@ const ControlledTextField = ({
             type={type}
             multiline={multiline}
             minRows={minRows}
+            disabled={disabled}
             {...field}
             id={name}
             error={!!errorMessage}

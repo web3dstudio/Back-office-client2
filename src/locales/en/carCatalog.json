@@ -9,6 +9,7 @@
   "vol": "Volume",
   "year": "Year",
   "model": "Model",
+  "modelCode": "Model Code",
   "manufacturer": "Manufacturer",
   "1": "Manually",
   "2": "Automatically",

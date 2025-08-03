@@ -24,6 +24,7 @@ interface AppControlledCheckboxesTagsProps<T> {
   required?: boolean;
   sx?: SxProps;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export default function AppControlledCheckboxesTags<T = any>({
@@ -38,6 +39,7 @@ export default function AppControlledCheckboxesTags<T = any>({
   required = false,
   sx,
   loading = false,
+  disabled = false,
 }: AppControlledCheckboxesTagsProps<T>) {
   const { t } = useTranslation();
   const theme = useTheme();
@@ -57,6 +59,7 @@ export default function AppControlledCheckboxesTags<T = any>({
       control={control}
       render={({ field }) => (
         <Autocomplete
+          disabled={disabled}
           loading={loading}
           multiple
           disableCloseOnSelect
@@ -69,8 +72,9 @@ export default function AppControlledCheckboxesTags<T = any>({
           renderOption={(props, option, { selected }) => {
             const { key, ...optionProps } = props;
             return (
-              <li key={key} {...optionProps}>
+              <li key={(option as any).id || key} {...optionProps}>
                 <Checkbox
+                  // key={(option as any).id || key}
                   icon={icon}
                   checkedIcon={checkedIcon}
                   style={{ marginRight: 8 }}
@@ -86,7 +90,18 @@ export default function AppControlledCheckboxesTags<T = any>({
               variant="standard"
               size="medium"
               error={!!errorMessage}
-              sx={{ ...sx }}
+              sx={{
+                // maxHeight: '40px',
+                '& .MuiAutocomplete-inputRoot': {
+                  // maxHeight: '40px',
+                  overflow: 'hidden'
+                },
+                '& .MuiChip-root': {
+                  height: '22px',
+                  fontSize: '12px'
+                },
+                ...sx
+              }}
             >
               <InputLabel
                 shrink
@@ -114,9 +129,10 @@ export default function AppControlledCheckboxesTags<T = any>({
                 placeholder={placeholder}
                 error={!!errorMessage}
                 helperText={errorMessage}
-                size="medium"
+                size="small"
                 variant="outlined"
                 sx={{
+
                   '& .MuiOutlinedInput-root': {
                     borderRadius: '20px',
                     '&.Mui-focused fieldset': {
@@ -141,9 +157,9 @@ export default function AppControlledCheckboxesTags<T = any>({
                 }}
               />
               {!errorMessage && <FormHelperText margin="dense"> </FormHelperText>}
-              {errorMessage && (
+              {/* {errorMessage && (
                 <FormHelperText margin="dense">{errorMessage}</FormHelperText>
-              )}
+              )} */}
             </FormControl>
           )}
           sx={{ ...sx }}

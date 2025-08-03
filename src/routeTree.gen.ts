@@ -52,7 +52,9 @@ import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_aut
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
 import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
+import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers/$id'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
+import { Route as AuthenticatedPriceListAdvertisementsIndexRouteImport } from './routes/_authenticated/price-list/advertisements/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 
 const PublicRoute = PublicRouteImport.update({
@@ -304,10 +306,22 @@ const AuthenticatedCustomersNewRoute =
     path: '/customers/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCustomersIdRoute =
+  AuthenticatedCustomersIdRouteImport.update({
+    id: '/customers/$id',
+    path: '/customers/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCatalogNewCarRoute =
   AuthenticatedCatalogNewCarRouteImport.update({
     id: '/catalog/new-car',
     path: '/catalog/new-car',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedPriceListAdvertisementsIndexRoute =
+  AuthenticatedPriceListAdvertisementsIndexRouteImport.update({
+    id: '/price-list/advertisements/',
+    path: '/price-list/advertisements/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedManufacturersEditIdRoute =
@@ -320,6 +334,7 @@ const AuthenticatedManufacturersEditIdRoute =
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
@@ -361,10 +376,12 @@ export interface FileRoutesByFullPath {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
@@ -406,6 +423,7 @@ export interface FileRoutesByTo {
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -413,6 +431,7 @@ export interface FileRoutesById {
   '/_public': typeof PublicRouteWithChildren
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
   '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
@@ -454,12 +473,14 @@ export interface FileRoutesById {
   '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/_authenticated/price-list/advertisements/': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/catalog/new-car'
+    | '/customers/$id'
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
@@ -501,10 +522,12 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
+    | '/price-list/advertisements'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/catalog/new-car'
+    | '/customers/$id'
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
@@ -546,12 +569,14 @@ export interface FileRouteTypes {
     | '/values'
     | '/login'
     | '/manufacturers/edit/$id'
+    | '/price-list/advertisements'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_public'
     | '/_authenticated/'
     | '/_authenticated/catalog/new-car'
+    | '/_authenticated/customers/$id'
     | '/_authenticated/customers/new'
     | '/_authenticated/opinions/$id'
     | '/_authenticated/opinions/new'
@@ -593,6 +618,7 @@ export interface FileRouteTypes {
     | '/_authenticated/values/'
     | '/_public/login/'
     | '/_authenticated/manufacturers/edit/$id'
+    | '/_authenticated/price-list/advertisements/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -903,11 +929,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomersNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/customers/$id': {
+      id: '/_authenticated/customers/$id'
+      path: '/customers/$id'
+      fullPath: '/customers/$id'
+      preLoaderRoute: typeof AuthenticatedCustomersIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/catalog/new-car': {
       id: '/_authenticated/catalog/new-car'
       path: '/catalog/new-car'
       fullPath: '/catalog/new-car'
       preLoaderRoute: typeof AuthenticatedCatalogNewCarRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/price-list/advertisements/': {
+      id: '/_authenticated/price-list/advertisements/'
+      path: '/price-list/advertisements'
+      fullPath: '/price-list/advertisements'
+      preLoaderRoute: typeof AuthenticatedPriceListAdvertisementsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/manufacturers/edit/$id': {
@@ -923,6 +963,7 @@ declare module '@tanstack/react-router' {
 interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
+  AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
   AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
@@ -963,11 +1004,13 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
+  AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
+  AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
   AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
@@ -1012,6 +1055,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
+  AuthenticatedPriceListAdvertisementsIndexRoute:
+    AuthenticatedPriceListAdvertisementsIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

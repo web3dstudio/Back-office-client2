@@ -76,6 +76,15 @@ export default function MainNavTabItemSubmenu({
 
         <MenuItem
           onClick={() => {
+            navigate({ to: '/categories' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.categories', { ns: 'common' })}
+        </MenuItem>
+
+        <MenuItem
+          onClick={() => {
             navigate({ to: '/manufacturers' })
             handleClose()
           }}

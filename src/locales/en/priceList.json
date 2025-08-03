@@ -4,7 +4,7 @@
   "month": "Month",
   "type": "Car Type",
   "advertize": "Advertize",
-  "crateNew": "Crate New",
+  "crateNew": "Create New",
   "date": "Date",
   "carTypes": "Car Types",
   "view": "View",
@@ -12,5 +12,8 @@
   "delete": "Delete",
   "comment": "Comment",
   "preview": "Preview",
-  "priceListType": "Price List Type"
+  "priceListType": "Price List Type",
+  "priceListTitle": "Price List Title",
+  "upToYearOfManufacture": "Up To Year Of Manufacture",
+  "yearOfFirstRegistration": "Year Of First Registration"
 }

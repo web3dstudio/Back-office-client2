@@ -153,7 +153,7 @@ export type TCarType = {
   code?: number | null
   iconId?: string | null
   licenseType?: string | null
-  priceListType: TPriceListType | null
+  priceListType: 1 | 2 | null
   icon?: TIcon | null
 }
 
@@ -509,6 +509,7 @@ export type TCustomer = {
   allowedMonths: number | null
   imageDownloadUri: string | null
   imageUploadUri: string | null
+  customerTypes: TCustomerType[]
 }
 
 export type TCustomerList = {
@@ -527,10 +528,88 @@ export type TCustomerList = {
   subscriptionValidity: string
   dailyQueries: number
   subscriptionExclusion: boolean
+  customerTypes: TCustomerType[]
 }
 
 export type TCustomerListResponse = {
   data: TCustomerList[]
+  totalRowsNumber: number
+  totalPagesNumber: number
+  currentPageNumber: number
+  rowsInPage: number
+  status: number
+  message: string | null
+}
+
+export type TCustomerType = {
+  id: string
+  name: string
+  nameEn: string | null
+  value: number
+}
+
+export type TPriceList = {
+  date: string
+  month: number
+  year: number
+  comment: string
+  upToYearOfManufacture: number
+  yearOfFirstRegistration: number
+  priceListType: number
+  carTypes: TCarType[]
+  id: string
+}
+
+export type TPriceListResponse = {
+  data: TPriceList[]
+  totalRowsNumber: number
+  totalPagesNumber: number
+  currentPageNumber: number
+  rowsInPage: number
+  status: number
+  message: string | null
+}
+
+export type TCategory = {
+  id: string
+  name: string
+  nameEn: string | null
+  categoryID: string
+}
+
+export type TCar = {
+  id: string
+  modelId: string
+  modelCode: string
+  modelName: string
+  modelFinishing: string
+  modelPriority: number
+  seriesPriority: number
+  manufacturerId: string
+  manufacturName: string
+  fromYear: number
+  toYear: number
+  volume: number
+  gearbox: string
+  carTypeId: string
+  categoryId: string
+  countryId: string
+  count: number
+}
+
+export type TCarsList = {
+  id: string
+  model: string
+  manufacturer: string
+  modelCode: string
+  fromYear: number
+  toYear: number
+  volume: number
+  gearbox: string | null
+}
+
+export type TCarResponse = {
+  data: TCarsList[]
   totalRowsNumber: number
   totalPagesNumber: number
   currentPageNumber: number

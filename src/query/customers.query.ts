@@ -51,13 +51,33 @@ export function useCustomersListQuery(page: number, filters: Record<string, stri
   })
 }
 
-export function useCustomersAddMutation(): UseMutationResult<TCustomer, Error, Omit<TCustomer, 'id'>> {
+export function useGetCustomerQuery(id: string): UseQueryResult<TCustomer, Error> {
+  return useQuery({
+    queryKey: ['customers', id],
+    queryFn: async (): Promise<TCustomer> => {
+      const response = await axiosAPI.get(`/customers/${id}`)
+      return response.data
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    retry: 3,
+    enabled: !!id,
+  })
+}
+
+export function useCustomersAddMutation(): UseMutationResult<TCustomer, Error, FormData> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (newCustomer: Omit<TCustomer, 'id'>): Promise<TCustomer> => {
-      const response = await axiosAPI.post('/customers', newCustomer)
+    mutationFn: async (formData: FormData): Promise<TCustomer> => {
+      const response = await axiosAPI.post('/customers', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data
     },
     onSuccess: (_data) => {
@@ -71,13 +91,18 @@ export function useCustomersAddMutation(): UseMutationResult<TCustomer, Error, O
   })
 }
 
-export function useCustomersUpdateMutation(): UseMutationResult<TCustomer, Error, TCustomer> {
+export function useCustomersUpdateMutation(): UseMutationResult<TCustomer, Error, FormData> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (updatedCustomer: TCustomer): Promise<TCustomer> => {
-      const response = await axiosAPI.put(`/customers/${updatedCustomer.id}`, updatedCustomer)
+    mutationFn: async (formData: FormData): Promise<TCustomer> => {
+      const id = formData.get('id') as string
+      const response = await axiosAPI.put(`/customers/${id}`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data
     },
     onSuccess: (_data) => {

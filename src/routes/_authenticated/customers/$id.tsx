@@ -1,26 +1,24 @@
-import { createFileRoute, useLocation } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
 import { Box, Grid, Typography } from '@mui/material'
 import CustomerForm from '../../../components/Customers/CustomerForm'
 import StyledPaper from '../../../components/StyledPaper'
 import { useGetCustomerQuery } from '../../../query/customers.query'
+import AppLoading from '../../../components/AppLoading'
 
 
-export const Route = createFileRoute('/_authenticated/customers/new')({
-  component: NewCustomerPage,
+export const Route = createFileRoute('/_authenticated/customers/$id')({
+  component: EditCustomerPage,
 })
 
-
-function NewCustomerPage() {
+function EditCustomerPage() {
   const { t } = useTranslation()
-  const location = useLocation()
-  const duplicateId = new URLSearchParams(location.search).get('duplicateId')
-  const { data: customerData, isLoading } = useGetCustomerQuery(duplicateId || '')
+  const { id } = Route.useParams()
 
-  console.log('duplicateId', duplicateId)
-  console.log('customerData', customerData)
-  console.log('isLoading', isLoading)
+  const { data: customer, isLoading } = useGetCustomerQuery(id)
+
+  if (isLoading) return <AppLoading />
 
   return (
     <Grid container spacing={3}>
@@ -37,7 +35,7 @@ function NewCustomerPage() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
-            {t('newTitle', { ns: 'customer' })}
+            {t('editTitle', { ns: 'customer' })} {customer?.firstName} {customer?.lastName}
           </Typography>
         </Box>
         <Box>
@@ -53,17 +51,9 @@ function NewCustomerPage() {
         display: 'flex',
         gap: 2,
       }}>
-        {duplicateId && customerData && !isLoading &&
-          <CustomerForm
-            customer={{ ...customerData, id: '' }}
-          />
-        }
-        {!duplicateId &&
-          <CustomerForm
-            customer={null}
-          />
-        }
-
+        <CustomerForm
+          customer={customer || null}
+        />
       </StyledPaper>
     </Grid>
   )

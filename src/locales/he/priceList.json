@@ -12,5 +12,8 @@
   "priceListType": "סוג מחירון",
   "download": "הורדה",
   "delete": "מחיקה",
-  "preview": "צפייה"
+  "preview": "צפייה",
+  "priceListTitle": "כותרת מחירון",
+  "upToYearOfManufacture": "עד שנת יצור",
+  "yearOfFirstRegistration": "שנת רישוי"
 }

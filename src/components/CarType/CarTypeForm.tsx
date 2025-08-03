@@ -133,6 +133,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
             errors={errors}
             label={t('priceListType', { ns: 'carTypes' })}
             placeholder={t('priceListType', { ns: 'carTypes' })}
+            getOptionLabel={(option) => option.name}
           />
         </Grid>
 
