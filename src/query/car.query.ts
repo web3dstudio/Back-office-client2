@@ -32,7 +32,7 @@ export function useCarsQuery(page: number, filters: Record<string, string>, sort
     refetchOnMount: false,
     refetchOnReconnect: false,
     staleTime: Infinity,
-    placeholderData: keepPreviousData, // ВАЖНО!!! НЕ ТРОГАТЬ!!!
+    // placeholderData: keepPreviousData, // ВАЖНО!!! НЕ ТРОГАТЬ!!!
     retry: 3,
   })
 }
