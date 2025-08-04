@@ -21,7 +21,7 @@ function CatalogPage() {
   const { t } = useTranslation()
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TCarsList | null>(null)
-  const dateTimeFormat = useDateTimeFormat()
+
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const [sorting, setSorting] = useState<SortingState>([])
@@ -29,6 +29,11 @@ function CatalogPage() {
 
   const handlePaginationChange = (newPagination: PaginationState) => {
     setPagination(newPagination)
+  }
+
+  const handleSortingChange = (newSorting: SortingState) => {
+    setSorting(newSorting)
+    setPagination(prev => ({ ...prev, pageIndex: 0 })) // сброс на первую страницу
   }
 
   const { data: cars, isLoading } = useCarsQuery(pagination.pageIndex, {}, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
@@ -153,7 +158,7 @@ function CatalogPage() {
           expandedRows={expandedRows}
           setExpandedRows={setExpandedRows}
           sorting={sorting}
-          onSortingChange={setSorting}
+          onSortingChange={handleSortingChange}
           pagination={pagination}
           onPaginationChange={handlePaginationChange}
           totalPages={cars?.totalPagesNumber ?? 1}

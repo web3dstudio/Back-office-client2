@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, flexRender } from '@tanstack/react-table'
-import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper, Button, Checkbox, IconButton, Pagination } from '@mui/material'
-import { ArrowUpward, ArrowDownward } from '@mui/icons-material'
+import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper, Button, Checkbox, IconButton, Pagination, CircularProgress, Divider, TextField, List, ListItem, ListItemIcon, ListItemText, Menu, FormGroup, FormControlLabel } from '@mui/material'
+import { ArrowUpward, ArrowDownward, ViewColumn, Search } from '@mui/icons-material'
+
 
 interface AppDataTableProps<T> {
   data: T[]
@@ -59,23 +60,16 @@ export default function AppDataTable<T>({
   }, [columnVisibility, LOCAL_STORAGE_KEY]);
 
 
-  const [showColumnsDropdown, setShowColumnsDropdown] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [searchValue, setSearchValue] = useState('');
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-  // Закрытие по клику вне меню
-  useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setShowColumnsDropdown(false);
-      }
-    }
-    if (showColumnsDropdown) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showColumnsDropdown]);
+  const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
 
   const table = useReactTable({
     data: data ?? [],
@@ -98,52 +92,96 @@ export default function AppDataTable<T>({
   })
 
   if (isLoading) {
-    return <Typography>Loading...</Typography>
+    return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', flexGrow: 1 }}>
+      <CircularProgress />
+    </Box>
   }
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2, position: 'relative' }}>
-        <Button
-          variant="outlined"
+      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', marginBottom: 2, position: 'relative', }}>
+        <TextField
           size="small"
-          onClick={() => setShowColumnsDropdown((v) => !v)}
+          placeholder="Search..."
+          value={searchValue}
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{
+            startAdornment: <Search sx={{ fontSize: 16, marginRight: 1, color: 'text.secondary' }} />
+          }}
+          sx={{ minWidth: 200 }}
+        />
+        <Divider orientation="vertical" flexItem />
+        <IconButton
+          size="small"
+          onClick={handleMenuOpen}
           sx={{ marginBottom: 1 }}
         >
-          Columns
-        </Button>
-        {showColumnsDropdown && (
-          <Box
-            ref={dropdownRef}
-            sx={{
-              position: 'absolute',
-              right: 0,
-              top: '100%',
-              zIndex: 10,
-              background: '#fff',
-              border: '1px solid #ccc',
-              borderRadius: 1,
-              padding: 1,
-              minWidth: 160,
-              boxShadow: '0 2px 8px rgba(0,0,0,0.15)'
-            }}
-          >
-            {table.getAllLeafColumns().map(column => (
-              <Box key={column.id} sx={{ display: 'block', marginBottom: 0.5 }}>
-                <Checkbox
-                  checked={column.getIsVisible()}
-                  onChange={column.getToggleVisibilityHandler()}
-                  size="small"
+          <ViewColumn />
+        </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          slotProps={{
+            paper: {
+              sx: {
+                minWidth: 300,
+                padding: 0
+                // maxHeight: 300
+              }
+            }
+          }}
+        >
+          <Box sx={{ maxHeight: 300, overflow: 'auto' }}>
+            <FormGroup sx={{ px: 2 }}>
+              {table.getAllLeafColumns().map(column => (
+                <FormControlLabel
+                  key={column.id}
+                  control={
+                    <Checkbox
+                      checked={column.getIsVisible()}
+                      onChange={column.getToggleVisibilityHandler()}
+                      size="medium"
+                    />
+                  }
+                  label={typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
+                  sx={{ marginBottom: 0 }}
+                  slotProps={{
+                    typography: { variant: 'body2' }
+                  }}
                 />
-                <Typography variant="body2" component="span">
-                  {typeof column.columnDef.header === 'string' ? column.columnDef.header : column.id}
-                </Typography>
-              </Box>
-            ))}
+              ))}
+            </FormGroup>
           </Box>
-        )}
+          <Divider />
+          <Box sx={{ px: 2 }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={table.getAllLeafColumns().every(column => column.getIsVisible())}
+                  indeterminate={!table.getAllLeafColumns().every(column => column.getIsVisible()) && table.getAllLeafColumns().some(column => column.getIsVisible())}
+                  onChange={(e) => {
+                    if (e.target.checked) {
+                      table.toggleAllColumnsVisible(true)
+                    } else {
+                      table.toggleAllColumnsVisible(false)
+                    }
+                  }}
+                  size="medium"
+                />
+              }
+              label="Show/Hide All"
+              sx={{ marginBottom: 0, whiteSpace: 'nowrap' }}
+              slotProps={{
+                typography: { variant: 'body2' }
+              }}
+            />
+          </Box>
+        </Menu>
       </Box>
-      <TableContainer component={Paper} sx={{ width: '100%' }}>
+      <TableContainer component={Box} sx={{
+        width: '100%'
+      }}>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map(headerGroup => (
