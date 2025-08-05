@@ -1,16 +1,16 @@
-import { createFileRoute } from '@tanstack/react-router'
-import { useCarsQuery } from '../../../query/car.query'
-import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { useCarsQuery, useCarYearsQuery } from '../../../query/car.query'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect, useMemo } from 'react'
-import type { TCarsList, } from '../../../types'
+import { useState, useMemo, useEffect } from 'react'
+import type { TCarsList, TCarYears } from '../../../types'
 import { type ColumnDef, type SortingState, type PaginationState } from '@tanstack/react-table'
 import AppActionButton from '../../../components/AppActionButton'
-import { Box, Typography } from '@mui/material'
+import { Box, TableCell, TableRow, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
 import AppDataTable from '../../../components/AppDataTable'
+import AppLoading from '../../../components/AppLoading'
 
 
 export const Route = createFileRoute('/_authenticated/catalog/')({
@@ -19,13 +19,13 @@ export const Route = createFileRoute('/_authenticated/catalog/')({
 
 function CatalogPage() {
   const { t } = useTranslation()
-  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-  const [selected, setSelected] = useState<TCarsList | null>(null)
-
+  const navigate = useNavigate()
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
   const [sorting, setSorting] = useState<SortingState>([])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
+  const [selectedModelId, setSelectedModelId] = useState<string | undefined>()
+  const [carYearsData, setCarYearsData] = useState<Record<string, TCarYears[]>>({})
 
   const handlePaginationChange = (newPagination: PaginationState) => {
     setPagination(newPagination)
@@ -37,12 +37,41 @@ function CatalogPage() {
   }
 
   const { data: cars, isLoading } = useCarsQuery(pagination.pageIndex, {}, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
+  const { data: carYears } = useCarYearsQuery(selectedModelId || '')
 
+  // Сохраняем данные в состояние при получении
+  useEffect(() => {
+    if (carYears && selectedModelId) {
+      setCarYearsData(prev => ({
+        ...prev,
+        [selectedModelId]: carYears
+      }))
+    }
+  }, [carYears, selectedModelId])
 
   const columns: ColumnDef<TCarsList>[] = useMemo(() => [
     {
       accessorKey: 'manufacturer',
+      accessorFn: (row) => row.manufacturerName,
       header: t('manufacturer', { ns: 'carCatalog' }),
+      enableSorting: true,
+      size: 200,
+      minSize: 150,
+      maxSize: 300,
+    },
+    {
+      accessorKey: 'series',
+      accessorFn: (row) => row.seriesName,
+      header: t('series', { ns: 'carCatalog' }),
+      enableSorting: true,
+      size: 200,
+      minSize: 150,
+      maxSize: 300,
+    },
+    {
+      accessorKey: 'model',
+      accessorFn: (row) => row.modelName,
+      header: t('model', { ns: 'carCatalog' }),
       enableSorting: true,
     },
     {
@@ -50,15 +79,12 @@ function CatalogPage() {
       header: t('modelCode', { ns: 'carCatalog' }),
       enableSorting: true,
     },
-    {
-      accessorKey: 'model',
-      header: t('model', { ns: 'carCatalog' }),
-      enableSorting: true,
-    },
+
     {
       accessorKey: 'year',
       header: t('year', { ns: 'carCatalog' }),
       enableSorting: true,
+      enableHiding: false,
       cell: ({ row }) => {
         const car = row.original
         return car.fromYear === car.toYear ? car.fromYear.toString() : `${car.fromYear} - ${car.toYear}`
@@ -77,20 +103,51 @@ function CatalogPage() {
     {
       id: 'actions',
       header: 'Actions',
+      size: 100,
+      minSize: 50,
+      maxSize: 100,
       enableSorting: false,
-      cell: ({ row }) => (
-        <AppActionButton
-          type='view'
-          onClick={() => {
-            const id = row.original.id.toString()
-            if (expandedRows.has(id)) {
-              setExpandedRows(prev => new Set([...prev].filter(rowId => rowId !== id)))
-            } else {
-              setExpandedRows(prev => new Set([...prev, id]))
-            }
-          }}
-        />
-      ),
+      enableHiding: false,
+      cell: ({ row }) => {
+        const count = row.original.count || 0
+        if (count > 1) {
+          const isExpanded = expandedRows.has(row.original.id.toString())
+          return (
+            <AppActionButton
+              type={isExpanded ? 'remove' : 'add'}
+              onClick={() => {
+                const id = row.original.id.toString()
+                setSelectedModelId(row.original.modelId)
+
+                if (expandedRows.has(id)) {
+                  setExpandedRows(prev => new Set([...prev].filter(rowId => rowId !== id)))
+                } else {
+                  setExpandedRows(prev => new Set([...prev, id]))
+                }
+              }}
+            />
+          )
+        } else {
+          return (
+            <Box display='flex' gap={1} >
+              <AppActionButton
+                type='edit'
+                onClick={() => {
+                  // Логика редактирования
+                  console.log('Edit car:', row.original.id)
+                }}
+              />
+              <AppActionButton
+                type='duplicate'
+                onClick={() => {
+                  // Логика дублирования
+                  console.log('Duplicate car:', row.original.id)
+                }}
+              />
+            </Box>
+          )
+        }
+      },
     },
   ], [t, expandedRows, setExpandedRows])
 
@@ -164,6 +221,54 @@ function CatalogPage() {
           totalPages={cars?.totalPagesNumber ?? 1}
           currentPage={cars?.currentPageNumber ?? pagination.pageIndex + 1}
           manualPagination={true}
+          renderSubComponent={({ row, table }) => {
+            const modelYears = carYearsData[row.modelId]
+            if (modelYears) {
+              return (
+                <>
+                  {modelYears.map((year: any, index: number) => (
+                    <TableRow key={index}>
+                      {table.getVisibleLeafColumns().map((column: any) => {
+                        if ((column as any).accessorKey === 'year' || column.id === 'year') {
+                          return (
+                            <TableCell key={column.id} sx={{ backgroundColor: '#f8f9fa' }}>
+                              {year.year}
+                            </TableCell>
+                          )
+                        } else if (column.id === 'actions') {
+                          return (
+                            <TableCell key={column.id} sx={{ backgroundColor: '#f8f9fa' }}>
+                              <Box sx={{ display: 'flex', gap: 1 }}>
+                                <AppActionButton
+                                  type='edit'
+                                  onClick={() => {
+                                    navigate({ to: '/catalog/$id', params: { id: year.carId } })
+                                  }}
+                                />
+                                <AppActionButton type='duplicate' onClick={() => { console.log('Duplicate car:', year.carId) }} />
+                              </Box>
+                            </TableCell>
+                          )
+                        } else {
+                          return (
+                            <TableCell key={column.id} sx={{ backgroundColor: '#f8f9fa' }}>
+                            </TableCell>
+                          )
+                        }
+                      })}
+                    </TableRow>
+                  ))}
+                </>
+              )
+            }
+            return (
+              <TableRow>
+                <TableCell colSpan={columns.length}>
+                  <AppLoading />
+                </TableCell>
+              </TableRow>
+            )
+          }}
         />
       </StyledPaper>
     </Grid>

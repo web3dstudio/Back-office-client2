@@ -579,33 +579,31 @@ export type TCategory = {
 
 export type TCar = {
   id: string
-  modelId: string
-  modelCode: string
-  modelName: string
-  modelFinishing: string
-  modelPriority: number
-  seriesPriority: number
-  manufacturerId: string
-  manufacturName: string
-  fromYear: number
-  toYear: number
-  volume: number
-  gearbox: string
-  carTypeId: string
-  categoryId: string
-  countryId: string
-  count: number
+  carType: TCarType | null
+  category: TCategory | null
+  model: TModel | null
+  code: string | null
+  details: string | null
+  manufacturerYear: number | null
+  extraPrice: number | null
+  integralExtras: TIntegralExtra[]
+  extras: TExtra[]
+  upgradePackages: TUpgradePackage[]
+  servicePackages: TServicePackage[]
 }
 
 export type TCarsList = {
   id: string
-  model: string
-  manufacturer: string
+  modelName: string
+  modelId: string
+  seriesName: string
+  manufacturerName: string
   modelCode: string
   fromYear: number
   toYear: number
   volume: number
   gearbox: string | null
+  count: number
 }
 
 export type TCarResponse = {
@@ -617,3 +615,9 @@ export type TCarResponse = {
   status: number
   message: string | null
 }
+
+export type TCarYears = {
+  carId: string
+  year: number
+}
+

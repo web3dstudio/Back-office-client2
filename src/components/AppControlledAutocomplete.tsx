@@ -27,6 +27,7 @@ interface ControlledAutocompleteProps<T> {
   sx?: SxProps
   groupBy?: (option: T) => string
   loading?: boolean
+  onUserChange?: (value: T | null) => void
 }
 
 export function AppControlledAutocomplete<T>({
@@ -45,6 +46,7 @@ export function AppControlledAutocomplete<T>({
   sx,
   groupBy,
   loading,
+  onUserChange,
 }: ControlledAutocompleteProps<T>) {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -67,7 +69,14 @@ export function AppControlledAutocomplete<T>({
           options={options}
           getOptionLabel={getOptionLabel}
           isOptionEqualToValue={isOptionEqualToValue}
-          onChange={(_, data) => field.onChange(data)}
+          onChange={(event, data) => {
+            field.onChange(data)
+            if (event?.type === 'click' || event?.type === 'keydown') {
+              onUserChange?.(data)
+            }
+          }}
+          // onChange={(_, data) => field.onChange(data)}
+
           renderInput={(params) => (
             <FormControl fullWidth variant='outlined' size='small'>
               <InputLabel shrink htmlFor={name} sx={{ fontSize: '20px' }}>

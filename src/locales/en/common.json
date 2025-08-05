@@ -90,7 +90,9 @@
     "cars": "cars",
     "add": "add new"
   },
-  "go": "Go",
+  "go": "Go to page",
   "page": "Page",
-  "back": "Back"
+  "back": "Back",
+  "upToYearOfManufacture": "Up To Year Of Manufacture",
+  "yearOfFirstRegistration": "Year Of First Registration"
 }

@@ -90,6 +90,8 @@
     "cars": "רכבים",
     "add": "הוספת חדש"
   },
-  "go": "דלג",
-  "page": "עמוד"
+  "go": "מעבר לעמוד",
+  "page": "עמוד",
+  "upToYearOfManufacture": "עד שנת יצירה",
+  "yearOfFirstRegistration": "שנת רישוי"
 }

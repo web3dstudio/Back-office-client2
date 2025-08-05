@@ -1,8 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
-import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, flexRender } from '@tanstack/react-table'
-import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper, Button, Checkbox, IconButton, Pagination, CircularProgress, Divider, TextField, List, ListItem, ListItemIcon, ListItemText, Menu, FormGroup, FormControlLabel } from '@mui/material'
-import { ArrowUpward, ArrowDownward, ViewColumn, Search } from '@mui/icons-material'
+import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, getExpandedRowModel, flexRender } from '@tanstack/react-table'
+import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper, Button, Checkbox, IconButton, Pagination, CircularProgress, Divider, TextField, Menu, FormGroup, FormControlLabel } from '@mui/material'
+import AppActionButton from './AppActionButton'
+import { ArrowUpward, ArrowDownward, ViewColumn, Search, Close } from '@mui/icons-material'
+import { t } from 'i18next'
 
 
 interface AppDataTableProps<T> {
@@ -21,6 +23,7 @@ interface AppDataTableProps<T> {
   totalPages?: number
   currentPage?: number
   manualPagination?: boolean
+  renderSubComponent?: (props: { row: any, table: any }) => React.ReactElement
 }
 
 export default function AppDataTable<T>({
@@ -28,7 +31,6 @@ export default function AppDataTable<T>({
   columns,
   isLoading,
   expandedRows = new Set(),
-  setExpandedRows = () => { },
   tableName = 'default',
   initialColumnVisibility = {},
   sorting = [],
@@ -36,7 +38,8 @@ export default function AppDataTable<T>({
   pagination = { pageIndex: 0, pageSize: 20 },
   onPaginationChange = () => { },
   totalPages = 1,
-  manualPagination = false
+  manualPagination = false,
+  renderSubComponent
 }: AppDataTableProps<T>) {
 
 
@@ -62,14 +65,46 @@ export default function AppDataTable<T>({
 
   const [searchValue, setSearchValue] = useState('');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [savedColumnVisibility, setSavedColumnVisibility] = useState<Record<string, boolean>>({});
+  const [showSearch, setShowSearch] = useState(false);
+  const [pageInput, setPageInput] = useState('');
+  const searchRef = useRef<HTMLDivElement>(null);
 
   const handleMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+    setSavedColumnVisibility(columnVisibility);
   };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+
+  const handleReset = () => {
+    setColumnVisibility(savedColumnVisibility);
+  };
+
+  const handleGoToPage = () => {
+    const pageNumber = parseInt(pageInput);
+    if (pageNumber && pageNumber >= 1 && pageNumber <= totalPages) {
+      onPaginationChange({ pageIndex: pageNumber - 1, pageSize: pagination.pageSize });
+      setPageInput('');
+    }
+  };
+
+  // Закрытие поиска по клику вне поля
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setShowSearch(false);
+      }
+    }
+    if (showSearch) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showSearch]);
 
   const table = useReactTable({
     data: data ?? [],
@@ -77,6 +112,8 @@ export default function AppDataTable<T>({
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
     onSortingChange: (updater) => {
       const newSorting = typeof updater === 'function' ? updater(sorting) : updater
       onSortingChange(newSorting)
@@ -88,6 +125,7 @@ export default function AppDataTable<T>({
       sorting,
       pagination,
       columnVisibility,
+      globalFilter: searchValue,
     },
   })
 
@@ -99,22 +137,11 @@ export default function AppDataTable<T>({
 
   return (
     <Box sx={{ width: '100%' }}>
-      <Box sx={{ display: 'flex', gap: 1, justifyContent: 'flex-end', marginBottom: 2, position: 'relative', }}>
-        <TextField
-          size="small"
-          placeholder="Search..."
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          InputProps={{
-            startAdornment: <Search sx={{ fontSize: 16, marginRight: 1, color: 'text.secondary' }} />
-          }}
-          sx={{ minWidth: 200 }}
-        />
-        <Divider orientation="vertical" flexItem />
+      <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2, position: 'relative', alignItems: 'center' }}>
+
         <IconButton
           size="small"
           onClick={handleMenuOpen}
-          sx={{ marginBottom: 1 }}
         >
           <ViewColumn />
         </IconButton>
@@ -141,6 +168,7 @@ export default function AppDataTable<T>({
                     <Checkbox
                       checked={column.getIsVisible()}
                       onChange={column.getToggleVisibilityHandler()}
+                      disabled={!column.getCanHide()}
                       size="medium"
                     />
                   }
@@ -154,7 +182,7 @@ export default function AppDataTable<T>({
             </FormGroup>
           </Box>
           <Divider />
-          <Box sx={{ px: 2 }}>
+          <Box sx={{ px: 2, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -176,8 +204,64 @@ export default function AppDataTable<T>({
                 typography: { variant: 'body2' }
               }}
             />
+            <Button
+              size="small"
+              onClick={handleReset}
+              sx={{ minWidth: 'auto', padding: '4px 8px' }}
+            >
+              Reset
+            </Button>
           </Box>
         </Menu>
+
+        <Divider orientation="vertical" flexItem sx={{ marginLeft: 1, marginRight: 1 }} />
+
+        <Box
+          ref={searchRef}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            overflow: 'hidden',
+            transition: 'width 0.2s ease-in-out, opacity 0.2s ease-in-out',
+            width: showSearch ? 200 : 0,
+            opacity: showSearch ? 1 : 0
+          }}
+        >
+          <TextField
+            size="small"
+            placeholder="Search..."
+            value={searchValue}
+            onChange={(e) => setSearchValue(e.target.value)}
+            slotProps={{
+              input: {
+                startAdornment: <Search sx={{ fontSize: 20, marginRight: 1, color: 'text.secondary' }} />
+              }
+            }}
+            sx={{ minWidth: 200 }}
+          />
+          <IconButton
+            size="small"
+            onClick={() => setShowSearch(false)}
+            sx={{ marginLeft: 1 }}
+          >
+            <Close />
+          </IconButton>
+        </Box>
+
+        <IconButton
+          size="small"
+          onClick={() => setShowSearch(true)}
+          sx={{
+            display: showSearch ? 'none' : 'flex',
+            opacity: showSearch ? 0 : 1,
+            transition: 'opacity 0.2s ease-in-out',
+            transitionDelay: showSearch ? '0s' : '0.2s',
+            pointerEvents: showSearch ? 'none' : 'auto'
+          }}
+        >
+          <Search sx={{ fontSize: 20 }} />
+        </IconButton>
+
       </Box>
       <TableContainer component={Box} sx={{
         width: '100%'
@@ -196,7 +280,9 @@ export default function AppDataTable<T>({
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                       sx={{
                         cursor: canSort ? 'pointer' : 'default',
-                        userSelect: 'none'
+                        userSelect: 'none',
+                        width: header.getSize(),
+                        minWidth: header.getSize()
                       }}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
@@ -216,25 +302,28 @@ export default function AppDataTable<T>({
             ))}
           </TableHead>
           <TableBody>
-            {table.getRowModel().rows.map(row => (
+            {table.getRowModel().rows.map((row, index) => (
               <React.Fragment key={row.id}>
-                <TableRow>
+                <TableRow sx={{
+                  backgroundColor: index % 2 === 0 ? 'transparent' : '#f5f5f5',
+                  '&:hover': {
+                    backgroundColor: '#e3f2fd'
+                  }
+                }}>
                   {row.getVisibleCells().map(cell => (
-                    <TableCell key={cell.id}>
+                    <TableCell
+                      key={cell.id}
+                      sx={{
+                        width: cell.column.getSize(),
+                        minWidth: cell.column.getSize()
+                      }}
+                    >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
-                {expandedRows.has((row.original as any).id?.toString() || '') && (
-                  <TableRow>
-                    <TableCell colSpan={columns.length} sx={{ backgroundColor: '#f8f9fa', borderTop: '1px solid #e0e0e0' }}>
-                      <Box sx={{ p: 2 }}>
-                        <Typography variant="body2">
-                          Детальная информация
-                        </Typography>
-                      </Box>
-                    </TableCell>
-                  </TableRow>
+                {expandedRows.has((row.original as any).id?.toString() || '') && renderSubComponent && (
+                  renderSubComponent({ row: row.original, table })
                 )}
               </React.Fragment>
             ))}
@@ -242,8 +331,9 @@ export default function AppDataTable<T>({
         </Table>
       </TableContainer>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2 }}>
+      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, alignItems: 'center' }}>
         <Pagination
+          size='large'
           count={totalPages}
           page={pagination.pageIndex + 1}
           onChange={(_event, page) => {
@@ -251,7 +341,40 @@ export default function AppDataTable<T>({
           }}
           showFirstButton
           showLastButton
+          sx={{
+            '& .MuiPaginationItem-root.Mui-selected': {
+              backgroundColor: 'primary.main',
+              color: 'white',
+              '&:hover': {
+                backgroundColor: 'primary.dark',
+                color: 'white'
+              }
+            }
+          }}
         />
+        <TextField
+          size="small"
+          sx={{ width: 100, marginLeft: 2 }}
+          placeholder={t('page', { ns: 'common' })}
+          value={pageInput}
+          onChange={(e) => setPageInput(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              handleGoToPage();
+            }
+          }}
+        />
+        <Button
+          size='large'
+          variant='outlined'
+          color='primary'
+          onClick={handleGoToPage}
+          sx={{ marginLeft: 1 }}
+        >
+          <Typography variant='body2'>
+            {t('go', { ns: 'common' })}
+          </Typography>
+        </Button>
       </Box>
     </Box>
   )

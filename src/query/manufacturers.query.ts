@@ -20,6 +20,22 @@ export function useManufacturersQuery(): UseQueryResult<TManufacturer[], Error> 
   })
 }
 
+export function useManufacturersWithSeriesAndModelsQuery(): UseQueryResult<TManufacturer[], Error> {
+  return useQuery({
+    queryKey: ['manufacturers-names'],
+    queryFn: async (): Promise<TManufacturer[]> => {
+      const response = await axiosAPI.get('/manufacturers/names')
+      return response.data.data
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    placeholderData: keepPreviousData,
+    retry: 3,
+  })
+}
+
 export function useManufacturerQuery(id: string): UseQueryResult<TManufacturer, Error> {
   return useQuery({
     queryKey: ['manufacturer', id],
@@ -77,7 +93,6 @@ export function useManufacturerAddMutation(): UseMutationResult<TManufacturer, E
     },
   })
 }
-
 
 export function useManufacturerDeleteMutation(): UseMutationResult<string, Error, string> {
   const { t } = useTranslation('notifications')

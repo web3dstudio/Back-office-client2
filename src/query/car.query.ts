@@ -1,6 +1,6 @@
 import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
-import type { TCarResponse } from "../types"
+import type { TCar, TCarResponse, TCarYears } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 import type { GridSortModel } from "@mui/x-data-grid"
@@ -37,4 +37,35 @@ export function useCarsQuery(page: number, filters: Record<string, string>, sort
   })
 }
 
+export function useCarYearsQuery(modelId: string): UseQueryResult<TCarYears[], Error> {
+  return useQuery({
+    queryKey: ['car', modelId],
+    queryFn: async (): Promise<TCarYears[]> => {
+      const response = await axiosAPI.get(`/cars/years/${modelId}`);
+      return response.data;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    retry: 3,
+    enabled: !!modelId,
+  })
+}
+
+export function useCarQuery(id: string): UseQueryResult<TCar, Error> {
+  return useQuery({
+    queryKey: ['car', id],
+    queryFn: async (): Promise<TCar> => {
+      const response = await axiosAPI.get(`/cars/${id}`);
+      return response.data;
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    retry: 3,
+    enabled: !!id,
+  })
+}
 

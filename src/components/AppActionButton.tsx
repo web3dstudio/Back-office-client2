@@ -5,10 +5,12 @@ import SendTwoToneIcon from '@mui/icons-material/SendTwoTone';
 import ContentCopyTwoToneIcon from '@mui/icons-material/ContentCopyTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DownloadTwoToneIcon from '@mui/icons-material/DownloadTwoTone';
+import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
+import RemoveTwoToneIcon from '@mui/icons-material/RemoveTwoTone';
 
 
 interface IProps {
-    type: 'edit' | 'delete' | 'send' | 'duplicate' | 'view' | 'download'
+    type: 'edit' | 'delete' | 'send' | 'duplicate' | 'view' | 'download' | 'add' | 'remove'
     onClick: () => void
     sx?: SxProps
     loading?: boolean
@@ -23,7 +25,7 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                 width: '28px',
                 height: '28px',
                 backgroundColor:
-                    type === 'edit' || type === 'duplicate' || type === 'view' || type === 'download'
+                    type === 'edit' || type === 'duplicate' || type === 'view' || type === 'download' || type === 'add' || type === 'remove'
                         ? 'primary.main'
                         : type === 'delete'
                             ? 'error.main'
@@ -37,7 +39,7 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                 alignItems: 'center',
                 justifyContent: 'center',
                 '&:hover': {
-                    backgroundColor: type === 'edit' || type === 'duplicate'
+                    backgroundColor: type === 'edit' || type === 'duplicate' || type === 'add' || type === 'remove'
                         ? 'primary.main'
                         : type === 'delete'
                             ? 'error.main'
@@ -59,6 +61,8 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                     {type === 'duplicate' && <ContentCopyTwoToneIcon fontSize="small" />}
                     {type === 'view' && <VisibilityTwoToneIcon fontSize="small" />}
                     {type === 'download' && <DownloadTwoToneIcon fontSize="small" />}
+                    {type === 'add' && <AddTwoToneIcon fontSize="small" />}
+                    {type === 'remove' && <RemoveTwoToneIcon fontSize="small" />}
                 </>
             )}
         </Box>
