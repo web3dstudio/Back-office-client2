@@ -48,7 +48,7 @@ function OwnersForm({ data, isPending, onCancel, onConfirm }: Props) {
 			lessThanYearChangePercentage: data?.lessThanYearChangePercentage || 0,
 			ownerCountAdjustmentFactor: data?.ownerCountAdjustmentFactor || 0,
 			mileageAdjustmentType: data?.mileageAdjustmentType || 3,
-			mileageAdjustmentFactor: data?.mileageAdjustmentFactor || 0,
+			mileageAdjustmentFactor: data?.mileageAdjustmentFactor || 1,
 		},
 	})
 

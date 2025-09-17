@@ -1,13 +1,13 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import type { TOwner } from '../../../types'
 import { useOwnerAddMutation, useOwnerDeleteMutation, useOwnersQuery, useOwnerUpdateMutation } from '../../../query/owners.query'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
-import AppDataGrid from '../../../components/AppDataGrid'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import AppDataTable from '../../../components/AppDataTable'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import OwnersForm from '../../../components/Owners/OwnersForm'
@@ -23,99 +23,112 @@ function OwnersPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TOwner | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: ownersData, isLoading, isError } = useOwnersQuery()
   const { mutate: addMutation } = useOwnerAddMutation()
   const { mutate: updateMutation } = useOwnerUpdateMutation()
   const { mutate: deleteMutation } = useOwnerDeleteMutation()
 
-
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'owners' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOwner) => row.name,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'owners' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOwner) => row.nameEn,
-    },
-    {
-      field: 'defaultChangePercentage',
-      headerName: t('defaultChangePercentage', { ns: 'owners' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'lessThanYearChangePercentage',
-      headerName: t('lessThanYearChangePercentage', { ns: 'owners' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'ownerCountAdjustmentFactor',
-      headerName: t('ownerCountAdjustmentFactor', { ns: 'owners' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'mileageAdjustmentType',
-      headerName: t('mileageAdjustmentType', { ns: 'owners' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 0,
-      valueGetter: (_value: any, row: TOwner) => {
-        switch (row.mileageAdjustmentType) {
-          case 1: return '−';
-          case 2: return '÷';
-          case 3: return '×';
-          case 4: return '+';
-          default: return 'not set';
-        }
+  const columns = useMemo<ColumnDef<TOwner>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
       },
-    },
-    {
-      field: 'mileageAdjustmentFactor',
-      headerName: t('mileageAdjustmentFactor', { ns: 'owners' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+      {
+        accessorKey: 'nameEn',
+        header: t('nameEn', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 300,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'defaultChangePercentage',
+        header: t('defaultChangePercentage', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+      },
+      {
+        accessorKey: 'lessThanYearChangePercentage',
+        header: t('lessThanYearChangePercentage', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+      },
+      {
+        accessorKey: 'ownerCountAdjustmentFactor',
+        header: t('ownerCountAdjustmentFactor', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+      },
+      {
+        accessorKey: 'mileageAdjustmentType',
+        header: t('mileageAdjustmentType', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => {
+          switch (row.original.mileageAdjustmentType) {
+            case 1: return '−';
+            case 2: return '÷';
+            case 3: return '×';
+            case 4: return '+';
+            default: return 'not set';
+          }
+        },
+      },
+      {
+        accessorKey: 'mileageAdjustmentFactor',
+        header: t('mileageAdjustmentFactor', { ns: 'owners' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
 
   const onSubmit = (data: TOwner) => {
@@ -185,20 +198,36 @@ function OwnersPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='upgradePackagesTable'
-          rows={ownersData ?? []}
-          columns={columns as GridColDef<TOwner>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='owners'
+          data={ownersData ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toLowerCase().includes(filterValue.toLowerCase())
+            const nameEnMatch = row.original.nameEn?.toLowerCase().includes(filterValue.toLowerCase())
+            const defaultChangeMatch = row.original.defaultChangePercentage?.toString().toLowerCase().includes(filterValue.toLowerCase())
+            const lessThanYearMatch = row.original.lessThanYearChangePercentage?.toString().toLowerCase().includes(filterValue.toLowerCase())
+            const ownerCountMatch = row.original.ownerCountAdjustmentFactor?.toString().toLowerCase().includes(filterValue.toLowerCase())
+            const mileageFactorMatch = row.original.mileageAdjustmentFactor?.toString().toLowerCase().includes(filterValue.toLowerCase())
+
+            // Поиск по символам mileageAdjustmentType
+            let typeMatch = false
+            switch (row.original.mileageAdjustmentType) {
+              case 1: typeMatch = '−'.includes(filterValue) || 'minus'.includes(filterValue.toLowerCase())
+                break
+              case 2: typeMatch = '÷'.includes(filterValue) || 'divide'.includes(filterValue.toLowerCase())
+                break
+              case 3: typeMatch = '×'.includes(filterValue) || 'multiply'.includes(filterValue.toLowerCase())
+                break
+              case 4: typeMatch = '+'.includes(filterValue) || 'plus'.includes(filterValue.toLowerCase())
+                break
+            }
+
+            return nameMatch || nameEnMatch || defaultChangeMatch || lessThanYearMatch || ownerCountMatch || mileageFactorMatch || typeMatch
           }}
         />
       </StyledPaper>
