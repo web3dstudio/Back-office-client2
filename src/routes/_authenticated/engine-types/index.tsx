@@ -191,6 +191,12 @@ function EngineTypesPage() {
           sorting={sorting}
           onSortingChange={setSorting}
           hidePagination={true}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const nameEnMatch = row.original.nameEn?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const codeMatch = row.original.code?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || nameEnMatch || codeMatch
+          }}
         />
       </StyledPaper>
 
