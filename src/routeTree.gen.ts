@@ -13,7 +13,6 @@ import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
-import { Route as AuthenticatedValuesIndexRouteImport } from './routes/_authenticated/values/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedUsageTypesIndexRouteImport } from './routes/_authenticated/usage-types/index'
 import { Route as AuthenticatedUpgradePackagesIndexRouteImport } from './routes/_authenticated/upgrade-packages/index'
@@ -78,12 +77,6 @@ const PublicLoginIndexRoute = PublicLoginIndexRouteImport.update({
   path: '/login/',
   getParentRoute: () => PublicRoute,
 } as any)
-const AuthenticatedValuesIndexRoute =
-  AuthenticatedValuesIndexRouteImport.update({
-    id: '/values/',
-    path: '/values/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedUsersIndexRoute = AuthenticatedUsersIndexRouteImport.update({
   id: '/users/',
   path: '/users/',
@@ -395,7 +388,6 @@ export interface FileRoutesByFullPath {
   '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
   '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
@@ -445,7 +437,6 @@ export interface FileRoutesByTo {
   '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
   '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
   '/users': typeof AuthenticatedUsersIndexRoute
-  '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
   '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
@@ -498,7 +489,6 @@ export interface FileRoutesById {
   '/_authenticated/upgrade-packages/': typeof AuthenticatedUpgradePackagesIndexRoute
   '/_authenticated/usage-types/': typeof AuthenticatedUsageTypesIndexRoute
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
-  '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
   '/_authenticated/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
@@ -550,7 +540,6 @@ export interface FileRouteTypes {
     | '/upgrade-packages'
     | '/usage-types'
     | '/users'
-    | '/values'
     | '/login'
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
@@ -600,7 +589,6 @@ export interface FileRouteTypes {
     | '/upgrade-packages'
     | '/usage-types'
     | '/users'
-    | '/values'
     | '/login'
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
@@ -652,7 +640,6 @@ export interface FileRouteTypes {
     | '/_authenticated/upgrade-packages/'
     | '/_authenticated/usage-types/'
     | '/_authenticated/users/'
-    | '/_authenticated/values/'
     | '/_public/login/'
     | '/_authenticated/catalog/edit/$id'
     | '/_authenticated/manufacturers/edit/$id'
@@ -693,13 +680,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/login'
       preLoaderRoute: typeof PublicLoginIndexRouteImport
       parentRoute: typeof PublicRoute
-    }
-    '/_authenticated/values/': {
-      id: '/_authenticated/values/'
-      path: '/values'
-      fullPath: '/values'
-      preLoaderRoute: typeof AuthenticatedValuesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/users/': {
       id: '/_authenticated/users/'
@@ -1063,7 +1043,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUpgradePackagesIndexRoute: typeof AuthenticatedUpgradePackagesIndexRoute
   AuthenticatedUsageTypesIndexRoute: typeof AuthenticatedUsageTypesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
-  AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
   AuthenticatedCatalogEditIdRoute: typeof AuthenticatedCatalogEditIdRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
   AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
@@ -1117,7 +1096,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedUpgradePackagesIndexRoute,
   AuthenticatedUsageTypesIndexRoute: AuthenticatedUsageTypesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
-  AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
   AuthenticatedCatalogEditIdRoute: AuthenticatedCatalogEditIdRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
   AuthenticatedPriceListAdvertisementsIndexRoute:

@@ -5,11 +5,11 @@ import { useTranslation } from 'react-i18next'
 import StyledPaper from '../../../components/StyledPaper'
 import { useManufacturerAddMutation, useManufacturerDeleteMutation, useManufacturersQuery } from '../../../query/manufacturers.query'
 import AppError from '../../../components/AppError'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import type { TManufacturer } from '../../../types'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import AppActionButton from '../../../components/AppActionButton'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import ManufacturerForm from '../../../components/Manufacturer/ManufacturerForm'
@@ -25,6 +25,8 @@ function ManufacturersPage() {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [selected, setSelected] = useState<TManufacturer | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const search = useSearch({ from: '/_authenticated/manufacturers/' }) as { openModal: 'add' | 'edit' }
 
@@ -38,87 +40,91 @@ function ManufacturersPage() {
   const { mutate: deleteMutation, isPending: isDeleting } = useManufacturerDeleteMutation()
   const { mutate: addMutation } = useManufacturerAddMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'manufacturers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 200,
-    },
-    {
-      field: 'engName',
-      headerName: t('engName', { ns: 'manufacturers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 200,
-    },
-    {
-      field: 'manufacturerCode',
-      headerName: t('manufacturerCode', { ns: 'manufacturers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 200
-    },
-
-    {
-      field: 'icon',
-      headerName: t('logo', { ns: 'manufacturers' }) || 'Logo',
-      editable: false,
-      hideable: true,
-      type: 'string',
-      width: 60,
-      minWidth: 50,
-      renderCell: (params: GridRenderCellParams<TManufacturer>) => {
-        const logoImg = params.row.logoDownloadUri;
-        if (logoImg) {
-          return (
-            <Box
-              sx={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '100%',
-                width: '100%',
-              }}
-            >
-              <img
-                src={logoImg}
-                alt="logo"
-                style={{ width: 20, height: 20, objectFit: 'contain' }}
-              />
-            </Box>
-          )
-        }
-        return null;
+  const columns = useMemo<ColumnDef<TManufacturer>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'manufacturers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
       },
-    },
-
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          // setSelected(() => params.row)
-          // setOpenFormDialog(true)
-          navigate({ to: '/manufacturers/edit/$id', params: { id: params.row.id } })
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+      {
+        accessorKey: 'engName',
+        header: t('engName', { ns: 'manufacturers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'manufacturerCode',
+        header: t('manufacturerCode', { ns: 'manufacturers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'logo',
+        header: t('logo', { ns: 'manufacturers' }) || 'Logo',
+        enableSorting: false,
+        enableHiding: true,
+        size: 60,
+        minSize: 50,
+        maxSize: 80,
+        cell: ({ row }) => {
+          const logoImg = row.original.logoDownloadUri;
+          if (logoImg) {
+            return (
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  height: '100%',
+                  width: '100%',
+                }}
+              >
+                <img
+                  src={logoImg}
+                  alt="logo"
+                  style={{ width: 20, height: 20, objectFit: 'contain' }}
+                />
+              </Box>
+            )
+          }
+          return null;
+        },
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              navigate({ to: '/manufacturers/edit/$id', params: { id: row.original.id } })
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t, navigate]
+  )
 
   const onSubmit = (data: TManufacturer) => {
     addMutation(data, {
@@ -183,20 +189,22 @@ function ManufacturersPage() {
           width: '100%',
         }}
       >
-        <AppDataGrid
-          tableName='manufacturersTable'
-          rows={manufacturers ?? []}
-          columns={columns as GridColDef<TManufacturer>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='manufacturers'
+          data={manufacturers ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          totalPages={Math.ceil((manufacturers?.length || 0) / pagination.pageSize)}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const engNameMatch = row.original.engName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const codeMatch = row.original.manufacturerCode?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || engNameMatch || codeMatch
           }}
         />
 

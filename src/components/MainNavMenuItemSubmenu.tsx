@@ -244,15 +244,6 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
 
         <MenuItem
           onClick={() => {
-            navigate({ to: '/values' })
-            handleClose()
-          }}
-        >
-          {t('slidebar.values', { ns: 'common' })}
-        </MenuItem>
-
-        <MenuItem
-          onClick={() => {
             navigate({ to: '/repository' })
             handleClose()
           }}
