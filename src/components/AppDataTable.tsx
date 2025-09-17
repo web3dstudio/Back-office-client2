@@ -25,6 +25,7 @@ interface AppDataTableProps<T> {
   manualPagination?: boolean
   renderSubComponent?: (props: { row: any, table: any }) => React.ReactElement
   globalFilterFn?: (row: any, columnId: string, filterValue: string) => boolean
+  hidePagination?: boolean
   sx?: SxProps<Theme>
 }
 
@@ -43,6 +44,7 @@ export default function AppDataTable<T>({
   manualPagination = false,
   renderSubComponent,
   globalFilterFn,
+  hidePagination = false,
   sx,
 }: AppDataTableProps<T>) {
 
@@ -345,51 +347,53 @@ export default function AppDataTable<T>({
         </Table>
       </TableContainer>
 
-      <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, alignItems: 'center' }}>
-        <Pagination
-          size='large'
-          count={totalPages}
-          page={pagination.pageIndex + 1}
-          onChange={(_event, page) => {
-            onPaginationChange({ pageIndex: page - 1, pageSize: pagination.pageSize })
-          }}
-          showFirstButton
-          showLastButton
-          sx={{
-            '& .MuiPaginationItem-root.Mui-selected': {
-              backgroundColor: 'primary.main',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'primary.dark',
-                color: 'white'
+      {!hidePagination && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', marginTop: 2, alignItems: 'center' }}>
+          <Pagination
+            size='large'
+            count={totalPages}
+            page={pagination.pageIndex + 1}
+            onChange={(_event, page) => {
+              onPaginationChange({ pageIndex: page - 1, pageSize: pagination.pageSize })
+            }}
+            showFirstButton
+            showLastButton
+            sx={{
+              '& .MuiPaginationItem-root.Mui-selected': {
+                backgroundColor: 'primary.main',
+                color: 'white',
+                '&:hover': {
+                  backgroundColor: 'primary.dark',
+                  color: 'white'
+                }
               }
-            }
-          }}
-        />
-        <TextField
-          size="small"
-          sx={{ width: 100, marginLeft: 2 }}
-          placeholder={t('page', { ns: 'common' })}
-          value={pageInput}
-          onChange={(e) => setPageInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') {
-              handleGoToPage();
-            }
-          }}
-        />
-        <Button
-          size='large'
-          variant='outlined'
-          color='primary'
-          onClick={handleGoToPage}
-          sx={{ marginLeft: 1 }}
-        >
-          <Typography variant='body2'>
-            {t('go', { ns: 'common' })}
-          </Typography>
-        </Button>
-      </Box>
+            }}
+          />
+          <TextField
+            size="small"
+            sx={{ width: 100, marginLeft: 2 }}
+            placeholder={t('page', { ns: 'common' })}
+            value={pageInput}
+            onChange={(e) => setPageInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleGoToPage();
+              }
+            }}
+          />
+          <Button
+            size='large'
+            variant='outlined'
+            color='primary'
+            onClick={handleGoToPage}
+            sx={{ marginLeft: 1 }}
+          >
+            <Typography variant='body2'>
+              {t('go', { ns: 'common' })}
+            </Typography>
+          </Button>
+        </Box>
+      )}
     </Box>
   )
 } 

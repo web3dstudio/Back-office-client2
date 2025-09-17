@@ -163,6 +163,7 @@ export default function AverageMileagesTable() {
       manualPagination={false}
       sorting={sorting}
       onSortingChange={setSorting}
+      hidePagination={true}
       globalFilterFn={(row, _columnId, filterValue) => {
         const currentYear = new Date().getFullYear()
         const displayYear = currentYear - row.original.yearOffset
