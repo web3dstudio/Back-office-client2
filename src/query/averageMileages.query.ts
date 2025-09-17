@@ -23,7 +23,7 @@ export function useAverageMileagesQuery(): UseQueryResult<TAverageMileage[], Err
 type TParams = {
   field: "averageMileageMin" | "averageMileageMax",
   id: string,
-  value: number,
+  value: string,
 }
 
 export function useUpdateAverageMileagesMutation(): UseMutationResult<TAverageMileage, Error, TParams> {

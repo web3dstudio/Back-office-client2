@@ -1,16 +1,16 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { TServicePackage, TUpgradePackage } from '../../../types'
 import { useServicePackagesAddMutation, useServicePackagesDeleteMutation, useServicePackagesQuery, useServicePackagesUpdateMutation } from '../../../query/servicePackages.query'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import AppError from '../../../components/AppError'
 import { Box, Button, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import ServicePackagesForm from '../../../components/ServicePackages/ServicePackagesForm'
@@ -31,51 +31,62 @@ function ServicePackagesPage() {
   const { mutate: updateMutation } = useServicePackagesUpdateMutation()
   const { mutate: deleteMutation } = useServicePackagesDeleteMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUpgradePackage) => row.name,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUpgradePackage) => row.nameEn,
-    },
-    {
-      field: 'defaultChangePercentage',
-      headerName: t('defaultChangePercentage', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const [sorting, setSorting] = useState<SortingState>([])
+
+  const columns = useMemo<ColumnDef<TServicePackage>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'integralExtras' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 100,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'nameEn',
+        header: t('nameEn', { ns: 'integralExtras' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 100,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'defaultChangePercentage',
+        header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 250,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
 
   const onSubmit = (data: TUpgradePackage) => {
@@ -147,21 +158,14 @@ function ServicePackagesPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='upgradePackagesTable'
-          rows={servicePackages ?? []}
-          columns={columns as GridColDef<TServicePackage>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='servicePackages'
+          data={servicePackages ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
-          }}
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
         />
       </StyledPaper>
 

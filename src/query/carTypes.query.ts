@@ -1,6 +1,6 @@
 import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from '../utils/axiosAPI'
-import type { TCarType } from '../types'
+import type { TCarType, TPriceListType } from '../types'
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 
@@ -53,14 +53,14 @@ export function useCarTypesDeleteMutation(): UseMutationResult<
 export function useCarTypesAddMutation(): UseMutationResult<
   TCarType,
   Error,
-  Omit<TCarType, 'id'>,
+  Omit<TCarType, 'id' | 'priceListType'> & { priceListType: TPriceListType | null },
   unknown
 > {
   const queryClient = useQueryClient()
   const { t } = useTranslation('notifications')
 
   return useMutation({
-    mutationFn: async (newCarType: Omit<TCarType, 'id'>): Promise<TCarType> => {
+    mutationFn: async (newCarType: Omit<TCarType, 'id' | 'priceListType'> & { priceListType: TPriceListType | null }): Promise<TCarType> => {
       const response = await axiosAPI.post('/v2/carTypes/', newCarType)
       return response.data
     },
@@ -85,15 +85,16 @@ export function useCarTypesAddMutation(): UseMutationResult<
 export function useCarTypesUpdateMutation(): UseMutationResult<
   TCarType,
   Error,
-  TCarType,
+  Omit<TCarType, 'priceListType'> & { priceListType: TPriceListType | null },
   unknown
 > {
   const queryClient = useQueryClient()
   const { t } = useTranslation('notifications')
 
   return useMutation({
-    mutationFn: async (updatedCarType: TCarType): Promise<TCarType> => {
+    mutationFn: async (updatedCarType: Omit<TCarType, 'priceListType'> & { priceListType: TPriceListType | null }): Promise<TCarType> => {
       // Отправляем только id вместо объекта в priceListType
+      console.log('updatedCarType', updatedCarType.priceListType)
       const payload = {
         ...updatedCarType,
         priceListType: updatedCarType.priceListType?.id ?? null

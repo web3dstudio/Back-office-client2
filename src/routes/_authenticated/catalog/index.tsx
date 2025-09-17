@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react'
 import type { TCarsList, TCarYears } from '../../../types'
 import { type ColumnDef, type SortingState, type PaginationState } from '@tanstack/react-table'
 import AppActionButton from '../../../components/AppActionButton'
-import { Box, TableCell, TableRow, Typography } from '@mui/material'
+import { Box, Button, TableCell, TableRow, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
@@ -131,10 +131,15 @@ function CatalogPage() {
           return (
             <Box display='flex' gap={1} >
               <AppActionButton
+                type='view'
+                onClick={() => {
+                  navigate({ to: '/catalog/$id', params: { id: row.original.id } })
+                }}
+              />
+              <AppActionButton
                 type='edit'
                 onClick={() => {
-                  // Логика редактирования
-                  console.log('Edit car:', row.original.id)
+                  navigate({ to: '/catalog/edit/$id', params: { id: row.original.id } })
                 }}
               />
               <AppActionButton
@@ -170,15 +175,15 @@ function CatalogPage() {
             {t('catalog', { ns: 'carCatalog' })}
           </Typography>
         </Box>
-        {/* <Box>
-            <Button variant='contained' onClick={() => {
-              navigate({ to: '/opinions/new' })
-            }
+        <Box>
+          <Button variant='contained' onClick={() => {
+            navigate({ to: '/catalog/new-car' })
+          }
 
-            }>
-              {t('modals.add', { ns: 'common' })}
-            </Button>
-          </Box> */}
+          }>
+            {t('modals.add', { ns: 'common' })}
+          </Button>
+        </Box>
       </Grid>
       <StyledPaper sx={{
         borderRadius: '24px',
@@ -209,6 +214,7 @@ function CatalogPage() {
         }}
       >
         <AppDataTable
+          tableName='carsCatalog'
           data={cars?.data ?? []}
           columns={columns}
           isLoading={isLoading}
@@ -240,12 +246,21 @@ function CatalogPage() {
                             <TableCell key={column.id} sx={{ backgroundColor: '#f8f9fa' }}>
                               <Box sx={{ display: 'flex', gap: 1 }}>
                                 <AppActionButton
-                                  type='edit'
+                                  type='view'
                                   onClick={() => {
                                     navigate({ to: '/catalog/$id', params: { id: year.carId } })
                                   }}
                                 />
-                                <AppActionButton type='duplicate' onClick={() => { console.log('Duplicate car:', year.carId) }} />
+                                <AppActionButton
+                                  type='edit'
+                                  onClick={() => {
+                                    navigate({ to: '/catalog/edit/$id', params: { id: year.carId } })
+                                  }}
+                                />
+                                <AppActionButton
+                                  type='duplicate'
+                                  onClick={() => { console.log('Duplicate car:', year.carId) }}
+                                />
                               </Box>
                             </TableCell>
                           )

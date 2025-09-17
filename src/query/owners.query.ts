@@ -29,7 +29,7 @@ export function useOwnerAddMutation(): UseMutationResult<TOwner, Error, Omit<TOw
       const response = await axiosAPI.post('/owners', newOwner)
       return response.data
     },
-    onSuccess: (data) => {
+    onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['owners'] })
       toast.success(t('owner_added_successfully'))
     },
@@ -53,7 +53,7 @@ export function useOwnerUpdateMutation(): UseMutationResult<TOwner, Error, TOwne
       queryClient.invalidateQueries({ queryKey: ['owners'] })
       toast.success(t('owner_updated_successfully'))
     },
-    onError: (error) => {
+    onError: () => {
       toast.error(t('error_occurred') || 'Error!')
     },
   })
@@ -68,7 +68,7 @@ export function useOwnerDeleteMutation(): UseMutationResult<string, Error, strin
       await axiosAPI.delete(`/owners/${id}`)
       return id
     },
-    onSuccess: (id) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['owners'] })
       toast.success(t('owner_deleted_successfully'))
     },

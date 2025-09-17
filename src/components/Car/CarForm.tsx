@@ -1,11 +1,11 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
-import { FormProvider, useForm, useWatch } from "react-hook-form"
+import { FormProvider, useForm, useWatch, useFieldArray } from "react-hook-form"
 import { useTranslation } from "react-i18next"
 import { useMemo, useEffect } from "react"
-import { Button, Grid, Typography } from "@mui/material"
+import { Box, Button, Grid, Typography } from "@mui/material"
 import { AppControlledAutocomplete } from "../AppControlledAutocomplete"
 import { useCarTypesQuery } from "../../query/carTypes.query"
 import { useManufacturersWithSeriesAndModelsQuery } from "../../query/manufacturers.query"
@@ -19,6 +19,10 @@ import { useUpgradePackagesQuery } from "../../query/upgradePackages.query"
 import { useServicePackagesQuery } from "../../query/servicePackages.query"
 
 import AppExtrasMultiselect from "../AppExtrasMultiselect"
+import AppActionButton from "../AppActionButton"
+import { useCountriesQuery } from "../../query/countries.query"
+import { useNavigate } from "@tanstack/react-router"
+import AppControlledCheckbox from "../AppControlledCheckbox"
 
 
 interface Props {
@@ -39,18 +43,27 @@ type TFormInput = {
   extras: TExtra[]
   upgradePackages: TUpgradePackage[]
   servicePackages: TServicePackage[]
+  additionalLines: {
+    name: string;
+    percentage: number;
+    letterText: string;
+    letterNum: string;
+  }[]
 }
 
+
 export default function CarForm({ data }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+
   const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
   const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
   const { data: categories, isLoading: isCategoriesLoading } = useCategoriesQuery()
-  const { data: integralExtrasData, isLoading: isIntegralExtrasLoading } = useIntegralExtrasQuery()
-  const { data: extrasData, isLoading: isExtrasLoading } = useExtrasQuery()
-  const { data: upgradePackagesData, isLoading: isUpgradePackagesLoading } = useUpgradePackagesQuery()
-  const { data: servicePackagesData, isLoading: isServicePackagesLoading } = useServicePackagesQuery()
-
+  const { data: integralExtrasData, isLoading: _isIntegralExtrasLoading } = useIntegralExtrasQuery()
+  const { data: extrasData, isLoading: _isExtrasLoading } = useExtrasQuery()
+  const { data: upgradePackagesData, isLoading: _isUpgradePackagesLoading } = useUpgradePackagesQuery()
+  const { data: servicePackagesData, isLoading: _isServicePackagesLoading } = useServicePackagesQuery()
+  const { data: countries, isLoading: isCountriesLoading } = useCountriesQuery()
 
 
   const defaultValues = useMemo(() => ({
@@ -93,7 +106,8 @@ export default function CarForm({ data }: Props) {
       selected: false,
       value: 0
     })) || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData])
+    additionalLines: data?.additionalLines || [],
+  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data])
 
 
   const schema = object()
@@ -117,6 +131,12 @@ export default function CarForm({ data }: Props) {
   }, [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, methods, defaultValues]);
 
   const { handleSubmit, control, setValue } = methods
+
+  // Массив additional lines
+  const { fields: additionalLines, append, remove } = useFieldArray({
+    control,
+    name: 'additionalLines'
+  })
 
   // Следим за изменениями полей
   const selectedManufacturer = useWatch({ control, name: 'manufacturer' })
@@ -157,8 +177,18 @@ export default function CarForm({ data }: Props) {
   }, [data, manufacturers, setValue])
 
 
+  // Массив месяцев от 1 до 12
+  const months = useMemo(() => {
+    return Array.from({ length: 12 }, (_, i) => i + 1)
+  }, [])
+
+  // Массив уникальных годов из цен
+
+
+
   const onSubmit = (data: any) => {
-    console.log('Form data:', data)
+
+    // console.log(data)
 
     // Фильтруем выбранные extras
     const selectedIntegralExtras = data.integralExtras?.filter((item: any) => item.selected) || [];
@@ -175,6 +205,37 @@ export default function CarForm({ data }: Props) {
   return (<>
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+        <Grid container columns={12} columnSpacing={3} sx={{ width: '100%' }}>
+          <Grid size={10}>
+            <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={() => {
+              if (data?.id) {
+                navigate({ to: '/catalog/$id', params: { id: data?.id } })
+              } else {
+                navigate({ to: '/catalog/new-car' })
+              }
+            }}>
+              {t('toDetails', { ns: 'newCar' })}
+            </Button>
+          </Grid>
+          <Grid size={2}>
+
+            <AppControlledAutocomplete<TCountry>
+              name='country'
+              control={control}
+              options={countries || []}
+              label={t('country', { ns: 'newCar' })}
+              placeholder={t('country', { ns: 'newCar' })}
+              required
+              loading={isCountriesLoading}
+              getOptionLabel={(option) => i18n.language === 'he' ? option.name || '' : option.nameEn || option.name}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+            />
+          </Grid>
+        </Grid>
+
+
+
+
         <StyledPaper sx={{
           borderRadius: '24px',
           overflow: 'hidden',
@@ -364,7 +425,6 @@ export default function CarForm({ data }: Props) {
               />
             </Grid>
 
-
           </Grid>
         </StyledPaper>
 
@@ -418,9 +478,166 @@ export default function CarForm({ data }: Props) {
           </Grid>
         </StyledPaper>
 
-        <Button type="submit" variant="contained" color="primary">
-          {t('save', { ns: 'newCar' })}
-        </Button>
+        <StyledPaper sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: 3,
+          width: '100%',
+          display: 'flex',
+          gap: 2,
+          marginBottom: 3,
+        }}>
+
+          <Grid container columns={13} rowSpacing={0} columnSpacing={3} sx={{ width: '100%' }}>
+            <Grid size={13} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}
+              mb={additionalLines.length > 0 ? 2 : 0}>
+
+              <Typography variant="h6">{t('additional', { ns: 'newCar' })}</Typography>
+
+              <AppActionButton type="add" onClick={() => append({ name: '', percentage: 0, letterText: '', letterNum: '' })} />
+            </Grid>
+
+            {additionalLines.map((field, index) => (
+
+              <Grid size={13} key={field.id} sx={{ display: 'flex', columnGap: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+                <AppControlledTextField
+                  name={`additionalLines.${index}.name`}
+                  control={control}
+                  label={t('additionalLineName', { ns: 'newCar' })}
+                  placeholder={t('additionalLineName', { ns: 'newCar' })}
+                />
+
+                <AppControlledTextField
+                  name={`additionalLines.${index}.percentage`}
+                  control={control}
+                  label={t('additionalLinePercentage', { ns: 'newCar' })}
+                  placeholder={t('additionalLinePercentage', { ns: 'newCar' })}
+                />
+
+                <AppControlledTextField
+                  name={`additionalLines.${index}.letterText`}
+                  control={control}
+                  label={t('additionalLineLetterText', { ns: 'newCar' })}
+                  placeholder={t('additionalLineLetterText', { ns: 'newCar' })}
+                />
+
+                <AppControlledTextField
+                  name={`additionalLines.${index}.letterNum`}
+                  control={control}
+                  label={t('additionalLineLetterNum', { ns: 'newCar' })}
+                  placeholder={t('additionalLineLetterNum', { ns: 'newCar' })}
+                />
+
+                <AppActionButton type="delete" onClick={() => remove(index)} sx={{ mb: 1 }} />
+              </Grid>
+
+
+            ))}
+          </Grid>
+        </StyledPaper>
+
+        <StyledPaper sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: 3,
+          width: '100%',
+          display: 'flex',
+          gap: 2,
+          marginBottom: 3,
+        }}>
+          <Grid container columns={12} rowSpacing={2} columnSpacing={3} sx={{ width: '100%' }}>
+
+            <Grid size={6}>
+              <AppControlledTextField
+                name='specialYear'
+                control={control}
+                label={t('specialByYear', { ns: 'newCar' })}
+                placeholder={t('specialByYear', { ns: 'newCar' })}
+              />
+            </Grid>
+
+            <Grid size={6}>
+              <AppControlledTextField
+                name='parallelImports'
+                control={control}
+                label={t('parallelImports', { ns: 'newCar' })}
+                placeholder={t('parallelImports', { ns: 'newCar' })}
+              />
+            </Grid>
+          </Grid>
+        </StyledPaper>
+
+        <StyledPaper sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: 3,
+          width: '100%',
+          display: 'flex',
+          gap: 2,
+          marginBottom: 3,
+        }}>
+          <Grid container columns={12} rowSpacing={2} columnSpacing={3} sx={{ width: '100%' }}>
+
+            <Grid size={3}>
+              <AppControlledTextField
+                name='newCarPrice'
+                control={control}
+                label={t('newCarPrice', { ns: 'newCar' })}
+                placeholder={t('newCarPrice', { ns: 'newCar' })}
+              />
+            </Grid>
+
+            <Grid size={2}>
+              <AppControlledAutocomplete
+                name='month'
+                control={control}
+                label={t('month', { ns: 'newCar' })}
+                placeholder={t('month', { ns: 'newCar' })}
+                options={months}
+                getOptionLabel={(option) => option.toString()}
+                isOptionEqualToValue={(option, value) => option === value}
+              />
+            </Grid>
+
+            <Grid size={2}>
+              <AppControlledAutocomplete
+                name='year'
+                control={control}
+                label={t('year', { ns: 'newCar' })}
+                placeholder={t('year', { ns: 'newCar' })}
+                options={years}
+                getOptionLabel={(option) => option.toString()}
+                isOptionEqualToValue={(option, value) => option === value}
+              />
+            </Grid>
+
+
+            <Grid size={3}>
+              <AppControlledTextField
+                name='price'
+                control={control}
+                label={t('price', { ns: 'newCar' })}
+                placeholder={t('price', { ns: 'newCar' })}
+              />
+            </Grid>
+
+            <Grid size={2}>
+              <AppControlledCheckbox
+                name='visible'
+                control={control}
+                label={t('showInPriceList', { ns: 'newCar' })}
+                sx={{ mt: 2 }}
+              />
+            </Grid>
+          </Grid>
+        </StyledPaper>
+
+        <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
+
+          <Button type="submit" variant="contained" color="primary" >
+            {t('save', { ns: 'newCar' })}
+          </Button>
+        </Box>
 
       </form></FormProvider>
   </>)

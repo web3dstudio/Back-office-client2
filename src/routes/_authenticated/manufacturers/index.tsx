@@ -1,5 +1,5 @@
 import { Grid, Box, Typography, Button } from '@mui/material'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useSearch } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
 import StyledPaper from '../../../components/StyledPaper'
@@ -9,7 +9,7 @@ import AppDataGrid from '../../../components/AppDataGrid'
 import type { TManufacturer } from '../../../types'
 import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import ManufacturerForm from '../../../components/Manufacturer/ManufacturerForm'
@@ -21,9 +21,18 @@ export const Route = createFileRoute('/_authenticated/manufacturers/')({
 function ManufacturersPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [selected, setSelected] = useState<TManufacturer | null>(null)
+
+  const search = useSearch({ from: '/_authenticated/manufacturers/' }) as { openModal: 'add' | 'edit' }
+
+  useEffect(() => {
+    if (search?.openModal === 'add') {
+      setOpenFormDialog(true)
+    }
+  }, [search])
 
   const { data: manufacturers, isLoading, isError } = useManufacturersQuery()
   const { mutate: deleteMutation, isPending: isDeleting } = useManufacturerDeleteMutation()

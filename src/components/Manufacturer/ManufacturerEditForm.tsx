@@ -20,7 +20,7 @@ function ManufacturerEditForm({ manufacturer, isPending }: Props) {
   const isValid = formState.isValid
   const router = useRouter()
 
-  const [files, setFiles] = useState<File[]>([])
+  const [_files, setFiles] = useState<File[]>([])
 
   return (
     <Grid container columnSpacing={3} rowSpacing={2} columns={12} >

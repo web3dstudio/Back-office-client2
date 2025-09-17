@@ -1,16 +1,16 @@
 {
   "title": "הוספת רכב חדש",
   "back": "חזרה",
-  "carType": "*סוג הרכב",
+  "carType": "סוג הרכב",
   "category": "קטגוריות",
-  "manufacturer": "*יצרן",
+  "manufacturer": "יצרן",
   "series": "*סדרה",
-  "modelName": "*דגם",
+  "modelName": "דגם",
   "modelCode": "קוד דגם",
   "privateImportCode": "קוד דגם יבוא אישי",
   "finishing": "תת דגם / גימור",
   "extraTitle": "פרטים נוספים",
-  "manufacturerYear": "*שנה",
+  "manufacturerYear": "שנה",
   "year": "שנה",
   "gearbox": "תיבת הילוכים",
   "volume": "נפח מנוע",
@@ -53,5 +53,8 @@
   "parallelImports": "יבוא מקביל",
   "specialYear": "פרטי הרכב",
   "chassis": "מרכב",
-  "countryCode": "* קוד יצרן"
+  "countryCode": "קוד יצרן",
+  "additionalLineLetterText": "LETTER (טקסט)",
+  "additionalLineLetterNum": "LETTER (מספרי)",
+  "edit": "עריכה"
 }

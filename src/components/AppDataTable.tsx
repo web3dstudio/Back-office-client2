@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
 import { useReactTable, getCoreRowModel, getPaginationRowModel, getSortedRowModel, getFilteredRowModel, getExpandedRowModel, flexRender } from '@tanstack/react-table'
-import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Paper, Button, Checkbox, IconButton, Pagination, CircularProgress, Divider, TextField, Menu, FormGroup, FormControlLabel } from '@mui/material'
-import AppActionButton from './AppActionButton'
+import { Box, Typography, Table, TableBody, TableCell, TableHead, TableRow, TableContainer, Button, Checkbox, IconButton, Pagination, CircularProgress, Divider, TextField, Menu, FormGroup, FormControlLabel } from '@mui/material'
+import type { SxProps, Theme } from '@mui/material'
 import { ArrowUpward, ArrowDownward, ViewColumn, Search, Close } from '@mui/icons-material'
 import { t } from 'i18next'
 
@@ -24,6 +24,8 @@ interface AppDataTableProps<T> {
   currentPage?: number
   manualPagination?: boolean
   renderSubComponent?: (props: { row: any, table: any }) => React.ReactElement
+  globalFilterFn?: (row: any, columnId: string, filterValue: string) => boolean
+  sx?: SxProps<Theme>
 }
 
 export default function AppDataTable<T>({
@@ -39,7 +41,9 @@ export default function AppDataTable<T>({
   onPaginationChange = () => { },
   totalPages = 1,
   manualPagination = false,
-  renderSubComponent
+  renderSubComponent,
+  globalFilterFn,
+  sx,
 }: AppDataTableProps<T>) {
 
 
@@ -114,6 +118,7 @@ export default function AppDataTable<T>({
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getExpandedRowModel: getExpandedRowModel(),
+    globalFilterFn: globalFilterFn,
     onSortingChange: (updater) => {
       const newSorting = typeof updater === 'function' ? updater(sorting) : updater
       onSortingChange(newSorting)
@@ -127,6 +132,10 @@ export default function AppDataTable<T>({
       columnVisibility,
       globalFilter: searchValue,
     },
+    defaultColumn: {
+      minSize: 30,
+      maxSize: 800,
+    },
   })
 
   if (isLoading) {
@@ -136,7 +145,7 @@ export default function AppDataTable<T>({
   }
 
   return (
-    <Box sx={{ width: '100%' }}>
+    <Box sx={{ width: '100%', ...sx }}>
       <Box sx={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 2, position: 'relative', alignItems: 'center' }}>
 
         <IconButton
@@ -276,13 +285,16 @@ export default function AppDataTable<T>({
 
                   return (
                     <TableCell
+                      variant='head'
                       key={header.id}
                       onClick={canSort ? header.column.getToggleSortingHandler() : undefined}
                       sx={{
                         cursor: canSort ? 'pointer' : 'default',
                         userSelect: 'none',
                         width: header.getSize(),
-                        minWidth: header.getSize()
+                        minWidth: 'unset !important',
+                        maxWidth: 'unset !important',
+                        textAlign: (header.column.columnDef.meta as any)?.align || 'left'
                       }}
                     >
                       {flexRender(header.column.columnDef.header, header.getContext())}
@@ -312,10 +324,12 @@ export default function AppDataTable<T>({
                 }}>
                   {row.getVisibleCells().map(cell => (
                     <TableCell
+                      variant='body'
                       key={cell.id}
                       sx={{
                         width: cell.column.getSize(),
-                        minWidth: cell.column.getSize()
+                        minWidth: 'unset !important',
+                        maxWidth: 'unset !important'
                       }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

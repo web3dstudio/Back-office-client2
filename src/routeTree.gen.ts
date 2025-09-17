@@ -38,6 +38,7 @@ import { Route as AuthenticatedExtrasIndexRouteImport } from './routes/_authenti
 import { Route as AuthenticatedEngineTypesIndexRouteImport } from './routes/_authenticated/engine-types/index'
 import { Route as AuthenticatedDriveTypesIndexRouteImport } from './routes/_authenticated/drive-types/index'
 import { Route as AuthenticatedCustomersIndexRouteImport } from './routes/_authenticated/customers/index'
+import { Route as AuthenticatedCountriesIndexRouteImport } from './routes/_authenticated/countries/index'
 import { Route as AuthenticatedCommentsForOpinionIndexRouteImport } from './routes/_authenticated/comments-for-opinion/index'
 import { Route as AuthenticatedCodesIndexRouteImport } from './routes/_authenticated/codes/index'
 import { Route as AuthenticatedClientSupportIndexRouteImport } from './routes/_authenticated/client-support/index'
@@ -57,6 +58,7 @@ import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authen
 import { Route as AuthenticatedCatalogIdRouteImport } from './routes/_authenticated/catalog/$id'
 import { Route as AuthenticatedPriceListAdvertisementsIndexRouteImport } from './routes/_authenticated/price-list/advertisements/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
+import { Route as AuthenticatedCatalogEditIdRouteImport } from './routes/_authenticated/catalog/edit/$id'
 
 const PublicRoute = PublicRouteImport.update({
   id: '/_public',
@@ -225,6 +227,12 @@ const AuthenticatedCustomersIndexRoute =
     path: '/customers/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCountriesIndexRoute =
+  AuthenticatedCountriesIndexRouteImport.update({
+    id: '/countries/',
+    path: '/countries/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCommentsForOpinionIndexRoute =
   AuthenticatedCommentsForOpinionIndexRouteImport.update({
     id: '/comments-for-opinion/',
@@ -336,6 +344,12 @@ const AuthenticatedManufacturersEditIdRoute =
     path: '/manufacturers/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCatalogEditIdRoute =
+  AuthenticatedCatalogEditIdRouteImport.update({
+    id: '/catalog/edit/$id',
+    path: '/catalog/edit/$id',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -356,6 +370,7 @@ export interface FileRoutesByFullPath {
   '/client-support': typeof AuthenticatedClientSupportIndexRoute
   '/codes': typeof AuthenticatedCodesIndexRoute
   '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
+  '/countries': typeof AuthenticatedCountriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
   '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
@@ -382,6 +397,7 @@ export interface FileRoutesByFullPath {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
+  '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
   '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
@@ -404,6 +420,7 @@ export interface FileRoutesByTo {
   '/client-support': typeof AuthenticatedClientSupportIndexRoute
   '/codes': typeof AuthenticatedCodesIndexRoute
   '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
+  '/countries': typeof AuthenticatedCountriesIndexRoute
   '/customers': typeof AuthenticatedCustomersIndexRoute
   '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
   '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
@@ -430,6 +447,7 @@ export interface FileRoutesByTo {
   '/users': typeof AuthenticatedUsersIndexRoute
   '/values': typeof AuthenticatedValuesIndexRoute
   '/login': typeof PublicLoginIndexRoute
+  '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
   '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
@@ -455,6 +473,7 @@ export interface FileRoutesById {
   '/_authenticated/client-support/': typeof AuthenticatedClientSupportIndexRoute
   '/_authenticated/codes/': typeof AuthenticatedCodesIndexRoute
   '/_authenticated/comments-for-opinion/': typeof AuthenticatedCommentsForOpinionIndexRoute
+  '/_authenticated/countries/': typeof AuthenticatedCountriesIndexRoute
   '/_authenticated/customers/': typeof AuthenticatedCustomersIndexRoute
   '/_authenticated/drive-types/': typeof AuthenticatedDriveTypesIndexRoute
   '/_authenticated/engine-types/': typeof AuthenticatedEngineTypesIndexRoute
@@ -481,6 +500,7 @@ export interface FileRoutesById {
   '/_authenticated/users/': typeof AuthenticatedUsersIndexRoute
   '/_authenticated/values/': typeof AuthenticatedValuesIndexRoute
   '/_public/login/': typeof PublicLoginIndexRoute
+  '/_authenticated/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
   '/_authenticated/price-list/advertisements/': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
@@ -505,6 +525,7 @@ export interface FileRouteTypes {
     | '/client-support'
     | '/codes'
     | '/comments-for-opinion'
+    | '/countries'
     | '/customers'
     | '/drive-types'
     | '/engine-types'
@@ -531,6 +552,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/values'
     | '/login'
+    | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
     | '/price-list/advertisements'
   fileRoutesByTo: FileRoutesByTo
@@ -553,6 +575,7 @@ export interface FileRouteTypes {
     | '/client-support'
     | '/codes'
     | '/comments-for-opinion'
+    | '/countries'
     | '/customers'
     | '/drive-types'
     | '/engine-types'
@@ -579,6 +602,7 @@ export interface FileRouteTypes {
     | '/users'
     | '/values'
     | '/login'
+    | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
     | '/price-list/advertisements'
   id:
@@ -603,6 +627,7 @@ export interface FileRouteTypes {
     | '/_authenticated/client-support/'
     | '/_authenticated/codes/'
     | '/_authenticated/comments-for-opinion/'
+    | '/_authenticated/countries/'
     | '/_authenticated/customers/'
     | '/_authenticated/drive-types/'
     | '/_authenticated/engine-types/'
@@ -629,6 +654,7 @@ export interface FileRouteTypes {
     | '/_authenticated/users/'
     | '/_authenticated/values/'
     | '/_public/login/'
+    | '/_authenticated/catalog/edit/$id'
     | '/_authenticated/manufacturers/edit/$id'
     | '/_authenticated/price-list/advertisements/'
   fileRoutesById: FileRoutesById
@@ -843,6 +869,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomersIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/countries/': {
+      id: '/_authenticated/countries/'
+      path: '/countries'
+      fullPath: '/countries'
+      preLoaderRoute: typeof AuthenticatedCountriesIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/comments-for-opinion/': {
       id: '/_authenticated/comments-for-opinion/'
       path: '/comments-for-opinion'
@@ -976,6 +1009,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedManufacturersEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/catalog/edit/$id': {
+      id: '/_authenticated/catalog/edit/$id'
+      path: '/catalog/edit/$id'
+      fullPath: '/catalog/edit/$id'
+      preLoaderRoute: typeof AuthenticatedCatalogEditIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -998,6 +1038,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedClientSupportIndexRoute: typeof AuthenticatedClientSupportIndexRoute
   AuthenticatedCodesIndexRoute: typeof AuthenticatedCodesIndexRoute
   AuthenticatedCommentsForOpinionIndexRoute: typeof AuthenticatedCommentsForOpinionIndexRoute
+  AuthenticatedCountriesIndexRoute: typeof AuthenticatedCountriesIndexRoute
   AuthenticatedCustomersIndexRoute: typeof AuthenticatedCustomersIndexRoute
   AuthenticatedDriveTypesIndexRoute: typeof AuthenticatedDriveTypesIndexRoute
   AuthenticatedEngineTypesIndexRoute: typeof AuthenticatedEngineTypesIndexRoute
@@ -1023,6 +1064,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsageTypesIndexRoute: typeof AuthenticatedUsageTypesIndexRoute
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedValuesIndexRoute: typeof AuthenticatedValuesIndexRoute
+  AuthenticatedCatalogEditIdRoute: typeof AuthenticatedCatalogEditIdRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
   AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
@@ -1047,6 +1089,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCodesIndexRoute: AuthenticatedCodesIndexRoute,
   AuthenticatedCommentsForOpinionIndexRoute:
     AuthenticatedCommentsForOpinionIndexRoute,
+  AuthenticatedCountriesIndexRoute: AuthenticatedCountriesIndexRoute,
   AuthenticatedCustomersIndexRoute: AuthenticatedCustomersIndexRoute,
   AuthenticatedDriveTypesIndexRoute: AuthenticatedDriveTypesIndexRoute,
   AuthenticatedEngineTypesIndexRoute: AuthenticatedEngineTypesIndexRoute,
@@ -1075,6 +1118,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsageTypesIndexRoute: AuthenticatedUsageTypesIndexRoute,
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedValuesIndexRoute: AuthenticatedValuesIndexRoute,
+  AuthenticatedCatalogEditIdRoute: AuthenticatedCatalogEditIdRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
   AuthenticatedPriceListAdvertisementsIndexRoute:
     AuthenticatedPriceListAdvertisementsIndexRoute,

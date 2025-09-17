@@ -94,6 +94,7 @@ export type TSerie = {
   dbId?: string | null
   priority?: number
   models?: TModel[]
+  manufacturer?: TManufacturer
 }
 
 export type TModel = {
@@ -108,6 +109,8 @@ export type TModel = {
 
 
   manufacturerCode: string // код модели (МинТранспорта)
+  series: TSerie | null
+  gearbox: TGearbox | null
 
   // modelType: string
   // yearOfManufacture: number
@@ -579,6 +582,7 @@ export type TCategory = {
 
 export type TCar = {
   id: string
+  country: TCountry | null
   carType: TCarType | null
   category: TCategory | null
   model: TModel | null
@@ -590,6 +594,14 @@ export type TCar = {
   extras: TExtra[]
   upgradePackages: TUpgradePackage[]
   servicePackages: TServicePackage[]
+  additionalLines: {
+    name: string;
+    percentage: number;
+    letterText: string;
+    letterNum: string;
+  }[]
+  newCarPrice: number | null
+  carPrices: TCarPrice[]
 }
 
 export type TCarsList = {
@@ -620,4 +632,20 @@ export type TCarYears = {
   carId: string
   year: number
 }
+
+export type TCountry = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TCarPrice = {
+  id: string
+  totalPrice: number
+  year: number
+  month: number
+  calculateDate: number
+}
+
+
 

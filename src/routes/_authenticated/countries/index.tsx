@@ -1,60 +1,50 @@
 import { createFileRoute } from '@tanstack/react-router'
-import StyledPaper from '../../../components/StyledPaper'
-import {
-  useExtrasAddMutation,
-  useExtrasDeleteMutation,
-  useExtrasQuery,
-  useExtrasUpdateMutation
-} from '../../../query/extras.query'
-import { Box, Button, Grid, Typography } from '@mui/material'
-import AppDataTable from '../../../components/AppDataTable'
-import type { TExtra } from '../../../types'
-import { type ColumnDef } from '@tanstack/react-table'
-import { useTranslation } from 'react-i18next'
-import AppActionButton from '../../../components/AppActionButton'
 import { useState, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import type { TCountry } from '../../../types'
+import { useCountriesAddMutation, useCountriesDeleteMutation, useCountriesQuery, useCountriesUpdateMutation } from '../../../query/countries.query'
+import { type ColumnDef } from '@tanstack/react-table'
 import { type SortingState } from '@tanstack/react-table'
-import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
-import AppDialog from '../../../components/AppDialog/AppDialog'
+import AppActionButton from '../../../components/AppActionButton'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppError from '../../../components/AppError'
-import ExtrasForm from '../../../components/Extras/IntegralExtrasForm'
+import AppDataTable from '../../../components/AppDataTable'
+import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
+import AppDialog from '../../../components/AppDialog/AppDialog'
+import StyledPaper from '../../../components/StyledPaper'
+import CountryForm from '../../../components/Countries/CountryForm'
 
-
-export const Route = createFileRoute('/_authenticated/extras/')({
-  component: IntegralExtrasPage,
+export const Route = createFileRoute('/_authenticated/countries/')({
+  component: Countries,
 })
 
-function IntegralExtrasPage() {
+function Countries() {
   const { t } = useTranslation()
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-  const [selected, setSelected] = useState<TExtra | null>(null)
+  const [selected, setSelected] = useState<TCountry | null>(null)
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const { data: extras, isLoading, isError } = useExtrasQuery()
-  const { mutate: addMutation } = useExtrasAddMutation()
-  const { mutate: updateMutation } = useExtrasUpdateMutation()
-  const { mutate: deleteMutation, isPending: isDeleting } = useExtrasDeleteMutation()
 
-  const columns = useMemo<ColumnDef<TExtra>[]>(() => [
+  const { data: countries, isLoading, isError } = useCountriesQuery()
+
+  const { mutate: addMutation } = useCountriesAddMutation()
+  const { mutate: updateMutation } = useCountriesUpdateMutation()
+  const { mutate: deleteMutation } = useCountriesDeleteMutation()
+
+  const columns = useMemo<ColumnDef<TCountry>[]>(() => [
     {
       accessorKey: 'name',
-      header: t('name', { ns: 'integralExtras' }),
+      header: t('name', { ns: 'countries' }),
       enableSorting: true,
       enableHiding: true,
     },
     {
       accessorKey: 'nameEn',
-      header: t('nameEn', { ns: 'integralExtras' }),
+      header: t('nameEn', { ns: 'countries' }),
       enableSorting: true,
       enableHiding: true,
-    },
-    {
-      accessorKey: 'defaultChangePercentage',
-      header: t('defaultChangePercentage', { ns: 'integralExtras' }),
-      enableSorting: true,
-      enableHiding: false,
     },
     {
       id: 'actions',
@@ -69,6 +59,7 @@ function IntegralExtrasPage() {
       cell: ({ row }) => (
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
           <AppActionButton type='edit' onClick={() => {
+            console.log('params.row', row.original)
             setSelected(row.original)
             setOpenFormDialog(true)
           }} />
@@ -81,7 +72,7 @@ function IntegralExtrasPage() {
     }
   ], [t])
 
-  const onSubmit = (data: TExtra) => {
+  const onSubmit = (data: TCountry) => {
     if (selected) {
       updateMutation({ ...data, id: selected.id }, {
         onSuccess: () => {
@@ -123,16 +114,14 @@ function IntegralExtrasPage() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {t('title', { ns: 'extras' })}
+            {t('title', { ns: 'carTypes' })}
           </Typography>
         </Box>
         <Box>
           <Button variant='contained' onClick={() => {
             setSelected(null)
             setOpenFormDialog(true)
-          }
-
-          }>
+          }}>
             {t('modals.add', { ns: 'common' })}
           </Button>
         </Box>
@@ -140,15 +129,18 @@ function IntegralExtrasPage() {
 
       <StyledPaper
         sx={{
+          borderRadius: '24px',
           overflow: 'hidden',
           padding: 3,
+          width: '100%',
           display: 'flex',
           gap: 2,
+          maxWidth: '100%',
         }}
       >
         <AppDataTable
-          tableName='extras'
-          data={extras ?? []}
+          tableName='countries'
+          data={countries ?? []}
           columns={columns}
           isLoading={isLoading}
           manualPagination={false}
@@ -162,7 +154,6 @@ function IntegralExtrasPage() {
         onClose={() => setOpenConfirmDialog(false)}
         onSubmit={onDelete}
         title={t('modals.approveDelete', { ns: 'common' })}
-        isPending={isDeleting}
       />
 
       <AppDialog
@@ -171,7 +162,7 @@ function IntegralExtrasPage() {
         title={selected ? t('modals.edit', { ns: 'common' }) : t('modals.add', { ns: 'common' })}
         maxWidth='sm'
       >
-        <ExtrasForm
+        <CountryForm
           data={selected}
           isPending={false}
           onCancel={() => setOpenFormDialog(false)}
@@ -181,4 +172,3 @@ function IntegralExtrasPage() {
     </Grid>
   )
 }
-

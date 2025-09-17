@@ -8,10 +8,11 @@ import {
   useCarTypesQuery,
   useCarTypesUpdateMutation,
 } from '../../../query/carTypes.query'
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
-import { useState } from 'react'
-import type { TCarType } from '../../../types'
-import AppDataGrid from '../../../components/AppDataGrid'
+import { type ColumnDef } from '@tanstack/react-table'
+import { useState, useMemo } from 'react'
+import type { TCarType, TPriceListType } from '../../../types'
+import AppDataTable from '../../../components/AppDataTable'
+import { type SortingState } from '@tanstack/react-table'
 import AppError from '../../../components/AppError'
 import AppActionButton from '../../../components/AppActionButton'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
@@ -31,6 +32,7 @@ function CarTypes() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TCarType | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   useIconsQuery()
 
@@ -43,17 +45,15 @@ function CarTypes() {
   const { mutate: updateMutation } = useCarTypesUpdateMutation()
   const { mutate: deleteMutation } = useCarTypesDeleteMutation()
 
-  const columns = [
+  const columns = useMemo<ColumnDef<TCarType>[]>(() => [
     {
-      field: 'icon',
-      headerName: t('icon', { ns: 'carTypes' }) || 'Icon',
-      editable: false,
-      hideable: true,
-      type: 'string',
-      width: 60,
-      minWidth: 50,
-      renderCell: (params: GridRenderCellParams<TCarType>) => {
-        const icon = params.row.icon;
+      accessorKey: 'icon',
+      header: t('icon', { ns: 'carTypes' }) || 'Icon',
+      enableSorting: false,
+      enableHiding: true,
+      size: 60,
+      cell: ({ row }) => {
+        const icon = row.original.icon;
         if (icon && icon.downloadUri) {
           return (
             <Box
@@ -77,82 +77,65 @@ function CarTypes() {
       },
     },
     {
-      field: 'name',
-      headerName: t('name', { ns: 'carTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 120,
+      accessorKey: 'name',
+      header: t('name', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'carTypeID',
-      headerName: t('carTypeID', { ns: 'carTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 120,
+      accessorKey: 'carTypeID',
+      header: t('carTypeID', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'code',
-      headerName: t('code', { ns: 'carTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 120,
+      accessorKey: 'code',
+      header: t('code', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'licenseType',
-      headerName: t('licenseType', { ns: 'carTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      minWidth: 120,
+      accessorKey: 'licenseType',
+      header: t('licenseType', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'priceListType',
-      headerName: t('priceListType', { ns: 'carTypes' }),
-      hideable: true,
-      editable: false,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCarType) => {
-        return priceListTypesList?.find(type => String(type?.id) === String(row?.priceListType))?.name
+      accessorKey: 'priceListType',
+      header: t('priceListType', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
+      cell: ({ row }) => {
+        return priceListTypesList?.find(type => String(type?.id) === String(row.original?.priceListType))?.name
       }
     },
     {
-      field: 'iconId',
-      headerName: 'iconId',
-      editable: false,
-      hideable: false,
-      type: 'string',
-    },
-
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      minWidth: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          console.log('params.row', params.row)
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
+      id: 'actions',
+      header: 'Actions',
+      enableSorting: false,
+      enableHiding: false,
+      enableResizing: false,
+      size: 80,
+      meta: {
+        align: 'right'
+      },
+      cell: ({ row }) => (
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+          <AppActionButton type='edit' onClick={() => {
+            console.log('params.row', row.original)
+            setSelected(row.original)
+            setOpenFormDialog(true)
+          }} />
+          <AppActionButton type='delete' onClick={() => {
+            setSelected(row.original)
+            setOpenConfirmDialog(true)
+          }} />
+        </Box>
+      ),
     }
-  ]
+  ], [t, priceListTypesList])
 
-  const onSubmit = (data: TCarType) => {
+  const onSubmit = (data: Omit<TCarType, 'priceListType'> & { priceListType: TPriceListType | null }) => {
     if (selected) {
       updateMutation({ ...data, id: selected.id }, {
         onSuccess: () => {
@@ -220,23 +203,16 @@ function CarTypes() {
           maxWidth: '100%',
         }}
       >
-        <AppDataGrid
-          tableName='carTypesTable'
-          rows={carTypes ?? []}
-          columns={columns as GridColDef<TCarType>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='carTypes'
+          data={carTypes ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          columnVisibilityModel={{
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          initialColumnVisibility={{
             iconId: false,
-          }}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
           }}
         />
       </StyledPaper>
@@ -258,7 +234,7 @@ function CarTypes() {
           data={selected}
           isPending={false}
           onCancel={() => setOpenFormDialog(false)}
-          onConfirm={(data) => onSubmit(data)}
+          onConfirm={(data) => onSubmit(data as Omit<TCarType, 'priceListType'> & { priceListType: TPriceListType | null })}
         />
       </AppDialog>
     </Grid>

@@ -2,12 +2,13 @@ import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { useIntegralExtrasAddMutation, useIntegralExtrasDeleteMutation, useIntegralExtrasQuery, useIntegralExtrasUpdateMutation } from '../../../query/integralExtras.query'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import type { TIntegralExtra } from '../../../types'
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
+import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { type SortingState } from '@tanstack/react-table'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
@@ -24,57 +25,57 @@ function IntegralExtrasPage() {
 	const [openFormDialog, setOpenFormDialog] = useState(false)
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const [selected, setSelected] = useState<TIntegralExtra | null>(null)
+	const [sorting, setSorting] = useState<SortingState>([])
 
 	const { data: integralExtras, isLoading, isError } = useIntegralExtrasQuery()
 	const { mutate: addMutation } = useIntegralExtrasAddMutation()
 	const { mutate: updateMutation } = useIntegralExtrasUpdateMutation()
 	const { mutate: deleteMutation } = useIntegralExtrasDeleteMutation()
 
-	const columns = [
+	const columns = useMemo<ColumnDef<TIntegralExtra>[]>(() => [
 		{
-			field: 'name',
-			headerName: t('name', { ns: 'integralExtras' }),
-			editable: false,
-			hideable: true,
-			type: 'string',
-			flex: 1,
-			valueGetter: (_value: any, row: TIntegralExtra) => row.name,
+			accessorKey: 'name',
+			header: t('name', { ns: 'integralExtras' }),
+			enableSorting: true,
+			enableHiding: true,
 		},
 		{
-			field: 'nameEn',
-			headerName: t('nameEn', { ns: 'integralExtras' }),
-			editable: false,
-			hideable: true,
-			type: 'string',
-			flex: 1,
-			valueGetter: (_value: any, row: TIntegralExtra) => row.nameEn,
+			accessorKey: 'nameEn',
+			header: t('nameEn', { ns: 'integralExtras' }),
+			enableSorting: true,
+			enableHiding: true,
+
 		},
 		{
-			field: 'defaultChangePercentage',
-			headerName: t('defaultChangePercentage', { ns: 'integralExtras' }),
-			editable: false,
-			hideable: false,
-			type: 'string',
-			flex: 1,
+			accessorKey: 'defaultChangePercentage',
+			header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+			enableSorting: true,
+			enableHiding: false,
 		},
 		{
-			field: 'actions',
-			type: 'actions',
-			headerName: 'Actions',
-			width: 100,
-			hideable: false,
-			getActions: (params: GridRenderCellParams) => [
-				<AppActionButton type='edit' onClick={() => {
-					setSelected(() => params.row)
-					setOpenFormDialog(true)
-				}} />,
-				<AppActionButton type='delete' onClick={() => {
-					setSelected(() => params.row)
-					setOpenConfirmDialog(true)
-				}} />
-			],
+			id: 'actions',
+			header: 'Actions',
+			enableSorting: false,
+			enableHiding: false,
+			enableResizing: false,
+			size: 30,
+			meta: {
+				align: 'right'
+			},
+			cell: ({ row }) => (
+				<Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+					<AppActionButton type='edit' onClick={() => {
+						setSelected(row.original)
+						setOpenFormDialog(true)
+					}} />
+					<AppActionButton type='delete' onClick={() => {
+						setSelected(row.original)
+						setOpenConfirmDialog(true)
+					}} />
+				</Box>
+			),
 		}
-	]
+	], [t])
 
 	const onSubmit = (data: TIntegralExtra) => {
 		if (selected) {
@@ -145,21 +146,14 @@ function IntegralExtrasPage() {
 					gap: 2,
 				}}
 			>
-				<AppDataGrid
-					tableName='integralExtrasTable'
-					rows={integralExtras ?? []}
-					columns={columns as GridColDef<TIntegralExtra>[]}
-					editMode='row'
+				<AppDataTable
+					tableName='integralExtras'
+					data={integralExtras ?? []}
+					columns={columns}
 					isLoading={isLoading}
-					hideFooterSelectedRowCount={true}
-					initialState={{
-						filter: {
-							filterModel: {
-								items: [],
-								quickFilterValues: [],
-							},
-						},
-					}}
+					manualPagination={false}
+					sorting={sorting}
+					onSortingChange={setSorting}
 				/>
 			</StyledPaper>
 

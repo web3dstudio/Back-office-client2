@@ -2,6 +2,8 @@ import { Box, Button, Checkbox, OutlinedInput, useTheme } from "@mui/material"
 import { Controller, useFormContext, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import type { TAppExtrasItemField } from "../types";
+import { alpha } from '@mui/material/styles'
+
 
 
 interface IProps {
@@ -29,7 +31,9 @@ function AppExtrasItem({ index, name, field }: IProps) {
 						{...field}
 						checked={!!checked}
 						color='primary'
-						sx={{ '& .MuiSvgIcon-root': { fontSize: 28 } }}
+						sx={{
+							'& .MuiSvgIcon-root': { fontSize: 28 },
+						}}
 						disabled={!selected}
 					/>
 				)}
@@ -48,6 +52,7 @@ function AppExtrasItem({ index, name, field }: IProps) {
 						sx={{
 							borderRadius: '20px 0 0 20px',
 							color: selectedField.value ? 'white' : theme.palette.text.primary,
+							backgroundColor: selectedField.value ? theme.palette.primary.main : alpha(theme.palette.primary.main, 0.1),
 							fontSize: '14px',
 							fontWeight: 'normal',
 							textWrap: 'nowrap',
@@ -75,6 +80,7 @@ function AppExtrasItem({ index, name, field }: IProps) {
 						sx={{
 							borderRadius: '0 20px 20px 0 !important',
 							border: `0px solid ${theme.palette.primary.main}`,
+							backgroundColor: alpha(theme.palette.primary.main, 0.1),
 							borderLeft: 'none',
 							maxWidth: '60px',
 							outline: 'none',

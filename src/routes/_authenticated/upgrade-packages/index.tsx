@@ -1,16 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { TUpgradePackage } from '../../../types'
 import { useUpgradePackagesAddMutation, useUpgradePackagesDeleteMutation, useUpgradePackagesQuery, useUpgradePackagesUpdateMutation } from '../../../query/upgradePackages.query'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import { type ColumnDef } from '@tanstack/react-table'
+import { type SortingState } from '@tanstack/react-table'
 import AppError from '../../../components/AppError'
 import { Box, Button, Typography } from '@mui/material'
 import { Grid } from '@mui/material'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import UpgradePackagesForm from '../../../components/UpgradePackages/UpgradePackagesForm'
@@ -27,57 +28,56 @@ function UpgradePackagesPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TUpgradePackage | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: upgradePackages, isLoading, isError } = useUpgradePackagesQuery()
   const { mutate: addMutation } = useUpgradePackagesAddMutation()
   const { mutate: updateMutation } = useUpgradePackagesUpdateMutation()
   const { mutate: deleteMutation } = useUpgradePackagesDeleteMutation()
 
-  const columns = [
+  const columns = useMemo<ColumnDef<TUpgradePackage>[]>(() => [
     {
-      field: 'name',
-      headerName: t('name', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUpgradePackage) => row.name,
+      accessorKey: 'name',
+      header: t('name', { ns: 'integralExtras' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUpgradePackage) => row.nameEn,
+      accessorKey: 'nameEn',
+      header: t('nameEn', { ns: 'integralExtras' }),
+      enableSorting: true,
+      enableHiding: true,
     },
     {
-      field: 'defaultChangePercentage',
-      headerName: t('defaultChangePercentage', { ns: 'integralExtras' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
+      accessorKey: 'defaultChangePercentage',
+      header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+      enableSorting: true,
+      enableHiding: false,
     },
     {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
+      id: 'actions',
+      header: 'Actions',
+      enableSorting: false,
+      enableHiding: false,
+      enableResizing: false,
+      size: 80,
+      meta: {
+        align: 'right'
+      },
+      cell: ({ row }) => (
+        <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+          <AppActionButton type='edit' onClick={() => {
+            setSelected(row.original)
+            setOpenFormDialog(true)
+          }} />
+          <AppActionButton type='delete' onClick={() => {
+            setSelected(row.original)
+            setOpenConfirmDialog(true)
+          }} />
+        </Box>
+      ),
     }
-  ]
+  ], [t])
 
 
   const onSubmit = (data: TUpgradePackage) => {
@@ -151,21 +151,14 @@ function UpgradePackagesPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='upgradePackagesTable'
-          rows={upgradePackages ?? []}
-          columns={columns as GridColDef<TUpgradePackage>[]}
-          editMode='row'
+        <AppDataTable
+          data={upgradePackages ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
-          }}
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          tableName='upgradePackages'
         />
       </StyledPaper>
 

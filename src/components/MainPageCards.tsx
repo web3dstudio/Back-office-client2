@@ -28,7 +28,7 @@ function MainPageCards() {
           icon={<CheckCarIcon />}
           count={homePageData?.data?.manufacturers}
           onCardClick={() => navigate({ to: '/manufacturers' })}
-          onButtonClick={() => navigate({ to: '/manufacturers/new' })}
+          onButtonClick={() => navigate({ to: '/manufacturers', search: { openModal: 'add' } })}
         />
       </Grid>
       <Grid size={{ xs: 6, md: 3 }}>

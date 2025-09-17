@@ -4,7 +4,7 @@ import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CheckBoxOutlineBlankIcon from '@mui/icons-material/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
-import { FormControl, InputLabel, useTheme, CircularProgress, Chip } from '@mui/material';
+import { FormControl, InputLabel, useTheme, CircularProgress } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 import type { SxProps } from '@mui/system';
 

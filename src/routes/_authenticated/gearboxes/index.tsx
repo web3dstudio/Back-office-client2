@@ -11,7 +11,6 @@ import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppError from '../../../components/AppError'
-import { useDriveTypesAddMutation, useDriveTypesDeleteMutation, useDriveTypesQuery, useDriveTypesUpdateMutation } from '../../../query/driveTypes.query'
 import { useGearboxesAddMutation, useGearboxesDeleteMutation, useGearboxesQuery, useGearboxesUpdateMutation } from '../../../query/gearboxes.query'
 import GearboxesForm from '../../../components/Gearboxes/GearboxesForm'
 

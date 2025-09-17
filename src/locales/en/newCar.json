@@ -53,5 +53,8 @@
   "additionalLinePercentage": "Value Percentage",
   "parallelImports": "Parallel Imports",
   "specialYear": "Year Special",
-  "countryCode": "* קוד יצרן"
+  "countryCode": "* Manufacturer Code",
+  "additionalLineLetterText": "LETTER (Text)",
+  "additionalLineLetterNum": "LETTER (Numeric)",
+  "edit": "Edit"
 }

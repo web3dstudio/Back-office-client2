@@ -4,7 +4,7 @@ import { useOpinionsQuery, useOpinionsSendMutation } from '../../../query/opinio
 import { useTranslation } from 'react-i18next';
 import { useState } from 'react';
 import type { OpinionsFilters, TOpinionList } from '../../../types';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel, type GridColumnVisibilityModel } from '@mui/x-data-grid';
+import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 import useCurrencyFormat from '../../../hooks/useCurrencyFormat';

@@ -22,7 +22,7 @@ interface Props {
   onConfirm: (data: TCarType) => void
 }
 
-type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId'>
+type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId' | 'priceListType'> & { priceListType: TPriceListType | null }
 
 function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const { t } = useTranslation()
@@ -75,7 +75,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
         if (!data?.priceListType) return null;
         if (typeof data.priceListType === 'object') return data.priceListType;
         // ищем объект в списке
-        return (priceListTypesList as TPriceListType[] | undefined)?.find(
+        return priceListTypesList?.find(
           (item) => String(item.id) === String(data.priceListType)
         ) || null;
       })(),

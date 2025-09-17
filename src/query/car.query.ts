@@ -1,8 +1,6 @@
-import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { type UseQueryResult, useQuery } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
 import type { TCar, TCarResponse, TCarYears } from "../types"
-import { useTranslation } from "react-i18next"
-import { toast } from 'react-toastify'
 import type { GridSortModel } from "@mui/x-data-grid"
 
 export function useCarsQuery(page: number, filters: Record<string, string>, sortModel?: GridSortModel): UseQueryResult<TCarResponse, Error> {
