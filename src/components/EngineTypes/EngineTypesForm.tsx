@@ -3,8 +3,8 @@ import type { TEngineType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
-import { Box, Button, Grid, Typography } from "@mui/material"
-import { useForm } from "react-hook-form"
+import { Box, Button, Grid, Typography, TextField } from "@mui/material"
+import { useForm, Controller } from "react-hook-form"
 import AppControlledTextField from "../AppControlledTextField"
 
 interface Props {
@@ -80,6 +80,27 @@ function EngineTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
             errors={errors}
             label={t('code', { ns: 'engineTypes' })}
             placeholder={t('code', { ns: 'engineTypes' })}
+          />
+        </Grid>
+
+        <Grid size={12} sx={{ mb: 3 }}>
+          <Controller
+            name="priceListBackground"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                type="color"
+                label={t('priceListBackground', { ns: 'engineTypes' })}
+                fullWidth
+                sx={{
+                  '& input[type="color"]': {
+                    height: '56px',
+                    cursor: 'pointer',
+                  },
+                }}
+              />
+            )}
           />
         </Grid>
 
