@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import AppDataGrid from '../../../components/AppDataGrid'
-import type { TDriveType, TEngineType } from '../../../types'
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
+import AppDataTable from '../../../components/AppDataTable'
+import type { TDriveType } from '../../../types'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
@@ -25,50 +25,58 @@ function DriveTypesPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TDriveType | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: driveTypes, isLoading, isError } = useDriveTypesQuery()
   const { mutate: addMutation } = useDriveTypesAddMutation()
   const { mutate: updateMutation } = useDriveTypesUpdateMutation()
   const { mutate: deleteMutation, isPending: isDeleting } = useDriveTypesDeleteMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'driveTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TEngineType) => row.name,
-    },
-
-    {
-      field: 'code',
-      headerName: t('code', { ns: 'driveTypes' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const columns = useMemo<ColumnDef<TDriveType>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'driveTypes' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'code',
+        header: t('code', { ns: 'driveTypes' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
   const onSubmit = (data: TDriveType) => {
     if (selected) {
@@ -113,7 +121,7 @@ function DriveTypesPage() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {t('title', { ns: 'engineTypes' })}
+            {t('title', { ns: 'driveTypes' })}
           </Typography>
         </Box>
         <Box>
@@ -136,20 +144,18 @@ function DriveTypesPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='driveTypesTable'
-          rows={driveTypes ?? []}
-          columns={columns as GridColDef<TDriveType>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='driveTypes'
+          data={driveTypes ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const codeMatch = row.original.code?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || codeMatch
           }}
         />
       </StyledPaper>
