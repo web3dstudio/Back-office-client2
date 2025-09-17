@@ -1,13 +1,13 @@
 import AppActionButton from '../AppActionButton'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AppConfirmDialog from '../AppDialog/AppConfirmDialog'
 import AppDialog from '../AppDialog/AppDialog'
 import AppError from '../AppError'
 import StatusesForm from './StatusesForm'
 import { useTranslation } from 'react-i18next'
 import type { TInternalStatus } from '../../types'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
-import AppDataGrid from '../AppDataGrid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
+import AppDataTable from '../AppDataTable'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import { useInternalStatusesAddMutation, useInternalStatusesDeleteMutation, useInternalStatusesQuery, useInternalStatusesUpdateMutation } from '../../query/internalStatus.query'
 
@@ -17,6 +17,7 @@ function InternalStatusesTable() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TInternalStatus | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: internalStatuses, isLoading, isError } = useInternalStatusesQuery()
   const { mutate: addMutation } = useInternalStatusesAddMutation()
@@ -24,43 +25,51 @@ function InternalStatusesTable() {
   const { mutate: deleteMutation, isPending: isDeleting } = useInternalStatusesDeleteMutation()
 
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'statuses' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TInternalStatus) => row.name,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'statuses' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TInternalStatus) => row.nameEn,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const columns = useMemo<ColumnDef<TInternalStatus>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'statuses' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 400,
+      },
+      {
+        accessorKey: 'nameEn',
+        header: t('nameEn', { ns: 'statuses' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 400,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
   const onSubmit = (data: TInternalStatus) => {
     if (selected) {
@@ -117,20 +126,19 @@ function InternalStatusesTable() {
         </Box>
       </Grid>
       <Grid size={12}>
-        <AppDataGrid
-          tableName='internalStatusesTable'
-          rows={internalStatuses ?? []}
-          columns={columns as GridColDef<TInternalStatus>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='internalStatuses'
+          data={internalStatuses ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          hidePagination={true}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const nameEnMatch = row.original.nameEn?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || nameEnMatch
           }}
         />
       </Grid>

@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import type { TAppraiser } from '../../../types'
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
@@ -24,47 +24,58 @@ function AppraisersPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TAppraiser | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: appraisers, isLoading, isError } = useAppraisersQuery()
   const { mutate: addMutation } = useAddAppraiserMutation()
   const { mutate: updateMutation } = useUpdateAppraiserMutation()
   const { mutate: deleteMutation, isPending: isDeleting } = useAppraiserDeleteMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'appraisers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'identifier',
-      headerName: t('identifier', { ns: 'appraisers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const columns = useMemo<ColumnDef<TAppraiser>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'appraisers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 400,
+      },
+      {
+        accessorKey: 'identifier',
+        header: t('identifier', { ns: 'appraisers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
   const onSubmit = (data: TAppraiser) => {
     if (selected) {
       updateMutation({ ...data, id: selected.id }, {
@@ -132,20 +143,19 @@ function AppraisersPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='appraisersTable'
-          rows={appraisers ?? []}
-          columns={columns as GridColDef<TAppraiser>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='appraisers'
+          data={appraisers ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          hidePagination={true}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const identifierMatch = row.original.identifier?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || identifierMatch
           }}
         />
       </StyledPaper>

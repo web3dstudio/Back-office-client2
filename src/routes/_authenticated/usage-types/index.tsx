@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import type { TUsageType } from '../../../types'
-import { type GridColDef, type GridRenderCellParams } from '@mui/x-data-grid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
@@ -25,49 +25,58 @@ function UsageTypesPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TUsageType | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
 
   const { data: usageTypes, isLoading, isError } = useUsageTypesQuery()
   const { mutate: addMutation } = useUsageTypesAddMutation()
   const { mutate: updateMutation } = useUsageTypesUpdateMutation()
   const { mutate: deleteMutation, isPending: isDeleting } = useUsageTypesDeleteMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'usageTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUsageType) => row.name,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'usageTypes' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TUsageType) => row.nameEn,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const columns = useMemo<ColumnDef<TUsageType>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'usageTypes' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 400,
+      },
+      {
+        accessorKey: 'nameEn',
+        header: t('nameEn', { ns: 'usageTypes' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 400,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
   const onSubmit = (data: TUsageType) => {
     if (selected) {
@@ -113,7 +122,7 @@ function UsageTypesPage() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {t('title', { ns: 'engineTypes' })}
+            {t('title', { ns: 'usageTypes' })}
           </Typography>
         </Box>
         <Box>
@@ -136,20 +145,19 @@ function UsageTypesPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='usageTypesTable'
-          rows={usageTypes ?? []}
-          columns={columns as GridColDef<TUsageType>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='usageTypes'
+          data={usageTypes ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          hidePagination={true}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const nameEnMatch = row.original.nameEn?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || nameEnMatch
           }}
         />
       </StyledPaper>
