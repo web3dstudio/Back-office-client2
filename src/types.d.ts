@@ -7,6 +7,27 @@ interface IUser {
   email: string
 }
 
+export type TAvatarUpload = {
+  imageUploadUri: string
+  filename: string
+  file: File
+}
+
+export type TProfileFormInput = {
+  imageFileName?: string | undefined
+
+  firstName: string
+  middleName?: string | undefined
+  lastName: string
+  tz: string
+
+  email: string
+  mobileNumber: string
+  phoneNumber?: string | undefined
+
+
+}
+
 
 export type TCurrentUser = {
   id: string

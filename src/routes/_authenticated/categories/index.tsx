@@ -4,15 +4,15 @@ import { useCategoriesUpdateMutation } from '../../../query/category.query'
 import { useCategoriesDeleteMutation } from '../../../query/category.query'
 import { useCategoriesQuery } from '../../../query/category.query'
 import { useTranslation } from 'react-i18next'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import type { TCategory } from '../../../types'
 import AppActionButton from '../../../components/AppActionButton'
-import type { GridColDef, GridRenderCellParams } from '@mui/x-data-grid'
+import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import AppError from '../../../components/AppError'
 import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
-import AppDataGrid from '../../../components/AppDataGrid'
+import AppDataTable from '../../../components/AppDataTable'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import CategoriesForm from '../../../components/Categories/CategoriesForm'
@@ -27,60 +27,68 @@ function CategoriesPage() {
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TCategory | null>(null)
+  const [sorting, setSorting] = useState<SortingState>([])
+  const [pagination, setPagination] = useState({ pageIndex: 0, pageSize: 10 })
 
   const { data: categories, isLoading, isError } = useCategoriesQuery()
   const { mutate: addMutation } = useCategoriesAddMutation()
   const { mutate: updateMutation } = useCategoriesUpdateMutation()
   const { mutate: deleteMutation, isPending: isDeleting } = useCategoriesDeleteMutation()
 
-  const columns = [
-    {
-      field: 'name',
-      headerName: t('name', { ns: 'categories' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCategory) => row.name,
-    },
-    {
-      field: 'nameEn',
-      headerName: t('nameEn', { ns: 'categories' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCategory) => row.nameEn,
-    },
-
-
-    {
-      field: 'categoryID',
-      headerName: t('categoryID', { ns: 'categories' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-    },
-
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          setSelected(() => params.row)
-          setOpenFormDialog(true)
-        }} />,
-        <AppActionButton type='delete' onClick={() => {
-          setSelected(() => params.row)
-          setOpenConfirmDialog(true)
-        }} />
-      ],
-    }
-  ]
+  const columns = useMemo<ColumnDef<TCategory>[]>(
+    () => [
+      {
+        accessorKey: 'name',
+        header: t('name', { ns: 'categories' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'nameEn',
+        header: t('nameEn', { ns: 'categories' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'categoryID',
+        header: t('categoryID', { ns: 'categories' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 80,
+        minSize: 80,
+        maxSize: 80,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              setSelected(() => row.original)
+              setOpenFormDialog(true)
+            }} />
+            <AppActionButton type='delete' onClick={() => {
+              setSelected(() => row.original)
+              setOpenConfirmDialog(true)
+            }} />
+          </Box>
+        ),
+      },
+    ],
+    [t]
+  )
 
   const onSubmit = (data: TCategory) => {
     if (selected) {
@@ -90,7 +98,6 @@ function CategoriesPage() {
         }
       })
     } else {
-      console.log(data)
       addMutation(data, {
         onSuccess: () => {
           setOpenFormDialog(false)
@@ -149,20 +156,22 @@ function CategoriesPage() {
           gap: 2,
         }}
       >
-        <AppDataGrid
-          tableName='categoriesTable'
-          rows={categories ?? []}
-          columns={columns as GridColDef<TCategory>[]}
-          editMode='row'
+        <AppDataTable
+          tableName='categories'
+          data={categories ?? []}
+          columns={columns}
           isLoading={isLoading}
-          hideFooterSelectedRowCount={true}
-          initialState={{
-            filter: {
-              filterModel: {
-                items: [],
-                quickFilterValues: [],
-              },
-            },
+          manualPagination={false}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          totalPages={Math.ceil((categories?.length || 0) / pagination.pageSize)}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const nameEnMatch = row.original.nameEn?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const categoryIDMatch = row.original.categoryID?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return nameMatch || nameEnMatch || categoryIDMatch
           }}
         />
       </StyledPaper>

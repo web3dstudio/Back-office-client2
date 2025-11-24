@@ -1,8 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next'
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel } from '@mui/x-data-grid';
 import { useDeletePriceListMutation, usePriceListsQuery } from '../../../query/priceList.query';
 import { usePriceListTypesQuery } from '../../../query/priceListTypes.querty';
 import AppActionButton from '../../../components/AppActionButton';
@@ -13,6 +11,8 @@ import AppBackBtn from '../../../components/AppBackBtn';
 import StyledPaper from '../../../components/StyledPaper';
 import PriceListForm from '../../../components/PriceList/PriceListForm';
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog';
+import AppDataTable from '../../../components/AppDataTable';
+import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table';
 
 export const Route = createFileRoute('/_authenticated/price-list/')({
   component: PriceListPage,
@@ -25,78 +25,82 @@ function PriceListPage() {
   const [selected, setSelected] = useState<TPriceList | null>(null)
   const dateTimeFormat = useDateTimeFormat()
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
     pageSize: 20,
   });
 
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('priceListTable', {});
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const { data: priceListTypes } = usePriceListTypesQuery()
-  const { data: priceLists, isLoading } = usePriceListsQuery(paginationModel.page, {}, sortModel)
+  const { data: priceLists, isLoading } = usePriceListsQuery(pagination.pageIndex, {}, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
   const { mutate: deletePriceList, isPending: isDeleting } = useDeletePriceListMutation()
 
-  const columns = [
-
-    {
-      field: 'date',
-      headerName: t('date', { ns: 'priceList' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TPriceList) => dateTimeFormat(row.date),
-    },
-    {
-      field: 'priceListType',
-      headerName: t('priceListType', { ns: 'priceList' }),
-      editable: false,
-      sortable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TPriceList) => priceListTypes?.find(type => type.id === row.priceListType)?.name,
-    },
-
-    {
-      field: 'carTypes',
-      headerName: t('carTypes', { ns: 'priceList' }),
-      editable: false,
-      sortable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TPriceList) => row.carTypes.map(type => type?.name).join(', '),
-    },
-
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 140,
-      hideable: false,
-      sortable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='view' onClick={() => {
-          // navigate({ to: '/customers/$id', params: { id: params.row.id } })
-        }} />,
-        <AppActionButton type='download' onClick={() => {
-          // navigate({
-          //   to: '/customers/new',
-          //   search: { duplicateId: params.row.id }
-          // })
-        }} />,
-        <AppActionButton
-          type='delete'
-          onClick={() => {
-            setSelected(() => params.row)
-            setOpenConfirmDialog(true)
-          }}
-        />
-      ],
-    },
-  ]
+  const columns = useMemo<ColumnDef<TPriceList>[]>(
+    () => [
+      {
+        accessorKey: 'date',
+        header: t('date', { ns: 'priceList' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+        cell: ({ row }) => dateTimeFormat(row.original.date),
+      },
+      {
+        accessorKey: 'priceListType',
+        header: t('priceListType', { ns: 'priceList' }),
+        enableSorting: false,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+        cell: ({ row }) => priceListTypes?.find(type => type.id === row.original.priceListType)?.name,
+      },
+      {
+        accessorKey: 'carTypes',
+        header: t('carTypes', { ns: 'priceList' }),
+        enableSorting: false,
+        enableHiding: true,
+        size: 300,
+        minSize: 200,
+        maxSize: 400,
+        cell: ({ row }) => row.original.carTypes.map(type => type?.name).join(', '),
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 140,
+        minSize: 140,
+        maxSize: 140,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='view' onClick={() => {
+              // navigate({ to: '/customers/$id', params: { id: row.original.id } })
+            }} />
+            <AppActionButton type='download' onClick={() => {
+              // navigate({
+              //   to: '/customers/new',
+              //   search: { duplicateId: row.original.id }
+              // })
+            }} />
+            <AppActionButton
+              type='delete'
+              onClick={() => {
+                setSelected(() => row.original)
+                setOpenConfirmDialog(true)
+              }}
+            />
+          </Box>
+        ),
+      },
+    ],
+    [t, dateTimeFormat, priceListTypes]
+  )
 
   const handleDeletePriceList = () => {
     if (selected) {
@@ -152,35 +156,24 @@ function PriceListPage() {
           gap: 2,
         }}
       >
-        <DataGrid
-          rows={priceLists?.data ?? []}
-          columns={columns as GridColDef<TPriceList>[]}
-          rowCount={priceLists?.totalRowsNumber ?? 0}
-          loading={isLoading}
-          pagination
-          paginationMode="server"
-          paginationModel={paginationModel}
-          sortingMode="server"
-          sortModel={sortModel}
-          disableColumnMenu
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) => {
-            setColumnVisibilityModel(newModel);
+        <AppDataTable
+          tableName='priceList'
+          data={priceLists?.data ?? []}
+          columns={columns}
+          isLoading={isLoading}
+          manualPagination={true}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          totalPages={priceLists?.totalPagesNumber ?? 1}
+          currentPage={priceLists?.currentPageNumber ?? pagination.pageIndex + 1}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const dateMatch = dateTimeFormat(row.original.date).toLowerCase().includes(filterValue.toLowerCase())
+            const typeMatch = priceListTypes?.find(type => type.id === row.original.priceListType)?.name?.toLowerCase().includes(filterValue.toLowerCase()) || false
+            const carTypesMatch = row.original.carTypes.map((type: any) => type?.name).join(', ').toLowerCase().includes(filterValue.toLowerCase())
+            return dateMatch || typeMatch || carTypesMatch
           }}
-          onSortModelChange={(model: GridSortModel) => {
-            setSortModel(model)
-          }}
-          onPaginationModelChange={(model: GridPaginationModel) => {
-            setPaginationModel(model)
-          }}
-          getRowId={(row) => row.id}
-          pageSizeOptions={[20]}
-          sx={{
-            '& .MuiDataGrid-row:nth-of-type(odd)': {
-              backgroundColor: '#f5f5f5',
-            },
-          }}
-          showToolbar
         />
       </StyledPaper>
     </Grid>

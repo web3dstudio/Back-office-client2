@@ -2,9 +2,8 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { useOpinionsQuery, useOpinionsSendMutation } from '../../../query/opinios.query';
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { OpinionsFilters, TOpinionList } from '../../../types';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 import useCurrencyFormat from '../../../hooks/useCurrencyFormat';
@@ -12,7 +11,8 @@ import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
 import AppBackBtn from '../../../components/AppBackBtn';
 import OpinionsFilter from '../../../components/Opinions/OpinionsFilter';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
+import AppDataTable from '../../../components/AppDataTable';
+import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table';
 
 
 export const Route = createFileRoute('/_authenticated/opinions/')({
@@ -25,13 +25,12 @@ function OpinionsPage() {
   const { formatCurrency } = useCurrencyFormat()
   const navigate = useNavigate({ from: '/opinions' })
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
     pageSize: 20,
   });
 
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('opinionsTable', {});
+  const [sorting, setSorting] = useState<SortingState>([]);
   const [sendingOpinionId, setSendingOpinionId] = useState<string | null>(null)
 
 
@@ -51,156 +50,174 @@ function OpinionsPage() {
   });
   const [filters, setFilters] = useState<OpinionsFilters>(filtersDraft);
 
-  const { data: opinions, isLoading } = useOpinionsQuery(paginationModel.page, filters, sortModel)
+  const { data: opinions, isLoading } = useOpinionsQuery(pagination.pageIndex, filters, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
 
   const { mutate: sendOpinion, isPending: isSendingOpinion } = useOpinionsSendMutation()
 
-  const columns = [
-    {
-      field: 'number',
-      headerName: t('id', { ns: 'options' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOpinionList) => row.number,
-    },
-    {
-      field: 'manufacturerName',
-      headerName: t('manufacturer', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'modelCode',
-      headerName: t('modelCode', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'model',
-      headerName: t('model', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'volume',
-      headerName: t('volume', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'ordererName',
-      headerName: t('orderer', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'inspectionDate',
-      headerName: t('insDate', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.inspectionDate),
-    },
-    {
-      field: 'receptionDate',
-      headerName: t('recDate', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.receptionDate),
-    },
-    {
-      field: 'manufacturerYear',
-      headerName: t('year', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'price',
-      headerName: t('price', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOpinionList) => formatCurrency(row.price),
-    },
-    {
-      field: 'nextUpdateDate',
-      headerName: t('updateDate', { ns: 'options' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TOpinionList) => dateTimeFormat(row.nextUpdateDate),
-    },
-    {
-      field: 'sendDate',
-      headerName: "",
-      editable: false,
-      hideable: true,
-      sortable: true,
-      type: 'string',
-      width: 100,
-      renderCell: ({ row }: { row: TOpinionList }) => {
-        const icons = [
-          { show: !!row?.opinionSend, tip: row?.opinionSendDate },
-          { show: !!row?.update1Send, tip: row?.update1SendDate },
-          { show: !!row?.update2Send, tip: row?.update2SendDate },
-          { show: !!row?.update3Send, tip: row?.update3SendDate },
-        ];
-        return (
-          <>
-            {icons.map(
-              (item, idx) =>
-                item.show && (
-                  <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
-                    <Tooltip key={idx} title={item.tip ? dateTimeFormat(item.tip) : ''}>
-                      <CheckIcon color="success" sx={{ mr: 0.5 }} />
-                    </Tooltip>
-                  </Box>
-                )
-            )}
-          </>
-        );
+  const columns = useMemo<ColumnDef<TOpinionList>[]>(
+    () => [
+      {
+        accessorKey: 'number',
+        header: t('id', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 100,
+        minSize: 80,
+        maxSize: 150,
       },
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 100,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          navigate({ to: '/opinions/$id', params: { id: params.row.id } })
-        }} />,
-        <AppActionButton
-          type='send'
-          onClick={() => {
-            setSendingOpinionId(params.row.id)
-            sendOpinion(params.row.id)
-          }}
-          loading={isSendingOpinion && sendingOpinionId === params.row.id}
-        />
-      ],
-    },
-  ]
+      {
+        accessorKey: 'manufacturerName',
+        header: t('manufacturer', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        accessorKey: 'modelCode',
+        header: t('modelCode', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+      },
+      {
+        accessorKey: 'model',
+        header: t('model', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        accessorKey: 'volume',
+        header: t('volume', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
+      },
+      {
+        accessorKey: 'ordererName',
+        header: t('orderer', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        accessorKey: 'inspectionDate',
+        header: t('insDate', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => dateTimeFormat(row.original.inspectionDate),
+      },
+      {
+        accessorKey: 'receptionDate',
+        header: t('recDate', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => dateTimeFormat(row.original.receptionDate),
+      },
+      {
+        accessorKey: 'manufacturerYear',
+        header: t('year', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 80,
+        minSize: 60,
+        maxSize: 100,
+      },
+      {
+        accessorKey: 'price',
+        header: t('price', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => formatCurrency(row.original.price),
+      },
+      {
+        accessorKey: 'nextUpdateDate',
+        header: t('updateDate', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => dateTimeFormat(row.original.nextUpdateDate),
+      },
+      {
+        id: 'sendDate',
+        header: t('sendDate', { ns: 'options' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
+        cell: ({ row }) => {
+          const icons = [
+            { show: !!row.original?.opinionSend, tip: row.original?.opinionSendDate },
+            { show: !!row.original?.update1Send, tip: row.original?.update1SendDate },
+            { show: !!row.original?.update2Send, tip: row.original?.update2SendDate },
+            { show: !!row.original?.update3Send, tip: row.original?.update3SendDate },
+          ];
+          return (
+            <>
+              {icons.map(
+                (item, idx) =>
+                  item.show && (
+                    <Box key={idx} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: '100%', height: '100%' }}>
+                      <Tooltip key={idx} title={item.tip ? dateTimeFormat(item.tip) : ''}>
+                        <CheckIcon color="success" sx={{ mr: 0.5 }} />
+                      </Tooltip>
+                    </Box>
+                  )
+              )}
+            </>
+          );
+        },
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 100,
+        minSize: 100,
+        maxSize: 100,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              navigate({ to: '/opinions/$id', params: { id: row.original.id } })
+            }} />
+            <AppActionButton
+              type='send'
+              onClick={() => {
+                setSendingOpinionId(row.original.id)
+                sendOpinion(row.original.id)
+              }}
+              loading={isSendingOpinion && sendingOpinionId === row.original.id}
+            />
+          </Box>
+        ),
+      },
+    ],
+    [t, dateTimeFormat, formatCurrency, navigate, sendOpinion, isSendingOpinion, sendingOpinionId]
+  )
 
   return (<>
     <Grid container spacing={3} >
@@ -243,7 +260,7 @@ function OpinionsPage() {
           setFilters={setFiltersDraft}
           onSearch={() => {
             setFilters(filtersDraft);
-            setPaginationModel(model => ({ ...model, page: 0 })); // сбросить страницу при поиске
+            setPagination(prev => ({ ...prev, pageIndex: 0 })); // сбросить страницу при поиске
           }}
         />
       </StyledPaper>
@@ -258,35 +275,29 @@ function OpinionsPage() {
           gap: 2,
         }}
       >
-        <DataGrid
-          rows={opinions?.data ?? []}
-          columns={columns as GridColDef<TOpinionList>[]}
-          rowCount={opinions?.totalRowsNumber ?? 0}
-          loading={isLoading}
-          pagination
-          paginationMode="server"
-          paginationModel={paginationModel}
-          sortingMode="server"
-          sortModel={sortModel}
-          disableColumnMenu
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) => {
-            setColumnVisibilityModel(newModel);
+        <AppDataTable
+          tableName='opinions'
+          data={opinions?.data ?? []}
+          columns={columns}
+          isLoading={isLoading}
+          manualPagination={true}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          totalPages={opinions?.totalPagesNumber ?? 1}
+          currentPage={opinions?.currentPageNumber ?? pagination.pageIndex + 1}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const numberMatch = row.original.number?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const manufacturerMatch = row.original.manufacturerName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const modelCodeMatch = row.original.modelCode?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const modelMatch = row.original.model?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const volumeMatch = row.original.volume?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const ordererMatch = row.original.ordererName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const yearMatch = row.original.manufacturerYear?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const priceMatch = formatCurrency(row.original.price).toLowerCase().includes(filterValue.toLowerCase())
+            return numberMatch || manufacturerMatch || modelCodeMatch || modelMatch || volumeMatch || ordererMatch || yearMatch || priceMatch
           }}
-          onSortModelChange={(model: GridSortModel) => {
-            setSortModel(model)
-          }}
-          onPaginationModelChange={(model: GridPaginationModel) => {
-            setPaginationModel(model)
-          }}
-          getRowId={(row) => row.id}
-          pageSizeOptions={[20]}
-          sx={{
-            '& .MuiDataGrid-row:nth-of-type(odd)': {
-              backgroundColor: '#f5f5f5',
-            },
-          }}
-          showToolbar
         />
       </StyledPaper>
     </Grid>

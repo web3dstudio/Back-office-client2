@@ -149,7 +149,7 @@ export default function PriceListForm() {
             label={t('priceListType', { ns: 'priceList' })}
           />
         </Grid>
-        <Grid size={4}>
+        <Grid size={2}>
           <AppControlledCheckboxesTags
             name='carTypes'
             disabled={!priceListType}

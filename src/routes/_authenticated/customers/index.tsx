@@ -1,17 +1,17 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
 import { useTranslation } from 'react-i18next';
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import type { TCustomerList, TCustomerType } from '../../../types';
-import { DataGrid, type GridColDef, type GridPaginationModel, type GridRenderCellParams, type GridSortModel, } from '@mui/x-data-grid';
 import AppActionButton from '../../../components/AppActionButton';
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 import { Box, Button, Grid, Typography } from '@mui/material';
 import AppBackBtn from '../../../components/AppBackBtn';
-import { useLocalStorage } from '../../../hooks/useLocalStorage';
 import { useCustomersDeleteMutation, useCustomersListQuery } from '../../../query/customers.query';
 import CustomerFilter from '../../../components/Customers/CustomerFilter';
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog';
+import AppDataTable from '../../../components/AppDataTable';
+import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table';
 
 export const Route = createFileRoute('/_authenticated/customers/')({
   component: CustomersPage,
@@ -31,13 +31,12 @@ function CustomersPage() {
   const navigate = useNavigate({ from: '/customers' })
 
 
-  const [paginationModel, setPaginationModel] = useState({
-    page: 0,
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
     pageSize: 20,
   });
 
-  const [sortModel, setSortModel] = useState<GridSortModel>([]);
-  const [columnVisibilityModel, setColumnVisibilityModel] = useLocalStorage('customersTable', {});
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const [filtersDraft, setFiltersDraft] = useState<CustomersFilters>({
     Fullname: '',
@@ -45,10 +44,10 @@ function CustomersPage() {
   });
   const [filters, setFilters] = useState<CustomersFilters>(filtersDraft);
 
-  const { data: customers, isLoading } = useCustomersListQuery(paginationModel.page, {
+  const { data: customers, isLoading } = useCustomersListQuery(pagination.pageIndex, {
     Fullname: filters.Fullname,
     CustomerTypeIds: filters.CustomerTypeIds.join(',')
-  }, sortModel)
+  }, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
   const { mutate: deleteCustomer, isPending: isDeleting } = useCustomersDeleteMutation()
 
   const handleDeleteCustomer = () => {
@@ -62,101 +61,117 @@ function CustomersPage() {
     }
   }
 
-  const columns = [
-    {
-      field: 'fullname',
-      headerName: t('fullName', { ns: 'customers' }),
-      editable: false,
-      hideable: false,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCustomerList) => row.firstName + ' ' + row.middleName + ' ' + row.lastName,
-    },
-    {
-      field: 'company',
-      headerName: t('company', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'mobileNumber',
-      headerName: t('mobile', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'email',
-      headerName: t('email', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'address',
-      headerName: t('address', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCustomerList) => row.city + ' ' + row.street + ' ' + row.houseNumber + ' ' + row.zipCode,
-    },
-    {
-      field: 'type',
-      headerName: t('type', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCustomerList) => row.customerTypes.map((type: TCustomerType) => type.name).join(', '),
-    },
-    {
-      field: 'subscriptionValidity',
-      headerName: t('subValidity', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-      valueGetter: (_value: any, row: TCustomerList) => dateTimeFormat(row.subscriptionValidity),
-    },
-    {
-      field: 'dailyQueries',
-      headerName: t('queries', { ns: 'customers' }),
-      editable: false,
-      hideable: true,
-      type: 'string',
-      flex: 1,
-    },
-    {
-      field: 'actions',
-      type: 'actions',
-      headerName: 'Actions',
-      width: 140,
-      hideable: false,
-      getActions: (params: GridRenderCellParams) => [
-        <AppActionButton type='edit' onClick={() => {
-          navigate({ to: '/customers/$id', params: { id: params.row.id } })
-        }} />,
-        <AppActionButton type='duplicate' onClick={() => {
-          navigate({
-            to: '/customers/new',
-            search: { duplicateId: params.row.id }
-          })
-        }} />,
-        <AppActionButton
-          type='delete'
-          onClick={() => {
-            setSelected(() => params.row)
-            setOpenConfirmDialog(true)
-          }}
-        />
-      ],
-    },
-  ]
+  const columns = useMemo<ColumnDef<TCustomerList>[]>(
+    () => [
+      {
+        accessorKey: 'fullname',
+        header: t('fullName', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: false,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+        cell: ({ row }) => row.original.firstName + ' ' + row.original.middleName + ' ' + row.original.lastName,
+      },
+      {
+        accessorKey: 'company',
+        header: t('company', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+      },
+      {
+        accessorKey: 'mobileNumber',
+        header: t('mobile', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+      },
+      {
+        accessorKey: 'email',
+        header: t('email', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 200,
+        minSize: 150,
+        maxSize: 300,
+      },
+      {
+        accessorKey: 'address',
+        header: t('address', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 250,
+        minSize: 200,
+        maxSize: 350,
+        cell: ({ row }) => row.original.city + ' ' + row.original.street + ' ' + row.original.houseNumber + ' ' + row.original.zipCode,
+      },
+      {
+        accessorKey: 'type',
+        header: t('type', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 100,
+        maxSize: 200,
+        cell: ({ row }) => row.original.customerTypes.map((type: TCustomerType) => type.name).join(', '),
+      },
+      {
+        accessorKey: 'subscriptionValidity',
+        header: t('subValidity', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 120,
+        minSize: 100,
+        maxSize: 150,
+        cell: ({ row }) => dateTimeFormat(row.original.subscriptionValidity),
+      },
+      {
+        accessorKey: 'dailyQueries',
+        header: t('queries', { ns: 'customers' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 100,
+        minSize: 80,
+        maxSize: 120,
+      },
+      {
+        id: 'actions',
+        header: 'Actions',
+        enableSorting: false,
+        enableHiding: false,
+        size: 140,
+        minSize: 140,
+        maxSize: 140,
+        meta: { align: 'right' },
+        cell: ({ row }) => (
+          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+            <AppActionButton type='edit' onClick={() => {
+              navigate({ to: '/customers/$id', params: { id: row.original.id } })
+            }} />
+            <AppActionButton type='duplicate' onClick={() => {
+              navigate({
+                to: '/customers/new',
+                search: { duplicateId: row.original.id }
+              })
+            }} />
+            <AppActionButton
+              type='delete'
+              onClick={() => {
+                setSelected(() => row.original)
+                setOpenConfirmDialog(true)
+              }}
+            />
+          </Box>
+        ),
+      },
+    ],
+    [t, dateTimeFormat, navigate]
+  )
 
   return (<>
     <Grid container spacing={3} >
@@ -199,7 +214,7 @@ function CustomersPage() {
           setFilters={setFiltersDraft}
           onSearch={() => {
             setFilters(filtersDraft);
-            setPaginationModel(model => ({ ...model, page: 0 })); // сбросить страницу при поиске
+            setPagination(prev => ({ ...prev, pageIndex: 0 })); // сбросить страницу при поиске
           }}
         />
       </StyledPaper>
@@ -214,35 +229,28 @@ function CustomersPage() {
           gap: 2,
         }}
       >
-        <DataGrid
-          rows={customers?.data ?? []}
-          columns={columns as GridColDef<TCustomerList>[]}
-          rowCount={customers?.totalRowsNumber ?? 0}
-          loading={isLoading}
-          pagination
-          paginationMode="server"
-          paginationModel={paginationModel}
-          sortingMode="server"
-          sortModel={sortModel}
-          disableColumnMenu
-          columnVisibilityModel={columnVisibilityModel}
-          onColumnVisibilityModelChange={(newModel) => {
-            setColumnVisibilityModel(newModel);
+        <AppDataTable
+          tableName='customers'
+          data={customers?.data ?? []}
+          columns={columns}
+          isLoading={isLoading}
+          manualPagination={true}
+          sorting={sorting}
+          onSortingChange={setSorting}
+          pagination={pagination}
+          onPaginationChange={setPagination}
+          totalPages={customers?.totalPagesNumber ?? 1}
+          currentPage={customers?.currentPageNumber ?? pagination.pageIndex + 1}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const fullnameMatch = (row.original.firstName + ' ' + row.original.middleName + ' ' + row.original.lastName).toLowerCase().includes(filterValue.toLowerCase())
+            const companyMatch = row.original.company?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const mobileMatch = row.original.mobileNumber?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const emailMatch = row.original.email?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            const addressMatch = (row.original.city + ' ' + row.original.street + ' ' + row.original.houseNumber + ' ' + row.original.zipCode).toLowerCase().includes(filterValue.toLowerCase())
+            const typeMatch = row.original.customerTypes.map((type: TCustomerType) => type.name).join(', ').toLowerCase().includes(filterValue.toLowerCase())
+            const queriesMatch = row.original.dailyQueries?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
+            return fullnameMatch || companyMatch || mobileMatch || emailMatch || addressMatch || typeMatch || queriesMatch
           }}
-          onSortModelChange={(model: GridSortModel) => {
-            setSortModel(model)
-          }}
-          onPaginationModelChange={(model: GridPaginationModel) => {
-            setPaginationModel(model)
-          }}
-          getRowId={(row) => row.id}
-          pageSizeOptions={[20]}
-          sx={{
-            '& .MuiDataGrid-row:nth-of-type(odd)': {
-              backgroundColor: '#f5f5f5',
-            },
-          }}
-          showToolbar
         />
       </StyledPaper>
     </Grid>
