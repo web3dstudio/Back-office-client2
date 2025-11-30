@@ -1,4 +1,4 @@
-import { Avatar, Box, IconButton, Typography, useTheme } from '@mui/material'
+import { Avatar, Box, IconButton, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useTranslation } from 'react-i18next'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
@@ -15,11 +15,29 @@ import {
 } from '@mui/icons-material'
 import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledDatePicker } from '../AppControlledDatePicker'
-import type { TCurrentUser, TAvatarUpload, TProfileFormInput } from '../../types'
+import type { TCurrentUser, TAvatarUpload } from '../../types'
+
+type TProfileFormInput = {
+  imageFileName?: string | null | undefined
+  firstName: string
+  middleName?: string | undefined
+  lastName: string
+  tz: string
+  email: string
+  mobileNumber: string
+  phoneNumber?: string | undefined
+  address?: string
+  department?: string
+  position: string
+  userName?: string
+  startWorkDate?: any
+  password: string
+  approvePassword: string
+}
 
 type TAppProfileFormProps = {
   user: TCurrentUser | undefined
-  onProfileSave: (data: TProfileFormInput, avatar: TAvatarUpload | null) => void
+  onProfileSave: (data: any, avatar: TAvatarUpload | null) => void
   isPending: boolean
 }
 
@@ -32,17 +50,19 @@ function AppProfileForm({
 
   const schema = object()
     .shape({
-      imageFileName: yup.string(),
+      imageFileName: yup.string().optional(),
       firstName: yup.string().required(),
-      middleName: yup.string(),
+      middleName: yup.string().optional(),
       lastName: yup.string().required(),
       tz: yup.string().required(),
       email: yup.string().email().required(),
       mobileNumber: yup.string().required(),
-      phoneNumber: yup.string(),
-      address: yup.string(),
-      department: yup.string(),
+      phoneNumber: yup.string().optional(),
+      address: yup.string().optional(),
+      department: yup.string().optional(),
       position: yup.string().required(),
+      userName: yup.string().optional(),
+      startWorkDate: yup.mixed().optional(),
       password: yup.string().required(),
       approvePassword: yup
         .string()
@@ -52,7 +72,7 @@ function AppProfileForm({
     .required()
 
   const methods = useForm<TProfileFormInput>({
-    resolver: yupResolver(schema),
+    resolver: yupResolver(schema) as any,
     mode: 'onChange',
     defaultValues: {
       imageFileName: user?.imageFileName || '',
@@ -63,14 +83,13 @@ function AppProfileForm({
       email: user?.email || '',
       mobileNumber: user?.mobileNumber || '',
       phoneNumber: user?.phoneNumber || '',
-      company: user?.company || '',
-      companyTZ: user?.companyTZ || '',
+      address: user?.address || '',
       department: user?.department || '',
       position: user?.position || '',
-      branch: user?.branch || '',
+      userName: user?.userName || '',
+      startWorkDate: user?.startWorkDate || null,
       password: user?.password || '',
       approvePassword: user?.password || '',
-      allowedMonths: user?.allowedMonths || 0,
     },
   })
 
@@ -88,14 +107,13 @@ function AppProfileForm({
         email: user?.email || '',
         mobileNumber: user?.mobileNumber || '',
         phoneNumber: user?.phoneNumber || '',
-        company: user?.company || '',
-        companyTZ: user?.companyTZ || '',
+        address: user?.address || '',
         department: user?.department || '',
         position: user?.position || '',
-        branch: user?.branch || '',
+        userName: user?.userName || '',
+        startWorkDate: user?.startWorkDate || null,
         password: user?.password || '',
         approvePassword: user?.password || '',
-        allowedMonths: user?.allowedMonths || 0,
       })
       setPreview(user.imageDownloadUri ? user.imageDownloadUri : null)
     }
@@ -122,15 +140,22 @@ function AppProfileForm({
 
   const onSubmit: SubmitHandler<TProfileFormInput> = (data) => {
     console.log('OnSubmit Profile')
+
+    // Если imageFileName undefined (удален), явно устанавливаем null
+    const profileData = {
+      ...data,
+      imageFileName: data.imageFileName === undefined ? null : data.imageFileName
+    }
+
     if (selectedImage && data.imageFileName) {
       const avatar: TAvatarUpload = {
         imageUploadUri: '', // this from update profile response!!!
         filename: data.imageFileName,
         file: selectedImage,
       }
-      onProfileSave(data, avatar)
+      onProfileSave(profileData, avatar)
     } else {
-      onProfileSave(data, null)
+      onProfileSave(profileData, null)
     }
   }
 
@@ -214,7 +239,7 @@ function AppProfileForm({
             name='imageFileName'
             control={control}
             render={({ field }) => (
-              <input type='hidden' id='imageFileName' {...field} />
+              <input type='hidden' id='imageFileName' {...field} value={field.value || ''} />
             )}
           />
 
@@ -311,7 +336,7 @@ function AppProfileForm({
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <AppControlledTextField
                 required
-                name='mobile'
+                name='mobileNumber'
                 control={control}
                 errors={errors}
                 label={t('mobile', { ns: 'userProfile' })}
@@ -322,7 +347,7 @@ function AppProfileForm({
             {/* phoneNumber */}
             <Grid size={{ xs: 12, sm: 6, md: 3 }}>
               <AppControlledTextField
-                name='phone'
+                name='phoneNumber'
                 control={control}
                 errors={errors}
                 label={t('phone', { ns: 'userProfile' })}

@@ -16,6 +16,9 @@ interface Props {
   title?: React.ReactNode | string
   children?: React.ReactNode
   isPending?: boolean
+  confirmText?: string
+  confirmColor?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning'
+  cancelText?: string
 }
 
 const AppConfirmDialog = ({
@@ -25,6 +28,9 @@ const AppConfirmDialog = ({
   open,
   title,
   children,
+  confirmText,
+  confirmColor = 'error',
+  cancelText,
 }: Props) => {
 
   const { t } = useTranslation('common')
@@ -54,15 +60,15 @@ const AppConfirmDialog = ({
       <DialogContent>{children}</DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>
         <Button variant='outlined' onClick={() => onClose()}>
-          {t('modals.cancel')}
+          {cancelText || t('modals.cancel')}
         </Button>
         <Button
           loading={isPending}
-          color='error'
+          color={confirmColor}
           variant='contained'
           onClick={() => handleSubmut()}
         >
-          {t('modals.delete')}
+          {confirmText || t('modals.delete')}
         </Button>
       </DialogActions>
     </Dialog>

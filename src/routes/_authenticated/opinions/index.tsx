@@ -295,7 +295,7 @@ function OpinionsPage() {
             const volumeMatch = row.original.volume?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const ordererMatch = row.original.ordererName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const yearMatch = row.original.manufacturerYear?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-            const priceMatch = formatCurrency(row.original.price).toLowerCase().includes(filterValue.toLowerCase())
+            const priceMatch = formatCurrency(row.original.price)?.toLowerCase().includes(filterValue.toLowerCase()) || false
             return numberMatch || manufacturerMatch || modelCodeMatch || modelMatch || volumeMatch || ordererMatch || yearMatch || priceMatch
           }}
         />

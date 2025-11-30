@@ -13,53 +13,58 @@ export type TAvatarUpload = {
   file: File
 }
 
-export type TProfileFormInput = {
-  imageFileName?: string | undefined
 
+export type TUser = {
+  id: string
+  adSid: string | null
+  userName: string
   firstName: string
-  middleName?: string | undefined
+  middleName: string | null
   lastName: string
-  tz: string
-
   email: string
-  mobileNumber: string
-  phoneNumber?: string | undefined
-
-
+  tz: string
+  mobileNumber: string | null
+  phoneNumber: string | null
+  address: string | null
+  department: string | null
+  position: string | null
+  startWorkDate: string | null
+  password: string
+  imageFileName: string | null
+  imageDownloadUri: string | null
+  imageUploadUri: string | null
+  role: number
+  adUser: boolean
 }
 
 
 export type TCurrentUser = {
   id: string
-  parentId: string
+  userName: string | null
+  password: string
   firstName: string
-  middleName: string
+  middleName: string | null
   lastName: string
   tz: string
   email: string
-  mobileNumber: string
-  phoneNumber: string
-  city: string
-  street: string
-  houseNumber: string
-  zipCode: string
-  department: string
-  company: string
-  companyTZ: string
-  position: string
-  branch: string
-  password: string
-  dailyQueries: number
-  numberOfUsers: number
-  type: number
-  createDate: Date
-  subscriptionValidity: Date
-  subscriptionExclusion: boolean
-  comments: string
-  imageFileName: string | undefined
-  imageDownloadUri: string | undefined
-  imageUploadUri: string | undefined
-  allowedMonths: number
+  mobileNumber: string | null
+  phoneNumber: string | null
+  address: string | null
+  department: string | null
+  position: string | null
+  startWorkDate: string | null
+  twoFA: boolean
+  role: number
+  defaultPage: string | null
+  adUser: boolean
+  adSid: string | null
+  imageFileName: string | null
+  imageDownloadUri: string | null
+  imageUploadUri: string | null
+  company: string | null
+  companyTZ: string | null
+  branch: string | null
+  allowedMonths: number | null
 }
 
 export type TLogoutResponse = {
@@ -116,6 +121,7 @@ export type TSerie = {
   priority?: number
   models?: TModel[]
   manufacturer?: TManufacturer
+  seriesCode?: string
 }
 
 export type TModel = {
@@ -360,8 +366,8 @@ export type TOpinionResponse = {
   totalPagesNumber: number
   currentPageNumber: number
   rowsInPage: number
-  status: number
-  message: string | null
+  status?: number
+  message?: string | null
 }
 
 export type OpinionsFilters = {
@@ -666,6 +672,38 @@ export type TCarPrice = {
   year: number
   month: number
   calculateDate: number
+}
+
+export type TSystemSettings = {
+  id: string
+  twoFA: boolean
+  inactiveUsersDisconnectInterval: number
+  inactiveAssessorsUsersDisconnectInterval: number
+  inactiveOpinionsUsersDisconnectInterval: number
+  adminAproveForNewUsers: boolean
+  defaultDailyUserQueries: number
+  unsuccessfulLoginAttempts: number
+  preventUserMultiLogins: boolean
+}
+
+export type TAdUser = {
+  id: string
+  displayName: string
+  givenName: string
+  surname: string
+  emailAddress: string
+  samAccountName: string
+  voiceTelephoneNumber: string
+}
+
+export type TRole = {
+  id: string
+  name: string
+  nameEn: string | null
+}
+
+export type TUsersParamsResponse = {
+  adUsers: TAdUser[]
 }
 
 

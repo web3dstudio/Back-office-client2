@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedUsageTypesIndexRouteImport } from './routes/_authenticated/usage-types/index'
@@ -50,8 +49,6 @@ import { Route as AuthenticatedCarMarksIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppraisersIndexRouteImport } from './routes/_authenticated/appraisers/index'
 import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
-import { Route as AuthenticatedUsersNewRouteImport } from './routes/_authenticated/users/new'
-import { Route as AuthenticatedUsersIdRouteImport } from './routes/_authenticated/users/$id'
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
 import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
@@ -83,11 +80,6 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const PublicLoginIndexRoute = PublicLoginIndexRouteImport.update({
@@ -150,9 +142,9 @@ const AuthenticatedRepositoryIndexRoute =
   } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProtectivesIndexRoute =
   AuthenticatedProtectivesIndexRouteImport.update({
@@ -309,16 +301,6 @@ const AuthenticatedAccessoriesIndexRoute =
     path: '/accessories/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsersNewRoute = AuthenticatedUsersNewRouteImport.update({
-  id: '/users/new',
-  path: '/users/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedUsersIdRoute = AuthenticatedUsersIdRouteImport.update({
-  id: '/users/$id',
-  path: '/users/$id',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
 const AuthenticatedOpinionsNewRoute =
   AuthenticatedOpinionsNewRouteImport.update({
     id: '/opinions/new',
@@ -355,63 +337,63 @@ const AuthenticatedCatalogIdRoute = AuthenticatedCatalogIdRouteImport.update({
 } as any)
 const AuthenticatedReportsSubscriptionIndexRoute =
   AuthenticatedReportsSubscriptionIndexRouteImport.update({
-    id: '/subscription/',
-    path: '/subscription/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/subscription/',
+    path: '/reports/subscription/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsStatisticsIndexRoute =
   AuthenticatedReportsStatisticsIndexRouteImport.update({
-    id: '/statistics/',
-    path: '/statistics/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/statistics/',
+    path: '/reports/statistics/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsSearchQueriesIndexRoute =
   AuthenticatedReportsSearchQueriesIndexRouteImport.update({
-    id: '/search-queries/',
-    path: '/search-queries/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/search-queries/',
+    path: '/reports/search-queries/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsPriceDifferencesIndexRoute =
   AuthenticatedReportsPriceDifferencesIndexRouteImport.update({
-    id: '/price-differences/',
-    path: '/price-differences/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/price-differences/',
+    path: '/reports/price-differences/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsNewModelsIndexRoute =
   AuthenticatedReportsNewModelsIndexRouteImport.update({
-    id: '/new-models/',
-    path: '/new-models/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/new-models/',
+    path: '/reports/new-models/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsLowYearExceedsHighIndexRoute =
   AuthenticatedReportsLowYearExceedsHighIndexRouteImport.update({
-    id: '/low-year-exceeds-high/',
-    path: '/low-year-exceeds-high/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/low-year-exceeds-high/',
+    path: '/reports/low-year-exceeds-high/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsLeadingQueriesIndexRoute =
   AuthenticatedReportsLeadingQueriesIndexRouteImport.update({
-    id: '/leading-queries/',
-    path: '/leading-queries/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/leading-queries/',
+    path: '/reports/leading-queries/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsDeductedModelsIndexRoute =
   AuthenticatedReportsDeductedModelsIndexRouteImport.update({
-    id: '/deducted-models/',
-    path: '/deducted-models/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/deducted-models/',
+    path: '/reports/deducted-models/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsCatalogItemsIndexRoute =
   AuthenticatedReportsCatalogItemsIndexRouteImport.update({
-    id: '/catalog-items/',
-    path: '/catalog-items/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/catalog-items/',
+    path: '/reports/catalog-items/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedReportsCarByYearsIndexRoute =
   AuthenticatedReportsCarByYearsIndexRouteImport.update({
-    id: '/car-by-years/',
-    path: '/car-by-years/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/car-by-years/',
+    path: '/reports/car-by-years/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedPriceListAdvertisementsIndexRoute =
   AuthenticatedPriceListAdvertisementsIndexRouteImport.update({
@@ -433,7 +415,6 @@ const AuthenticatedCatalogEditIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/': typeof AuthenticatedIndexRoute
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
@@ -441,8 +422,6 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/users/$id': typeof AuthenticatedUsersIdRoute
-  '/users/new': typeof AuthenticatedUsersNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
   '/appraisers': typeof AuthenticatedAppraisersIndexRoute
@@ -469,7 +448,7 @@ export interface FileRoutesByFullPath {
   '/price-list': typeof AuthenticatedPriceListIndexRoute
   '/profile': typeof AuthenticatedProfileIndexRoute
   '/protectives': typeof AuthenticatedProtectivesIndexRoute
-  '/reports/': typeof AuthenticatedReportsIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
   '/repository': typeof AuthenticatedRepositoryIndexRoute
   '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
   '/service-packages': typeof AuthenticatedServicePackagesIndexRoute
@@ -502,8 +481,6 @@ export interface FileRoutesByTo {
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/users/$id': typeof AuthenticatedUsersIdRoute
-  '/users/new': typeof AuthenticatedUsersNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
   '/appraisers': typeof AuthenticatedAppraisersIndexRoute
@@ -559,7 +536,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
@@ -567,8 +543,6 @@ export interface FileRoutesById {
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
   '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/_authenticated/users/$id': typeof AuthenticatedUsersIdRoute
-  '/_authenticated/users/new': typeof AuthenticatedUsersNewRoute
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
   '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
   '/_authenticated/appraisers/': typeof AuthenticatedAppraisersIndexRoute
@@ -623,7 +597,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/reports'
     | '/'
     | '/catalog/$id'
     | '/catalog/new-car'
@@ -631,8 +604,6 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
-    | '/users/$id'
-    | '/users/new'
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
@@ -659,7 +630,7 @@ export interface FileRouteTypes {
     | '/price-list'
     | '/profile'
     | '/protectives'
-    | '/reports/'
+    | '/reports'
     | '/repository'
     | '/service-calls'
     | '/service-packages'
@@ -692,8 +663,6 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
-    | '/users/$id'
-    | '/users/new'
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
@@ -748,7 +717,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_authenticated'
     | '/_public'
-    | '/_authenticated/reports'
     | '/_authenticated/'
     | '/_authenticated/catalog/$id'
     | '/_authenticated/catalog/new-car'
@@ -756,8 +724,6 @@ export interface FileRouteTypes {
     | '/_authenticated/customers/new'
     | '/_authenticated/opinions/$id'
     | '/_authenticated/opinions/new'
-    | '/_authenticated/users/$id'
-    | '/_authenticated/users/new'
     | '/_authenticated/accessories/'
     | '/_authenticated/advertisements/'
     | '/_authenticated/appraisers/'
@@ -838,13 +804,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/reports': {
-      id: '/_authenticated/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof AuthenticatedReportsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_public/login/': {
       id: '/_public/login/'
       path: '/login'
@@ -917,10 +876,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
-      path: '/'
-      fullPath: '/reports/'
+      path: '/reports'
+      fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/protectives/': {
       id: '/_authenticated/protectives/'
@@ -1104,20 +1063,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccessoriesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/users/new': {
-      id: '/_authenticated/users/new'
-      path: '/users/new'
-      fullPath: '/users/new'
-      preLoaderRoute: typeof AuthenticatedUsersNewRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/users/$id': {
-      id: '/_authenticated/users/$id'
-      path: '/users/$id'
-      fullPath: '/users/$id'
-      preLoaderRoute: typeof AuthenticatedUsersIdRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/opinions/new': {
       id: '/_authenticated/opinions/new'
       path: '/opinions/new'
@@ -1162,73 +1107,73 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/reports/subscription/': {
       id: '/_authenticated/reports/subscription/'
-      path: '/subscription'
+      path: '/reports/subscription'
       fullPath: '/reports/subscription'
       preLoaderRoute: typeof AuthenticatedReportsSubscriptionIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/statistics/': {
       id: '/_authenticated/reports/statistics/'
-      path: '/statistics'
+      path: '/reports/statistics'
       fullPath: '/reports/statistics'
       preLoaderRoute: typeof AuthenticatedReportsStatisticsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/search-queries/': {
       id: '/_authenticated/reports/search-queries/'
-      path: '/search-queries'
+      path: '/reports/search-queries'
       fullPath: '/reports/search-queries'
       preLoaderRoute: typeof AuthenticatedReportsSearchQueriesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/price-differences/': {
       id: '/_authenticated/reports/price-differences/'
-      path: '/price-differences'
+      path: '/reports/price-differences'
       fullPath: '/reports/price-differences'
       preLoaderRoute: typeof AuthenticatedReportsPriceDifferencesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/new-models/': {
       id: '/_authenticated/reports/new-models/'
-      path: '/new-models'
+      path: '/reports/new-models'
       fullPath: '/reports/new-models'
       preLoaderRoute: typeof AuthenticatedReportsNewModelsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/low-year-exceeds-high/': {
       id: '/_authenticated/reports/low-year-exceeds-high/'
-      path: '/low-year-exceeds-high'
+      path: '/reports/low-year-exceeds-high'
       fullPath: '/reports/low-year-exceeds-high'
       preLoaderRoute: typeof AuthenticatedReportsLowYearExceedsHighIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/leading-queries/': {
       id: '/_authenticated/reports/leading-queries/'
-      path: '/leading-queries'
+      path: '/reports/leading-queries'
       fullPath: '/reports/leading-queries'
       preLoaderRoute: typeof AuthenticatedReportsLeadingQueriesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/deducted-models/': {
       id: '/_authenticated/reports/deducted-models/'
-      path: '/deducted-models'
+      path: '/reports/deducted-models'
       fullPath: '/reports/deducted-models'
       preLoaderRoute: typeof AuthenticatedReportsDeductedModelsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/catalog-items/': {
       id: '/_authenticated/reports/catalog-items/'
-      path: '/catalog-items'
+      path: '/reports/catalog-items'
       fullPath: '/reports/catalog-items'
       preLoaderRoute: typeof AuthenticatedReportsCatalogItemsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/reports/car-by-years/': {
       id: '/_authenticated/reports/car-by-years/'
-      path: '/car-by-years'
+      path: '/reports/car-by-years'
       fullPath: '/reports/car-by-years'
       preLoaderRoute: typeof AuthenticatedReportsCarByYearsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/price-list/advertisements/': {
       id: '/_authenticated/price-list/advertisements/'
@@ -1254,49 +1199,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedReportsRouteChildren {
-  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
-  AuthenticatedReportsCarByYearsIndexRoute: typeof AuthenticatedReportsCarByYearsIndexRoute
-  AuthenticatedReportsCatalogItemsIndexRoute: typeof AuthenticatedReportsCatalogItemsIndexRoute
-  AuthenticatedReportsDeductedModelsIndexRoute: typeof AuthenticatedReportsDeductedModelsIndexRoute
-  AuthenticatedReportsLeadingQueriesIndexRoute: typeof AuthenticatedReportsLeadingQueriesIndexRoute
-  AuthenticatedReportsLowYearExceedsHighIndexRoute: typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
-  AuthenticatedReportsNewModelsIndexRoute: typeof AuthenticatedReportsNewModelsIndexRoute
-  AuthenticatedReportsPriceDifferencesIndexRoute: typeof AuthenticatedReportsPriceDifferencesIndexRoute
-  AuthenticatedReportsSearchQueriesIndexRoute: typeof AuthenticatedReportsSearchQueriesIndexRoute
-  AuthenticatedReportsStatisticsIndexRoute: typeof AuthenticatedReportsStatisticsIndexRoute
-  AuthenticatedReportsSubscriptionIndexRoute: typeof AuthenticatedReportsSubscriptionIndexRoute
-}
-
-const AuthenticatedReportsRouteChildren: AuthenticatedReportsRouteChildren = {
-  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
-  AuthenticatedReportsCarByYearsIndexRoute:
-    AuthenticatedReportsCarByYearsIndexRoute,
-  AuthenticatedReportsCatalogItemsIndexRoute:
-    AuthenticatedReportsCatalogItemsIndexRoute,
-  AuthenticatedReportsDeductedModelsIndexRoute:
-    AuthenticatedReportsDeductedModelsIndexRoute,
-  AuthenticatedReportsLeadingQueriesIndexRoute:
-    AuthenticatedReportsLeadingQueriesIndexRoute,
-  AuthenticatedReportsLowYearExceedsHighIndexRoute:
-    AuthenticatedReportsLowYearExceedsHighIndexRoute,
-  AuthenticatedReportsNewModelsIndexRoute:
-    AuthenticatedReportsNewModelsIndexRoute,
-  AuthenticatedReportsPriceDifferencesIndexRoute:
-    AuthenticatedReportsPriceDifferencesIndexRoute,
-  AuthenticatedReportsSearchQueriesIndexRoute:
-    AuthenticatedReportsSearchQueriesIndexRoute,
-  AuthenticatedReportsStatisticsIndexRoute:
-    AuthenticatedReportsStatisticsIndexRoute,
-  AuthenticatedReportsSubscriptionIndexRoute:
-    AuthenticatedReportsSubscriptionIndexRoute,
-}
-
-const AuthenticatedReportsRouteWithChildren =
-  AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
-
 interface AuthenticatedRouteChildren {
-  AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCatalogIdRoute: typeof AuthenticatedCatalogIdRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
@@ -1304,8 +1207,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
   AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
-  AuthenticatedUsersIdRoute: typeof AuthenticatedUsersIdRoute
-  AuthenticatedUsersNewRoute: typeof AuthenticatedUsersNewRoute
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
   AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
   AuthenticatedAppraisersIndexRoute: typeof AuthenticatedAppraisersIndexRoute
@@ -1332,6 +1233,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPriceListIndexRoute: typeof AuthenticatedPriceListIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedProtectivesIndexRoute: typeof AuthenticatedProtectivesIndexRoute
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
   AuthenticatedRepositoryIndexRoute: typeof AuthenticatedRepositoryIndexRoute
   AuthenticatedServiceCallsIndexRoute: typeof AuthenticatedServiceCallsIndexRoute
   AuthenticatedServicePackagesIndexRoute: typeof AuthenticatedServicePackagesIndexRoute
@@ -1344,10 +1246,19 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCatalogEditIdRoute: typeof AuthenticatedCatalogEditIdRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
   AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
+  AuthenticatedReportsCarByYearsIndexRoute: typeof AuthenticatedReportsCarByYearsIndexRoute
+  AuthenticatedReportsCatalogItemsIndexRoute: typeof AuthenticatedReportsCatalogItemsIndexRoute
+  AuthenticatedReportsDeductedModelsIndexRoute: typeof AuthenticatedReportsDeductedModelsIndexRoute
+  AuthenticatedReportsLeadingQueriesIndexRoute: typeof AuthenticatedReportsLeadingQueriesIndexRoute
+  AuthenticatedReportsLowYearExceedsHighIndexRoute: typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
+  AuthenticatedReportsNewModelsIndexRoute: typeof AuthenticatedReportsNewModelsIndexRoute
+  AuthenticatedReportsPriceDifferencesIndexRoute: typeof AuthenticatedReportsPriceDifferencesIndexRoute
+  AuthenticatedReportsSearchQueriesIndexRoute: typeof AuthenticatedReportsSearchQueriesIndexRoute
+  AuthenticatedReportsStatisticsIndexRoute: typeof AuthenticatedReportsStatisticsIndexRoute
+  AuthenticatedReportsSubscriptionIndexRoute: typeof AuthenticatedReportsSubscriptionIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCatalogIdRoute: AuthenticatedCatalogIdRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
@@ -1355,8 +1266,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
   AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
-  AuthenticatedUsersIdRoute: AuthenticatedUsersIdRoute,
-  AuthenticatedUsersNewRoute: AuthenticatedUsersNewRoute,
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
   AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
   AuthenticatedAppraisersIndexRoute: AuthenticatedAppraisersIndexRoute,
@@ -1385,6 +1294,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPriceListIndexRoute: AuthenticatedPriceListIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedProtectivesIndexRoute: AuthenticatedProtectivesIndexRoute,
+  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
   AuthenticatedRepositoryIndexRoute: AuthenticatedRepositoryIndexRoute,
   AuthenticatedServiceCallsIndexRoute: AuthenticatedServiceCallsIndexRoute,
   AuthenticatedServicePackagesIndexRoute:
@@ -1400,6 +1310,26 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
   AuthenticatedPriceListAdvertisementsIndexRoute:
     AuthenticatedPriceListAdvertisementsIndexRoute,
+  AuthenticatedReportsCarByYearsIndexRoute:
+    AuthenticatedReportsCarByYearsIndexRoute,
+  AuthenticatedReportsCatalogItemsIndexRoute:
+    AuthenticatedReportsCatalogItemsIndexRoute,
+  AuthenticatedReportsDeductedModelsIndexRoute:
+    AuthenticatedReportsDeductedModelsIndexRoute,
+  AuthenticatedReportsLeadingQueriesIndexRoute:
+    AuthenticatedReportsLeadingQueriesIndexRoute,
+  AuthenticatedReportsLowYearExceedsHighIndexRoute:
+    AuthenticatedReportsLowYearExceedsHighIndexRoute,
+  AuthenticatedReportsNewModelsIndexRoute:
+    AuthenticatedReportsNewModelsIndexRoute,
+  AuthenticatedReportsPriceDifferencesIndexRoute:
+    AuthenticatedReportsPriceDifferencesIndexRoute,
+  AuthenticatedReportsSearchQueriesIndexRoute:
+    AuthenticatedReportsSearchQueriesIndexRoute,
+  AuthenticatedReportsStatisticsIndexRoute:
+    AuthenticatedReportsStatisticsIndexRoute,
+  AuthenticatedReportsSubscriptionIndexRoute:
+    AuthenticatedReportsSubscriptionIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(

@@ -14,5 +14,6 @@
   "approveDelete": "האם אתה בטוח?",
   "logo": "לוגו יצרן",
   "Filter": "חיפוש",
-  "manufacturerCode": "קוד יצרן"
+  "manufacturerCode": "קוד יצרן",
+  "seriesCode": "קוד סדרה"
 }

@@ -8,16 +8,12 @@ type TSession = {
 }
 
 type THomePageResp = {
-  data: {
-    cars: number
-    manufacturers: number,
-    opinions: number,
-    customers: number,
-    reportLeadingQuery: any[],
-    sessions: TSession[]
-  }
-  status: number,
-  message: string | null
+  cars: number
+  manufacturers: number,
+  opinions: number,
+  customers: number,
+  reportLeadingQuery: any[],
+  sessions: TSession[]
 }
 
 export function useHomePageQuery(): UseQueryResult<THomePageResp, Error> {

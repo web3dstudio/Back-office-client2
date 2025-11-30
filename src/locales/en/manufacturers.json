@@ -14,5 +14,6 @@
   "approveDelete": "Are you sure?",
   "logo": "Manufacturer logo",
   "Filter": "Filter",
-  "manufacturerCode": "Manufacturer Code"
+  "manufacturerCode": "Manufacturer Code",
+  "seriesCode": "Series Code"
 }

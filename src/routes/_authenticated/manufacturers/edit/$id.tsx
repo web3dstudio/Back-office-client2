@@ -56,6 +56,7 @@ function MenufacturerEditPage() {
     serieses: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('form-field.required')),
+        seriesCode: yup.string(),
         models: yup.array().of(
           yup.object().shape({
             name: yup.string().required(t('form-field.required')),
@@ -79,6 +80,7 @@ function MenufacturerEditPage() {
       serieses: manufacturer?.serieses?.map(serie => ({
         dbId: serie.id,
         name: serie.name,
+        seriesCode: serie.seriesCode ?? '',
         priority: serie.priority ?? 0,
         models: serie.models?.map(model => ({
           dbId: model.id,
@@ -110,6 +112,7 @@ function MenufacturerEditPage() {
         serieses: manufacturer.serieses?.map(serie => ({
           dbId: serie.id,
           name: serie.name,
+          seriesCode: serie.seriesCode ?? '',
           priority: serie.priority ?? 0,
           models: serie.models?.map(model => ({
             dbId: model.id,
@@ -232,6 +235,7 @@ function MenufacturerEditPage() {
 
             {/* Поле фильтра по коду  */}
             <OutlinedInput
+              size="small"
               placeholder={t('filter', { ns: 'manufacturers' })}
               value={filterByCodeInput}
               onChange={(e) => setFilterByCodeInput(e.target.value)}
@@ -244,7 +248,7 @@ function MenufacturerEditPage() {
               }
             />
 
-            <Button variant="contained" onClick={() => prepend({ name: '', dbId: null, models: [] })}>
+            <Button variant="contained" onClick={() => prepend({ name: '', seriesCode: '', dbId: null, models: [] })}>
               {t('addSerie', { ns: 'manufacturers' })}
             </Button>
           </Grid>

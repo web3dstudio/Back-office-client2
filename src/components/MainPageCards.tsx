@@ -17,7 +17,7 @@ function MainPageCards() {
         <MainPageCard
           name={'cars'}
           icon={<CarIcon />}
-          count={homePageData?.data?.cars}
+          count={homePageData?.cars}
           onCardClick={() => navigate({ to: '/catalog' })}
           onButtonClick={() => navigate({ to: '/catalog/new-car' })}
         />
@@ -26,7 +26,7 @@ function MainPageCards() {
         <MainPageCard
           name={'manufacturers'}
           icon={<CheckCarIcon />}
-          count={homePageData?.data?.manufacturers}
+          count={homePageData?.manufacturers}
           onCardClick={() => navigate({ to: '/manufacturers' })}
           onButtonClick={() => navigate({ to: '/manufacturers', search: { openModal: 'add' } })}
         />
@@ -35,7 +35,7 @@ function MainPageCards() {
         <MainPageCard
           name={'opinions'}
           icon={<OpinionIcon />}
-          count={homePageData?.data?.opinions}
+          count={homePageData?.opinions}
           onCardClick={() => navigate({ to: '/opinions' })}
           onButtonClick={() => navigate({ to: '/opinions/new' })}
         />
@@ -44,7 +44,7 @@ function MainPageCards() {
         <MainPageCard
           name={'customers'}
           icon={<UsersIcon />}
-          count={homePageData?.data?.customers}
+          count={homePageData?.customers}
           onCardClick={() => navigate({ to: '/customers' })}
           onButtonClick={() => navigate({ to: '/customers/new' })}
         />

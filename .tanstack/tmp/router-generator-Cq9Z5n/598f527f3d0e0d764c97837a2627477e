@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as PublicRouteImport } from './routes/_public'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
-import { Route as AuthenticatedReportsRouteImport } from './routes/_authenticated/reports'
 import { Route as PublicLoginIndexRouteImport } from './routes/_public/login/index'
 import { Route as AuthenticatedUsersIndexRouteImport } from './routes/_authenticated/users/index'
 import { Route as AuthenticatedUsageTypesIndexRouteImport } from './routes/_authenticated/usage-types/index'
@@ -50,24 +49,22 @@ import { Route as AuthenticatedCarMarksIndexRouteImport } from './routes/_authen
 import { Route as AuthenticatedAppraisersIndexRouteImport } from './routes/_authenticated/appraisers/index'
 import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
-import { Route as AuthenticatedUsersNewRouteImport } from './routes/_authenticated/users/new'
-import { Route as AuthenticatedUsersIdRouteImport } from './routes/_authenticated/users/$id'
+import { Route as AuthenticatedReportsSubscriptionRouteImport } from './routes/_authenticated/reports/subscription'
+import { Route as AuthenticatedReportsStatisticsRouteImport } from './routes/_authenticated/reports/statistics'
+import { Route as AuthenticatedReportsSearchQueriesRouteImport } from './routes/_authenticated/reports/search-queries'
+import { Route as AuthenticatedReportsPriceDifferencesRouteImport } from './routes/_authenticated/reports/price-differences'
+import { Route as AuthenticatedReportsNewModelsRouteImport } from './routes/_authenticated/reports/new-models'
+import { Route as AuthenticatedReportsLowYearExceedsHighRouteImport } from './routes/_authenticated/reports/low-year-exceeds-high'
+import { Route as AuthenticatedReportsLeadingQueriesRouteImport } from './routes/_authenticated/reports/leading-queries'
+import { Route as AuthenticatedReportsDeductedModelsRouteImport } from './routes/_authenticated/reports/deducted-models'
+import { Route as AuthenticatedReportsCatalogItemsRouteImport } from './routes/_authenticated/reports/catalog-items'
+import { Route as AuthenticatedReportsCarByYearsRouteImport } from './routes/_authenticated/reports/car-by-years'
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
 import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers/$id'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
 import { Route as AuthenticatedCatalogIdRouteImport } from './routes/_authenticated/catalog/$id'
-import { Route as AuthenticatedReportsSubscriptionIndexRouteImport } from './routes/_authenticated/reports/subscription/index'
-import { Route as AuthenticatedReportsStatisticsIndexRouteImport } from './routes/_authenticated/reports/statistics/index'
-import { Route as AuthenticatedReportsSearchQueriesIndexRouteImport } from './routes/_authenticated/reports/search-queries/index'
-import { Route as AuthenticatedReportsPriceDifferencesIndexRouteImport } from './routes/_authenticated/reports/price-differences/index'
-import { Route as AuthenticatedReportsNewModelsIndexRouteImport } from './routes/_authenticated/reports/new-models/index'
-import { Route as AuthenticatedReportsLowYearExceedsHighIndexRouteImport } from './routes/_authenticated/reports/low-year-exceeds-high/index'
-import { Route as AuthenticatedReportsLeadingQueriesIndexRouteImport } from './routes/_authenticated/reports/leading-queries/index'
-import { Route as AuthenticatedReportsDeductedModelsIndexRouteImport } from './routes/_authenticated/reports/deducted-models/index'
-import { Route as AuthenticatedReportsCatalogItemsIndexRouteImport } from './routes/_authenticated/reports/catalog-items/index'
-import { Route as AuthenticatedReportsCarByYearsIndexRouteImport } from './routes/_authenticated/reports/car-by-years/index'
 import { Route as AuthenticatedPriceListAdvertisementsIndexRouteImport } from './routes/_authenticated/price-list/advertisements/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 import { Route as AuthenticatedCatalogEditIdRouteImport } from './routes/_authenticated/catalog/edit/$id'
@@ -83,11 +80,6 @@ const AuthenticatedRoute = AuthenticatedRouteImport.update({
 const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedReportsRoute = AuthenticatedReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
 const PublicLoginIndexRoute = PublicLoginIndexRouteImport.update({
@@ -150,9 +142,9 @@ const AuthenticatedRepositoryIndexRoute =
   } as any)
 const AuthenticatedReportsIndexRoute =
   AuthenticatedReportsIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedReportsRoute,
+    id: '/reports/',
+    path: '/reports/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedProtectivesIndexRoute =
   AuthenticatedProtectivesIndexRouteImport.update({
@@ -309,16 +301,66 @@ const AuthenticatedAccessoriesIndexRoute =
     path: '/accessories/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsersNewRoute = AuthenticatedUsersNewRouteImport.update({
-  id: '/users/new',
-  path: '/users/new',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
-const AuthenticatedUsersIdRoute = AuthenticatedUsersIdRouteImport.update({
-  id: '/users/$id',
-  path: '/users/$id',
-  getParentRoute: () => AuthenticatedRoute,
-} as any)
+const AuthenticatedReportsSubscriptionRoute =
+  AuthenticatedReportsSubscriptionRouteImport.update({
+    id: '/reports/subscription',
+    path: '/reports/subscription',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsStatisticsRoute =
+  AuthenticatedReportsStatisticsRouteImport.update({
+    id: '/reports/statistics',
+    path: '/reports/statistics',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsSearchQueriesRoute =
+  AuthenticatedReportsSearchQueriesRouteImport.update({
+    id: '/reports/search-queries',
+    path: '/reports/search-queries',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsPriceDifferencesRoute =
+  AuthenticatedReportsPriceDifferencesRouteImport.update({
+    id: '/reports/price-differences',
+    path: '/reports/price-differences',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsNewModelsRoute =
+  AuthenticatedReportsNewModelsRouteImport.update({
+    id: '/reports/new-models',
+    path: '/reports/new-models',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsLowYearExceedsHighRoute =
+  AuthenticatedReportsLowYearExceedsHighRouteImport.update({
+    id: '/reports/low-year-exceeds-high',
+    path: '/reports/low-year-exceeds-high',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsLeadingQueriesRoute =
+  AuthenticatedReportsLeadingQueriesRouteImport.update({
+    id: '/reports/leading-queries',
+    path: '/reports/leading-queries',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsDeductedModelsRoute =
+  AuthenticatedReportsDeductedModelsRouteImport.update({
+    id: '/reports/deducted-models',
+    path: '/reports/deducted-models',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsCatalogItemsRoute =
+  AuthenticatedReportsCatalogItemsRouteImport.update({
+    id: '/reports/catalog-items',
+    path: '/reports/catalog-items',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedReportsCarByYearsRoute =
+  AuthenticatedReportsCarByYearsRouteImport.update({
+    id: '/reports/car-by-years',
+    path: '/reports/car-by-years',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOpinionsNewRoute =
   AuthenticatedOpinionsNewRouteImport.update({
     id: '/opinions/new',
@@ -353,66 +395,6 @@ const AuthenticatedCatalogIdRoute = AuthenticatedCatalogIdRouteImport.update({
   path: '/catalog/$id',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
-const AuthenticatedReportsSubscriptionIndexRoute =
-  AuthenticatedReportsSubscriptionIndexRouteImport.update({
-    id: '/subscription/',
-    path: '/subscription/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsStatisticsIndexRoute =
-  AuthenticatedReportsStatisticsIndexRouteImport.update({
-    id: '/statistics/',
-    path: '/statistics/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsSearchQueriesIndexRoute =
-  AuthenticatedReportsSearchQueriesIndexRouteImport.update({
-    id: '/search-queries/',
-    path: '/search-queries/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsPriceDifferencesIndexRoute =
-  AuthenticatedReportsPriceDifferencesIndexRouteImport.update({
-    id: '/price-differences/',
-    path: '/price-differences/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsNewModelsIndexRoute =
-  AuthenticatedReportsNewModelsIndexRouteImport.update({
-    id: '/new-models/',
-    path: '/new-models/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsLowYearExceedsHighIndexRoute =
-  AuthenticatedReportsLowYearExceedsHighIndexRouteImport.update({
-    id: '/low-year-exceeds-high/',
-    path: '/low-year-exceeds-high/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsLeadingQueriesIndexRoute =
-  AuthenticatedReportsLeadingQueriesIndexRouteImport.update({
-    id: '/leading-queries/',
-    path: '/leading-queries/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsDeductedModelsIndexRoute =
-  AuthenticatedReportsDeductedModelsIndexRouteImport.update({
-    id: '/deducted-models/',
-    path: '/deducted-models/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsCatalogItemsIndexRoute =
-  AuthenticatedReportsCatalogItemsIndexRouteImport.update({
-    id: '/catalog-items/',
-    path: '/catalog-items/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
-const AuthenticatedReportsCarByYearsIndexRoute =
-  AuthenticatedReportsCarByYearsIndexRouteImport.update({
-    id: '/car-by-years/',
-    path: '/car-by-years/',
-    getParentRoute: () => AuthenticatedReportsRoute,
-  } as any)
 const AuthenticatedPriceListAdvertisementsIndexRoute =
   AuthenticatedPriceListAdvertisementsIndexRouteImport.update({
     id: '/price-list/advertisements/',
@@ -433,7 +415,6 @@ const AuthenticatedCatalogEditIdRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/reports': typeof AuthenticatedReportsRouteWithChildren
   '/': typeof AuthenticatedIndexRoute
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
@@ -441,69 +422,16 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/users/$id': typeof AuthenticatedUsersIdRoute
-  '/users/new': typeof AuthenticatedUsersNewRoute
-  '/accessories': typeof AuthenticatedAccessoriesIndexRoute
-  '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
-  '/appraisers': typeof AuthenticatedAppraisersIndexRoute
-  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
-  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
-  '/car-types': typeof AuthenticatedCarTypesIndexRoute
-  '/catalog': typeof AuthenticatedCatalogIndexRoute
-  '/categories': typeof AuthenticatedCategoriesIndexRoute
-  '/client-support': typeof AuthenticatedClientSupportIndexRoute
-  '/codes': typeof AuthenticatedCodesIndexRoute
-  '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
-  '/countries': typeof AuthenticatedCountriesIndexRoute
-  '/customers': typeof AuthenticatedCustomersIndexRoute
-  '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
-  '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
-  '/extras': typeof AuthenticatedExtrasIndexRoute
-  '/gearboxes': typeof AuthenticatedGearboxesIndexRoute
-  '/importers': typeof AuthenticatedImportersIndexRoute
-  '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
-  '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
-  '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
-  '/opinions': typeof AuthenticatedOpinionsIndexRoute
-  '/owners': typeof AuthenticatedOwnersIndexRoute
-  '/price-list': typeof AuthenticatedPriceListIndexRoute
-  '/profile': typeof AuthenticatedProfileIndexRoute
-  '/protectives': typeof AuthenticatedProtectivesIndexRoute
-  '/reports/': typeof AuthenticatedReportsIndexRoute
-  '/repository': typeof AuthenticatedRepositoryIndexRoute
-  '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
-  '/service-packages': typeof AuthenticatedServicePackagesIndexRoute
-  '/settings': typeof AuthenticatedSettingsIndexRoute
-  '/statuses': typeof AuthenticatedStatusesIndexRoute
-  '/tech-support': typeof AuthenticatedTechSupportIndexRoute
-  '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
-  '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
-  '/users': typeof AuthenticatedUsersIndexRoute
-  '/login': typeof PublicLoginIndexRoute
-  '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
-  '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
-  '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
-  '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsIndexRoute
-  '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsIndexRoute
-  '/reports/deducted-models': typeof AuthenticatedReportsDeductedModelsIndexRoute
-  '/reports/leading-queries': typeof AuthenticatedReportsLeadingQueriesIndexRoute
-  '/reports/low-year-exceeds-high': typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
-  '/reports/new-models': typeof AuthenticatedReportsNewModelsIndexRoute
-  '/reports/price-differences': typeof AuthenticatedReportsPriceDifferencesIndexRoute
-  '/reports/search-queries': typeof AuthenticatedReportsSearchQueriesIndexRoute
-  '/reports/statistics': typeof AuthenticatedReportsStatisticsIndexRoute
-  '/reports/subscription': typeof AuthenticatedReportsSubscriptionIndexRoute
-}
-export interface FileRoutesByTo {
-  '/': typeof AuthenticatedIndexRoute
-  '/catalog/$id': typeof AuthenticatedCatalogIdRoute
-  '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
-  '/customers/$id': typeof AuthenticatedCustomersIdRoute
-  '/customers/new': typeof AuthenticatedCustomersNewRoute
-  '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
-  '/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/users/$id': typeof AuthenticatedUsersIdRoute
-  '/users/new': typeof AuthenticatedUsersNewRoute
+  '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsRoute
+  '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsRoute
+  '/reports/deducted-models': typeof AuthenticatedReportsDeductedModelsRoute
+  '/reports/leading-queries': typeof AuthenticatedReportsLeadingQueriesRoute
+  '/reports/low-year-exceeds-high': typeof AuthenticatedReportsLowYearExceedsHighRoute
+  '/reports/new-models': typeof AuthenticatedReportsNewModelsRoute
+  '/reports/price-differences': typeof AuthenticatedReportsPriceDifferencesRoute
+  '/reports/search-queries': typeof AuthenticatedReportsSearchQueriesRoute
+  '/reports/statistics': typeof AuthenticatedReportsStatisticsRoute
+  '/reports/subscription': typeof AuthenticatedReportsSubscriptionRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
   '/appraisers': typeof AuthenticatedAppraisersIndexRoute
@@ -544,22 +472,70 @@ export interface FileRoutesByTo {
   '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
   '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
-  '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsIndexRoute
-  '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsIndexRoute
-  '/reports/deducted-models': typeof AuthenticatedReportsDeductedModelsIndexRoute
-  '/reports/leading-queries': typeof AuthenticatedReportsLeadingQueriesIndexRoute
-  '/reports/low-year-exceeds-high': typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
-  '/reports/new-models': typeof AuthenticatedReportsNewModelsIndexRoute
-  '/reports/price-differences': typeof AuthenticatedReportsPriceDifferencesIndexRoute
-  '/reports/search-queries': typeof AuthenticatedReportsSearchQueriesIndexRoute
-  '/reports/statistics': typeof AuthenticatedReportsStatisticsIndexRoute
-  '/reports/subscription': typeof AuthenticatedReportsSubscriptionIndexRoute
+}
+export interface FileRoutesByTo {
+  '/': typeof AuthenticatedIndexRoute
+  '/catalog/$id': typeof AuthenticatedCatalogIdRoute
+  '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/customers/$id': typeof AuthenticatedCustomersIdRoute
+  '/customers/new': typeof AuthenticatedCustomersNewRoute
+  '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
+  '/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsRoute
+  '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsRoute
+  '/reports/deducted-models': typeof AuthenticatedReportsDeductedModelsRoute
+  '/reports/leading-queries': typeof AuthenticatedReportsLeadingQueriesRoute
+  '/reports/low-year-exceeds-high': typeof AuthenticatedReportsLowYearExceedsHighRoute
+  '/reports/new-models': typeof AuthenticatedReportsNewModelsRoute
+  '/reports/price-differences': typeof AuthenticatedReportsPriceDifferencesRoute
+  '/reports/search-queries': typeof AuthenticatedReportsSearchQueriesRoute
+  '/reports/statistics': typeof AuthenticatedReportsStatisticsRoute
+  '/reports/subscription': typeof AuthenticatedReportsSubscriptionRoute
+  '/accessories': typeof AuthenticatedAccessoriesIndexRoute
+  '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
+  '/appraisers': typeof AuthenticatedAppraisersIndexRoute
+  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
+  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
+  '/car-types': typeof AuthenticatedCarTypesIndexRoute
+  '/catalog': typeof AuthenticatedCatalogIndexRoute
+  '/categories': typeof AuthenticatedCategoriesIndexRoute
+  '/client-support': typeof AuthenticatedClientSupportIndexRoute
+  '/codes': typeof AuthenticatedCodesIndexRoute
+  '/comments-for-opinion': typeof AuthenticatedCommentsForOpinionIndexRoute
+  '/countries': typeof AuthenticatedCountriesIndexRoute
+  '/customers': typeof AuthenticatedCustomersIndexRoute
+  '/drive-types': typeof AuthenticatedDriveTypesIndexRoute
+  '/engine-types': typeof AuthenticatedEngineTypesIndexRoute
+  '/extras': typeof AuthenticatedExtrasIndexRoute
+  '/gearboxes': typeof AuthenticatedGearboxesIndexRoute
+  '/importers': typeof AuthenticatedImportersIndexRoute
+  '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
+  '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
+  '/opinions': typeof AuthenticatedOpinionsIndexRoute
+  '/owners': typeof AuthenticatedOwnersIndexRoute
+  '/price-list': typeof AuthenticatedPriceListIndexRoute
+  '/profile': typeof AuthenticatedProfileIndexRoute
+  '/protectives': typeof AuthenticatedProtectivesIndexRoute
+  '/reports': typeof AuthenticatedReportsIndexRoute
+  '/repository': typeof AuthenticatedRepositoryIndexRoute
+  '/service-calls': typeof AuthenticatedServiceCallsIndexRoute
+  '/service-packages': typeof AuthenticatedServicePackagesIndexRoute
+  '/settings': typeof AuthenticatedSettingsIndexRoute
+  '/statuses': typeof AuthenticatedStatusesIndexRoute
+  '/tech-support': typeof AuthenticatedTechSupportIndexRoute
+  '/upgrade-packages': typeof AuthenticatedUpgradePackagesIndexRoute
+  '/usage-types': typeof AuthenticatedUsageTypesIndexRoute
+  '/users': typeof AuthenticatedUsersIndexRoute
+  '/login': typeof PublicLoginIndexRoute
+  '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
+  '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/_public': typeof PublicRouteWithChildren
-  '/_authenticated/reports': typeof AuthenticatedReportsRouteWithChildren
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
@@ -567,8 +543,16 @@ export interface FileRoutesById {
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
   '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
-  '/_authenticated/users/$id': typeof AuthenticatedUsersIdRoute
-  '/_authenticated/users/new': typeof AuthenticatedUsersNewRoute
+  '/_authenticated/reports/car-by-years': typeof AuthenticatedReportsCarByYearsRoute
+  '/_authenticated/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsRoute
+  '/_authenticated/reports/deducted-models': typeof AuthenticatedReportsDeductedModelsRoute
+  '/_authenticated/reports/leading-queries': typeof AuthenticatedReportsLeadingQueriesRoute
+  '/_authenticated/reports/low-year-exceeds-high': typeof AuthenticatedReportsLowYearExceedsHighRoute
+  '/_authenticated/reports/new-models': typeof AuthenticatedReportsNewModelsRoute
+  '/_authenticated/reports/price-differences': typeof AuthenticatedReportsPriceDifferencesRoute
+  '/_authenticated/reports/search-queries': typeof AuthenticatedReportsSearchQueriesRoute
+  '/_authenticated/reports/statistics': typeof AuthenticatedReportsStatisticsRoute
+  '/_authenticated/reports/subscription': typeof AuthenticatedReportsSubscriptionRoute
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
   '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
   '/_authenticated/appraisers/': typeof AuthenticatedAppraisersIndexRoute
@@ -609,21 +593,10 @@ export interface FileRoutesById {
   '/_authenticated/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
   '/_authenticated/price-list/advertisements/': typeof AuthenticatedPriceListAdvertisementsIndexRoute
-  '/_authenticated/reports/car-by-years/': typeof AuthenticatedReportsCarByYearsIndexRoute
-  '/_authenticated/reports/catalog-items/': typeof AuthenticatedReportsCatalogItemsIndexRoute
-  '/_authenticated/reports/deducted-models/': typeof AuthenticatedReportsDeductedModelsIndexRoute
-  '/_authenticated/reports/leading-queries/': typeof AuthenticatedReportsLeadingQueriesIndexRoute
-  '/_authenticated/reports/low-year-exceeds-high/': typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
-  '/_authenticated/reports/new-models/': typeof AuthenticatedReportsNewModelsIndexRoute
-  '/_authenticated/reports/price-differences/': typeof AuthenticatedReportsPriceDifferencesIndexRoute
-  '/_authenticated/reports/search-queries/': typeof AuthenticatedReportsSearchQueriesIndexRoute
-  '/_authenticated/reports/statistics/': typeof AuthenticatedReportsStatisticsIndexRoute
-  '/_authenticated/reports/subscription/': typeof AuthenticatedReportsSubscriptionIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/reports'
     | '/'
     | '/catalog/$id'
     | '/catalog/new-car'
@@ -631,8 +604,16 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
-    | '/users/$id'
-    | '/users/new'
+    | '/reports/car-by-years'
+    | '/reports/catalog-items'
+    | '/reports/deducted-models'
+    | '/reports/leading-queries'
+    | '/reports/low-year-exceeds-high'
+    | '/reports/new-models'
+    | '/reports/price-differences'
+    | '/reports/search-queries'
+    | '/reports/statistics'
+    | '/reports/subscription'
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
@@ -659,7 +640,7 @@ export interface FileRouteTypes {
     | '/price-list'
     | '/profile'
     | '/protectives'
-    | '/reports/'
+    | '/reports'
     | '/repository'
     | '/service-calls'
     | '/service-packages'
@@ -673,16 +654,6 @@ export interface FileRouteTypes {
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
     | '/price-list/advertisements'
-    | '/reports/car-by-years'
-    | '/reports/catalog-items'
-    | '/reports/deducted-models'
-    | '/reports/leading-queries'
-    | '/reports/low-year-exceeds-high'
-    | '/reports/new-models'
-    | '/reports/price-differences'
-    | '/reports/search-queries'
-    | '/reports/statistics'
-    | '/reports/subscription'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -692,8 +663,16 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
-    | '/users/$id'
-    | '/users/new'
+    | '/reports/car-by-years'
+    | '/reports/catalog-items'
+    | '/reports/deducted-models'
+    | '/reports/leading-queries'
+    | '/reports/low-year-exceeds-high'
+    | '/reports/new-models'
+    | '/reports/price-differences'
+    | '/reports/search-queries'
+    | '/reports/statistics'
+    | '/reports/subscription'
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
@@ -734,21 +713,10 @@ export interface FileRouteTypes {
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
     | '/price-list/advertisements'
-    | '/reports/car-by-years'
-    | '/reports/catalog-items'
-    | '/reports/deducted-models'
-    | '/reports/leading-queries'
-    | '/reports/low-year-exceeds-high'
-    | '/reports/new-models'
-    | '/reports/price-differences'
-    | '/reports/search-queries'
-    | '/reports/statistics'
-    | '/reports/subscription'
   id:
     | '__root__'
     | '/_authenticated'
     | '/_public'
-    | '/_authenticated/reports'
     | '/_authenticated/'
     | '/_authenticated/catalog/$id'
     | '/_authenticated/catalog/new-car'
@@ -756,8 +724,16 @@ export interface FileRouteTypes {
     | '/_authenticated/customers/new'
     | '/_authenticated/opinions/$id'
     | '/_authenticated/opinions/new'
-    | '/_authenticated/users/$id'
-    | '/_authenticated/users/new'
+    | '/_authenticated/reports/car-by-years'
+    | '/_authenticated/reports/catalog-items'
+    | '/_authenticated/reports/deducted-models'
+    | '/_authenticated/reports/leading-queries'
+    | '/_authenticated/reports/low-year-exceeds-high'
+    | '/_authenticated/reports/new-models'
+    | '/_authenticated/reports/price-differences'
+    | '/_authenticated/reports/search-queries'
+    | '/_authenticated/reports/statistics'
+    | '/_authenticated/reports/subscription'
     | '/_authenticated/accessories/'
     | '/_authenticated/advertisements/'
     | '/_authenticated/appraisers/'
@@ -798,16 +774,6 @@ export interface FileRouteTypes {
     | '/_authenticated/catalog/edit/$id'
     | '/_authenticated/manufacturers/edit/$id'
     | '/_authenticated/price-list/advertisements/'
-    | '/_authenticated/reports/car-by-years/'
-    | '/_authenticated/reports/catalog-items/'
-    | '/_authenticated/reports/deducted-models/'
-    | '/_authenticated/reports/leading-queries/'
-    | '/_authenticated/reports/low-year-exceeds-high/'
-    | '/_authenticated/reports/new-models/'
-    | '/_authenticated/reports/price-differences/'
-    | '/_authenticated/reports/search-queries/'
-    | '/_authenticated/reports/statistics/'
-    | '/_authenticated/reports/subscription/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -836,13 +802,6 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/reports': {
-      id: '/_authenticated/reports'
-      path: '/reports'
-      fullPath: '/reports'
-      preLoaderRoute: typeof AuthenticatedReportsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_public/login/': {
@@ -917,10 +876,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/reports/': {
       id: '/_authenticated/reports/'
-      path: '/'
-      fullPath: '/reports/'
+      path: '/reports'
+      fullPath: '/reports'
       preLoaderRoute: typeof AuthenticatedReportsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/protectives/': {
       id: '/_authenticated/protectives/'
@@ -1104,18 +1063,74 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAccessoriesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/users/new': {
-      id: '/_authenticated/users/new'
-      path: '/users/new'
-      fullPath: '/users/new'
-      preLoaderRoute: typeof AuthenticatedUsersNewRouteImport
+    '/_authenticated/reports/subscription': {
+      id: '/_authenticated/reports/subscription'
+      path: '/reports/subscription'
+      fullPath: '/reports/subscription'
+      preLoaderRoute: typeof AuthenticatedReportsSubscriptionRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/users/$id': {
-      id: '/_authenticated/users/$id'
-      path: '/users/$id'
-      fullPath: '/users/$id'
-      preLoaderRoute: typeof AuthenticatedUsersIdRouteImport
+    '/_authenticated/reports/statistics': {
+      id: '/_authenticated/reports/statistics'
+      path: '/reports/statistics'
+      fullPath: '/reports/statistics'
+      preLoaderRoute: typeof AuthenticatedReportsStatisticsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/search-queries': {
+      id: '/_authenticated/reports/search-queries'
+      path: '/reports/search-queries'
+      fullPath: '/reports/search-queries'
+      preLoaderRoute: typeof AuthenticatedReportsSearchQueriesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/price-differences': {
+      id: '/_authenticated/reports/price-differences'
+      path: '/reports/price-differences'
+      fullPath: '/reports/price-differences'
+      preLoaderRoute: typeof AuthenticatedReportsPriceDifferencesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/new-models': {
+      id: '/_authenticated/reports/new-models'
+      path: '/reports/new-models'
+      fullPath: '/reports/new-models'
+      preLoaderRoute: typeof AuthenticatedReportsNewModelsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/low-year-exceeds-high': {
+      id: '/_authenticated/reports/low-year-exceeds-high'
+      path: '/reports/low-year-exceeds-high'
+      fullPath: '/reports/low-year-exceeds-high'
+      preLoaderRoute: typeof AuthenticatedReportsLowYearExceedsHighRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/leading-queries': {
+      id: '/_authenticated/reports/leading-queries'
+      path: '/reports/leading-queries'
+      fullPath: '/reports/leading-queries'
+      preLoaderRoute: typeof AuthenticatedReportsLeadingQueriesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/deducted-models': {
+      id: '/_authenticated/reports/deducted-models'
+      path: '/reports/deducted-models'
+      fullPath: '/reports/deducted-models'
+      preLoaderRoute: typeof AuthenticatedReportsDeductedModelsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/catalog-items': {
+      id: '/_authenticated/reports/catalog-items'
+      path: '/reports/catalog-items'
+      fullPath: '/reports/catalog-items'
+      preLoaderRoute: typeof AuthenticatedReportsCatalogItemsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/reports/car-by-years': {
+      id: '/_authenticated/reports/car-by-years'
+      path: '/reports/car-by-years'
+      fullPath: '/reports/car-by-years'
+      preLoaderRoute: typeof AuthenticatedReportsCarByYearsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/opinions/new': {
@@ -1160,76 +1175,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatalogIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/reports/subscription/': {
-      id: '/_authenticated/reports/subscription/'
-      path: '/subscription'
-      fullPath: '/reports/subscription'
-      preLoaderRoute: typeof AuthenticatedReportsSubscriptionIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/statistics/': {
-      id: '/_authenticated/reports/statistics/'
-      path: '/statistics'
-      fullPath: '/reports/statistics'
-      preLoaderRoute: typeof AuthenticatedReportsStatisticsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/search-queries/': {
-      id: '/_authenticated/reports/search-queries/'
-      path: '/search-queries'
-      fullPath: '/reports/search-queries'
-      preLoaderRoute: typeof AuthenticatedReportsSearchQueriesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/price-differences/': {
-      id: '/_authenticated/reports/price-differences/'
-      path: '/price-differences'
-      fullPath: '/reports/price-differences'
-      preLoaderRoute: typeof AuthenticatedReportsPriceDifferencesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/new-models/': {
-      id: '/_authenticated/reports/new-models/'
-      path: '/new-models'
-      fullPath: '/reports/new-models'
-      preLoaderRoute: typeof AuthenticatedReportsNewModelsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/low-year-exceeds-high/': {
-      id: '/_authenticated/reports/low-year-exceeds-high/'
-      path: '/low-year-exceeds-high'
-      fullPath: '/reports/low-year-exceeds-high'
-      preLoaderRoute: typeof AuthenticatedReportsLowYearExceedsHighIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/leading-queries/': {
-      id: '/_authenticated/reports/leading-queries/'
-      path: '/leading-queries'
-      fullPath: '/reports/leading-queries'
-      preLoaderRoute: typeof AuthenticatedReportsLeadingQueriesIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/deducted-models/': {
-      id: '/_authenticated/reports/deducted-models/'
-      path: '/deducted-models'
-      fullPath: '/reports/deducted-models'
-      preLoaderRoute: typeof AuthenticatedReportsDeductedModelsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/catalog-items/': {
-      id: '/_authenticated/reports/catalog-items/'
-      path: '/catalog-items'
-      fullPath: '/reports/catalog-items'
-      preLoaderRoute: typeof AuthenticatedReportsCatalogItemsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
-    '/_authenticated/reports/car-by-years/': {
-      id: '/_authenticated/reports/car-by-years/'
-      path: '/car-by-years'
-      fullPath: '/reports/car-by-years'
-      preLoaderRoute: typeof AuthenticatedReportsCarByYearsIndexRouteImport
-      parentRoute: typeof AuthenticatedReportsRoute
-    }
     '/_authenticated/price-list/advertisements/': {
       id: '/_authenticated/price-list/advertisements/'
       path: '/price-list/advertisements'
@@ -1254,49 +1199,7 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedReportsRouteChildren {
-  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
-  AuthenticatedReportsCarByYearsIndexRoute: typeof AuthenticatedReportsCarByYearsIndexRoute
-  AuthenticatedReportsCatalogItemsIndexRoute: typeof AuthenticatedReportsCatalogItemsIndexRoute
-  AuthenticatedReportsDeductedModelsIndexRoute: typeof AuthenticatedReportsDeductedModelsIndexRoute
-  AuthenticatedReportsLeadingQueriesIndexRoute: typeof AuthenticatedReportsLeadingQueriesIndexRoute
-  AuthenticatedReportsLowYearExceedsHighIndexRoute: typeof AuthenticatedReportsLowYearExceedsHighIndexRoute
-  AuthenticatedReportsNewModelsIndexRoute: typeof AuthenticatedReportsNewModelsIndexRoute
-  AuthenticatedReportsPriceDifferencesIndexRoute: typeof AuthenticatedReportsPriceDifferencesIndexRoute
-  AuthenticatedReportsSearchQueriesIndexRoute: typeof AuthenticatedReportsSearchQueriesIndexRoute
-  AuthenticatedReportsStatisticsIndexRoute: typeof AuthenticatedReportsStatisticsIndexRoute
-  AuthenticatedReportsSubscriptionIndexRoute: typeof AuthenticatedReportsSubscriptionIndexRoute
-}
-
-const AuthenticatedReportsRouteChildren: AuthenticatedReportsRouteChildren = {
-  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
-  AuthenticatedReportsCarByYearsIndexRoute:
-    AuthenticatedReportsCarByYearsIndexRoute,
-  AuthenticatedReportsCatalogItemsIndexRoute:
-    AuthenticatedReportsCatalogItemsIndexRoute,
-  AuthenticatedReportsDeductedModelsIndexRoute:
-    AuthenticatedReportsDeductedModelsIndexRoute,
-  AuthenticatedReportsLeadingQueriesIndexRoute:
-    AuthenticatedReportsLeadingQueriesIndexRoute,
-  AuthenticatedReportsLowYearExceedsHighIndexRoute:
-    AuthenticatedReportsLowYearExceedsHighIndexRoute,
-  AuthenticatedReportsNewModelsIndexRoute:
-    AuthenticatedReportsNewModelsIndexRoute,
-  AuthenticatedReportsPriceDifferencesIndexRoute:
-    AuthenticatedReportsPriceDifferencesIndexRoute,
-  AuthenticatedReportsSearchQueriesIndexRoute:
-    AuthenticatedReportsSearchQueriesIndexRoute,
-  AuthenticatedReportsStatisticsIndexRoute:
-    AuthenticatedReportsStatisticsIndexRoute,
-  AuthenticatedReportsSubscriptionIndexRoute:
-    AuthenticatedReportsSubscriptionIndexRoute,
-}
-
-const AuthenticatedReportsRouteWithChildren =
-  AuthenticatedReportsRoute._addFileChildren(AuthenticatedReportsRouteChildren)
-
 interface AuthenticatedRouteChildren {
-  AuthenticatedReportsRoute: typeof AuthenticatedReportsRouteWithChildren
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCatalogIdRoute: typeof AuthenticatedCatalogIdRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
@@ -1304,8 +1207,16 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
   AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
-  AuthenticatedUsersIdRoute: typeof AuthenticatedUsersIdRoute
-  AuthenticatedUsersNewRoute: typeof AuthenticatedUsersNewRoute
+  AuthenticatedReportsCarByYearsRoute: typeof AuthenticatedReportsCarByYearsRoute
+  AuthenticatedReportsCatalogItemsRoute: typeof AuthenticatedReportsCatalogItemsRoute
+  AuthenticatedReportsDeductedModelsRoute: typeof AuthenticatedReportsDeductedModelsRoute
+  AuthenticatedReportsLeadingQueriesRoute: typeof AuthenticatedReportsLeadingQueriesRoute
+  AuthenticatedReportsLowYearExceedsHighRoute: typeof AuthenticatedReportsLowYearExceedsHighRoute
+  AuthenticatedReportsNewModelsRoute: typeof AuthenticatedReportsNewModelsRoute
+  AuthenticatedReportsPriceDifferencesRoute: typeof AuthenticatedReportsPriceDifferencesRoute
+  AuthenticatedReportsSearchQueriesRoute: typeof AuthenticatedReportsSearchQueriesRoute
+  AuthenticatedReportsStatisticsRoute: typeof AuthenticatedReportsStatisticsRoute
+  AuthenticatedReportsSubscriptionRoute: typeof AuthenticatedReportsSubscriptionRoute
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
   AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
   AuthenticatedAppraisersIndexRoute: typeof AuthenticatedAppraisersIndexRoute
@@ -1332,6 +1243,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedPriceListIndexRoute: typeof AuthenticatedPriceListIndexRoute
   AuthenticatedProfileIndexRoute: typeof AuthenticatedProfileIndexRoute
   AuthenticatedProtectivesIndexRoute: typeof AuthenticatedProtectivesIndexRoute
+  AuthenticatedReportsIndexRoute: typeof AuthenticatedReportsIndexRoute
   AuthenticatedRepositoryIndexRoute: typeof AuthenticatedRepositoryIndexRoute
   AuthenticatedServiceCallsIndexRoute: typeof AuthenticatedServiceCallsIndexRoute
   AuthenticatedServicePackagesIndexRoute: typeof AuthenticatedServicePackagesIndexRoute
@@ -1347,7 +1259,6 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
-  AuthenticatedReportsRoute: AuthenticatedReportsRouteWithChildren,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCatalogIdRoute: AuthenticatedCatalogIdRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
@@ -1355,8 +1266,21 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
   AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
-  AuthenticatedUsersIdRoute: AuthenticatedUsersIdRoute,
-  AuthenticatedUsersNewRoute: AuthenticatedUsersNewRoute,
+  AuthenticatedReportsCarByYearsRoute: AuthenticatedReportsCarByYearsRoute,
+  AuthenticatedReportsCatalogItemsRoute: AuthenticatedReportsCatalogItemsRoute,
+  AuthenticatedReportsDeductedModelsRoute:
+    AuthenticatedReportsDeductedModelsRoute,
+  AuthenticatedReportsLeadingQueriesRoute:
+    AuthenticatedReportsLeadingQueriesRoute,
+  AuthenticatedReportsLowYearExceedsHighRoute:
+    AuthenticatedReportsLowYearExceedsHighRoute,
+  AuthenticatedReportsNewModelsRoute: AuthenticatedReportsNewModelsRoute,
+  AuthenticatedReportsPriceDifferencesRoute:
+    AuthenticatedReportsPriceDifferencesRoute,
+  AuthenticatedReportsSearchQueriesRoute:
+    AuthenticatedReportsSearchQueriesRoute,
+  AuthenticatedReportsStatisticsRoute: AuthenticatedReportsStatisticsRoute,
+  AuthenticatedReportsSubscriptionRoute: AuthenticatedReportsSubscriptionRoute,
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
   AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
   AuthenticatedAppraisersIndexRoute: AuthenticatedAppraisersIndexRoute,
@@ -1385,6 +1309,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedPriceListIndexRoute: AuthenticatedPriceListIndexRoute,
   AuthenticatedProfileIndexRoute: AuthenticatedProfileIndexRoute,
   AuthenticatedProtectivesIndexRoute: AuthenticatedProtectivesIndexRoute,
+  AuthenticatedReportsIndexRoute: AuthenticatedReportsIndexRoute,
   AuthenticatedRepositoryIndexRoute: AuthenticatedRepositoryIndexRoute,
   AuthenticatedServiceCallsIndexRoute: AuthenticatedServiceCallsIndexRoute,
   AuthenticatedServicePackagesIndexRoute:

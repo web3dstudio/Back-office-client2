@@ -95,7 +95,7 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
               maxWidth: '100%',
             }}
           >
-            <Grid container size={12} gap={0}>
+            <Grid container size={12} spacing={3}>
               <Grid size={6}>
                 <AppControlledTextField
                   name={`serieses.${serieIndex}.name`}
@@ -103,6 +103,15 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
                   errors={errors}
                   label={t('seriesName', { ns: 'newManufacturer' })}
                   placeholder={t('seriesName', { ns: 'newManufacturer' })}
+                />
+              </Grid>
+              <Grid size={6}>
+                <AppControlledTextField
+                  name={`serieses.${serieIndex}.seriesCode`}
+                  control={control}
+                  errors={errors}
+                  label={t('seriesCode', { ns: 'manufacturers' })}
+                  placeholder={t('seriesCode', { ns: 'manufacturers' })}
                 />
               </Grid>
             </Grid>

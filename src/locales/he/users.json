@@ -1,6 +1,8 @@
 {
   "title": "משתמשי הארגון",
   "add": "הרשמת משתמש חדש",
+  "addNewUser": "הרשמת משתמש חדש",
+  "editUser": "עריכת משתמש",
   "search": "חיפוש משתמש",
   "totalUsers": "סהכ משתמשי מערכת",
   "department": "מחלקה",
@@ -9,5 +11,14 @@
   "email": "אימייל",
   "phone": "טלפון",
   "userName": "שם משתמש",
-  "fullName": "שם מלא"
+  "fullName": "שם מלא",
+  "activeDirectoryUser": "משתמש Active Directory",
+  "selectActiveDirectoryUser": "בחר משתמש Active Directory",
+  "selectRoles": "בחר תפקידים",
+  "roleName": "שם תפקיד",
+  "permission": "הרשאה",
+  "fillDataFromAdTitle": "מילוי פרטים מ-Active Directory",
+  "fillDataFromAdMessage": "האם למלא את פרטי המשתמש עם הנתונים מ-Active Directory?",
+  "fillDataFromAdYes": "כן, מלא פרטים",
+  "fillDataFromAdNo": "לא"
 }

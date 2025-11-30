@@ -1,19 +1,18 @@
-import { GroupOutlined } from '@mui/icons-material'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import AppProfileForm from '../../../components/Profile/AppProfileForm'
 
 import { useCurrentUserQuery } from '../../../query/user.query'
 // import { TAvatarUpload, TProfileFormInput } from '../../../types'
-// import {
-//   useUpdateAvatarMutation,
-//   useUpdateProfileMutation,
-// } from '../../../query/user.query'
+import {
+  useUpdateAvatarMutation,
+  useUpdateProfileMutation,
+} from '../../../query/user.query'
 import AppLoading from '../../../components/AppLoading'
 import AppError from '../../../components/AppError'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
-import StyledPaper from '../../../components/StyledPaper'
+
 
 
 export const Route = createFileRoute('/_authenticated/profile/')({
@@ -22,14 +21,14 @@ export const Route = createFileRoute('/_authenticated/profile/')({
 
 function ProfilePage() {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+
   const {
     data: currentUser,
     isPending: currentUserIsPending,
     isError: currentUserIsError,
   } = useCurrentUserQuery()
-  // const { mutate: updateProfileMutation, isPending: updateProfileIsPending } = useUpdateProfileMutation()
-  // const { mutate: updateAvatarMutation } = useUpdateAvatarMutation()
+  const { mutate: updateProfileMutation, isPending: updateProfileIsPending } = useUpdateProfileMutation()
+  const { mutate: updateAvatarMutation } = useUpdateAvatarMutation()
 
 
   const saveProfile = (
@@ -37,19 +36,19 @@ function ProfilePage() {
     avatar: any | null
   ) => {
     if (currentUser?.id) {
-      // updateProfileMutation(
-      //   { ...currentUser, ...data },
-      //   {
-      //     onSuccess: (response) => {
-      //       if (avatar && response?.data?.imageUploadUri) {
-      //         updateAvatarMutation({
-      //           ...avatar,
-      //           imageUploadUri: response?.data?.imageUploadUri,
-      //         })
-      //       }
-      //     },
-      //   }
-      // )
+      updateProfileMutation(
+        { ...currentUser, ...data },
+        {
+          onSuccess: (response) => {
+            if (avatar && response?.imageUploadUri) {
+              updateAvatarMutation({
+                ...avatar,
+                imageUploadUri: response?.imageUploadUri,
+              })
+            }
+          },
+        }
+      )
     }
   }
 
@@ -80,7 +79,7 @@ function ProfilePage() {
       </Grid>
 
       <AppProfileForm
-        isPending={false}
+        isPending={updateProfileIsPending}
         user={currentUser}
         onProfileSave={saveProfile}
       />
