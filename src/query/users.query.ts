@@ -3,7 +3,7 @@ import axiosAPI from "../utils/axiosAPI"
 import type { GridSortModel } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { toast } from "react-toastify"
-import type { TUser, TAvatarUpload, TAdUser } from "../types"
+import type { TUser, TAvatarUpload, TAdUser, TPagination } from "../types"
 
 // IUser используется только для списка пользователей в таблице
 export interface IUser {
@@ -18,22 +18,18 @@ export interface IUser {
     department: string | null
 }
 
-export interface IUsersResponse {
+export type TUsersResponse = {
     data: IUser[]
-    totalRowsNumber: number
-    totalPagesNumber: number
-    currentPageNumber: number
-    rowsInPage: number
-}
+} & TPagination
 
 export function useUsersQuery(
     page: number,
     filters: Record<string, string> = {},
     sortModel?: GridSortModel
-): UseQueryResult<IUsersResponse, Error> {
+): UseQueryResult<TUsersResponse, Error> {
     return useQuery({
         queryKey: ['users', page, filters, sortModel],
-        queryFn: async (): Promise<IUsersResponse> => {
+        queryFn: async (): Promise<TUsersResponse> => {
             const params = new URLSearchParams({
                 Page: String(page + 1),
                 PageSize: '20',

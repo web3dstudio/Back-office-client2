@@ -13,6 +13,13 @@ export type TAvatarUpload = {
   file: File
 }
 
+export type TPagination = {
+  totalRowsNumber: number
+  totalPagesNumber: number
+  currentPageNumber: number
+  rowsInPage: number
+}
+
 
 export type TUser = {
   id: string
@@ -362,10 +369,7 @@ export type TOpinionList = {
 
 export type TOpinionResponse = {
   data: TOpinionList[]
-  totalRowsNumber: number
-  totalPagesNumber: number
-  currentPageNumber: number
-  rowsInPage: number
+} & TPagination & {
   status?: number
   message?: string | null
 }
@@ -563,10 +567,7 @@ export type TCustomerList = {
 
 export type TCustomerListResponse = {
   data: TCustomerList[]
-  totalRowsNumber: number
-  totalPagesNumber: number
-  currentPageNumber: number
-  rowsInPage: number
+} & TPagination & {
   status: number
   message: string | null
 }
@@ -592,10 +593,7 @@ export type TPriceList = {
 
 export type TPriceListResponse = {
   data: TPriceList[]
-  totalRowsNumber: number
-  totalPagesNumber: number
-  currentPageNumber: number
-  rowsInPage: number
+} & TPagination & {
   status: number
   message: string | null
 }
@@ -647,10 +645,7 @@ export type TCarsList = {
 
 export type TCarResponse = {
   data: TCarsList[]
-  totalRowsNumber: number
-  totalPagesNumber: number
-  currentPageNumber: number
-  rowsInPage: number
+} & TPagination & {
   status: number
   message: string | null
 }
@@ -706,5 +701,15 @@ export type TUsersParamsResponse = {
   adUsers: TAdUser[]
 }
 
+export type TSupportArticle = {
+  id: string
+  title: string
+  application: number
+  categoryName: string
+}
+
+export type TSupportArticlesResponse = {
+  data: TSupportArticle[]
+} & TPagination
 
 

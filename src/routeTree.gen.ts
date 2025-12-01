@@ -52,6 +52,7 @@ import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
 import { Route as AuthenticatedUsersNewRouteImport } from './routes/_authenticated/users/new'
 import { Route as AuthenticatedUsersIdRouteImport } from './routes/_authenticated/users/$id'
+import { Route as AuthenticatedTechSupportNewRouteImport } from './routes/_authenticated/tech-support/new'
 import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenticated/opinions/new'
 import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
@@ -319,6 +320,12 @@ const AuthenticatedUsersIdRoute = AuthenticatedUsersIdRouteImport.update({
   path: '/users/$id',
   getParentRoute: () => AuthenticatedRoute,
 } as any)
+const AuthenticatedTechSupportNewRoute =
+  AuthenticatedTechSupportNewRouteImport.update({
+    id: '/tech-support/new',
+    path: '/tech-support/new',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedOpinionsNewRoute =
   AuthenticatedOpinionsNewRouteImport.update({
     id: '/opinions/new',
@@ -441,6 +448,7 @@ export interface FileRoutesByFullPath {
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/tech-support/new': typeof AuthenticatedTechSupportNewRoute
   '/users/$id': typeof AuthenticatedUsersIdRoute
   '/users/new': typeof AuthenticatedUsersNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
@@ -502,6 +510,7 @@ export interface FileRoutesByTo {
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/tech-support/new': typeof AuthenticatedTechSupportNewRoute
   '/users/$id': typeof AuthenticatedUsersIdRoute
   '/users/new': typeof AuthenticatedUsersNewRoute
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
@@ -567,6 +576,7 @@ export interface FileRoutesById {
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
   '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
   '/_authenticated/opinions/new': typeof AuthenticatedOpinionsNewRoute
+  '/_authenticated/tech-support/new': typeof AuthenticatedTechSupportNewRoute
   '/_authenticated/users/$id': typeof AuthenticatedUsersIdRoute
   '/_authenticated/users/new': typeof AuthenticatedUsersNewRoute
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
@@ -631,6 +641,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
+    | '/tech-support/new'
     | '/users/$id'
     | '/users/new'
     | '/accessories'
@@ -692,6 +703,7 @@ export interface FileRouteTypes {
     | '/customers/new'
     | '/opinions/$id'
     | '/opinions/new'
+    | '/tech-support/new'
     | '/users/$id'
     | '/users/new'
     | '/accessories'
@@ -756,6 +768,7 @@ export interface FileRouteTypes {
     | '/_authenticated/customers/new'
     | '/_authenticated/opinions/$id'
     | '/_authenticated/opinions/new'
+    | '/_authenticated/tech-support/new'
     | '/_authenticated/users/$id'
     | '/_authenticated/users/new'
     | '/_authenticated/accessories/'
@@ -1118,6 +1131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsersIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/tech-support/new': {
+      id: '/_authenticated/tech-support/new'
+      path: '/tech-support/new'
+      fullPath: '/tech-support/new'
+      preLoaderRoute: typeof AuthenticatedTechSupportNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/opinions/new': {
       id: '/_authenticated/opinions/new'
       path: '/opinions/new'
@@ -1304,6 +1324,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
   AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
   AuthenticatedOpinionsNewRoute: typeof AuthenticatedOpinionsNewRoute
+  AuthenticatedTechSupportNewRoute: typeof AuthenticatedTechSupportNewRoute
   AuthenticatedUsersIdRoute: typeof AuthenticatedUsersIdRoute
   AuthenticatedUsersNewRoute: typeof AuthenticatedUsersNewRoute
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
@@ -1355,6 +1376,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
   AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,
   AuthenticatedOpinionsNewRoute: AuthenticatedOpinionsNewRoute,
+  AuthenticatedTechSupportNewRoute: AuthenticatedTechSupportNewRoute,
   AuthenticatedUsersIdRoute: AuthenticatedUsersIdRoute,
   AuthenticatedUsersNewRoute: AuthenticatedUsersNewRoute,
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,

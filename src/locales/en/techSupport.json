@@ -1,7 +1,11 @@
 {
   "edit": "Edit",
-  "category": "category",
+  "category": "Category",
   "name": "Name",
   "title": "Articles - technical support",
-  "add": "Add new"
+  "add": "Add new",
+  "application": "Application",
+  "addNewArticle": "Add new article",
+  "nameOrTitle": "Name / title of the article",
+  "content": "Content"
 }
