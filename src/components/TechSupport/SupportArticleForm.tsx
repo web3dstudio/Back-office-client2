@@ -1,22 +1,21 @@
 import Grid from '@mui/material/Grid'
 import { useTranslation } from 'react-i18next'
-import { useForm, type SubmitHandler } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { object } from 'yup'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
+import AppControlledRichTextEditor from '../AppControlledRichTextEditor'
 import { Box } from '@mui/material'
 
-type TApplicationOption = {
-  id: number
-  name: string
-}
+// TODO: Определить реальный тип для application из API
+// type TApplication = { ... }
 
 type TSupportArticleFormInput = {
   title: string
-  application: TApplicationOption | null
+  application: any | null // TODO: Заменить на реальный тип
   content: string
 }
 
@@ -36,14 +35,15 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
   const { t } = useTranslation()
 
   // TODO: Заменить на реальный запрос для получения списка applications
-  const applicationOptions: TApplicationOption[] = []
-  
-  const defaultApplication = applicationOptions.find(app => app.id === article?.application) || null
+  // const { data: applications } = useApplicationsQuery()
+  const applicationOptions: any[] = [] // TODO: Заменить на реальный тип
+
+  const defaultApplication = applicationOptions.find((app: any) => app.id === article?.application) || null
 
   const schema = object()
     .shape({
       title: yup.string().required(t('form-field.required', { ns: 'common' })),
-      application: yup.mixed<TApplicationOption | null>().nullable().required(t('form-field.required', { ns: 'common' })),
+      application: yup.mixed().nullable().required(t('form-field.required', { ns: 'common' })),
       content: yup.string().optional(),
     })
     .required()
@@ -62,7 +62,7 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
   const { handleSubmit, control, formState } = methods
   const errors = formState.errors
 
-  const onSubmit: SubmitHandler<TSupportArticleFormInput> = (data) => {
+  const onSubmit = (data: any) => {
     const submitData: TSupportArticleSubmitData = {
       title: data.title,
       application: data.application?.id || null,
@@ -85,27 +85,25 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
           />
         </Grid>
         <Grid size={{ xs: 12, sm: 4 }}>
-          <AppControlledAutocomplete<TApplicationOption>
+          <AppControlledAutocomplete<any>
             required
             name="application"
             control={control}
             options={applicationOptions}
             errors={errors}
-            getOptionLabel={(option) => String(option.name)}
-            isOptionEqualToValue={(option, value) => option.id === value.id}
+            getOptionLabel={(option: any) => String(option?.name || option?.id || '')}
+            isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id}
             label={t('application', { ns: 'techSupport' })}
             placeholder={t('application', { ns: 'techSupport' })}
           />
         </Grid>
         <Grid size={12}>
-          <AppControlledTextField
+          <AppControlledRichTextEditor
             name="content"
             control={control}
             errors={errors}
             label={t('content', { ns: 'techSupport' })}
             placeholder={t('content', { ns: 'techSupport' })}
-            multiline
-            minRows={10}
           />
         </Grid>
         <Grid size={12}>

@@ -4,5 +4,11 @@
   "option": "Open link in new window",
   "link": "Link",
   "add": "add",
-  "cancel": "cancel"
+  "cancel": "cancel",
+  "edit": "Edit",
+  "remove": "Remove",
+  "addLink": "Add new link",
+  "editLink": "Update this link",
+  "linkText": "Text content",
+  "save": "Save"
 }

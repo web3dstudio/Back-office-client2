@@ -102,14 +102,14 @@ function TechSupportPage() {
             <Typography variant="h5" sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
               {t('title', { ns: 'techSupport' })}
             </Typography>
-          <Button
-            variant="contained"
-            onClick={() => {
-              navigate({ to: '/tech-support/new' })
-            }}
-          >
-            {t('add', { ns: 'techSupport' })}
-          </Button>
+            <Button
+              variant="contained"
+              onClick={() => {
+                navigate({ to: '/tech-support/new' })
+              }}
+            >
+              {t('add', { ns: 'techSupport' })}
+            </Button>
           </Box>
         </Grid>
 
