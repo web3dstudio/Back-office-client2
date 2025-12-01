@@ -130,6 +130,7 @@ export function useCreateUserMutation(): UseMutationResult<TUser, Error, { data:
         },
         onSuccess: (_data) => {
             queryClient.invalidateQueries({ queryKey: ['users'] })
+            queryClient.refetchQueries({ queryKey: ['users'] })
             toast.success(t('user_added_successfully') || 'User added successfully')
         },
         onError: (error) => {

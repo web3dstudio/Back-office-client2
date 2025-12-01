@@ -34,7 +34,7 @@ type TUserFormInput = {
   department?: string
   position?: string
   userName: string
-  startWorkDate?: any
+  startWorkDate: any
   password: string
   confirmPassword: string
   adUser: boolean
@@ -69,7 +69,7 @@ function UserForm({
       department: yup.string().optional(),
       position: yup.string().optional(),
       userName: yup.string().required(),
-      startWorkDate: yup.mixed().optional(),
+      startWorkDate: yup.mixed().required(),
       password: yup.string().required(),
       confirmPassword: yup
         .string()
@@ -220,17 +220,17 @@ function UserForm({
       imageFileName: profileData.imageFileName === undefined ? null : profileData.imageFileName,
     }
 
-    // Форматируем startWorkDate в ISO строку, если есть
+    // Форматируем startWorkDate в ISO строку
     if (profileData.startWorkDate) {
       if (profileData.startWorkDate instanceof Date) {
         submitData.startWorkDate = profileData.startWorkDate.toISOString()
       } else if (typeof profileData.startWorkDate === 'string') {
         submitData.startWorkDate = profileData.startWorkDate
       } else {
-        submitData.startWorkDate = null
+        submitData.startWorkDate = new Date().toISOString() // Fallback на текущую дату
       }
     } else {
-      submitData.startWorkDate = null
+      submitData.startWorkDate = new Date().toISOString() // Fallback на текущую дату
     }
 
     if (selectedImage && submitData.imageFileName) {
@@ -545,6 +545,7 @@ function UserForm({
             {/* start work date */}
             <Grid size={{ xs: 12, sm: 3 }}>
               <AppControlledDatePicker
+                required
                 name='startWorkDate'
                 control={control}
                 errors={errors}
