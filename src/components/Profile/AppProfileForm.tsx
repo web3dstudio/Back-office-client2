@@ -29,7 +29,7 @@ type TProfileFormInput = {
   address?: string
   department?: string
   position: string
-  userName?: string
+  userName: string
   startWorkDate?: any
   password: string
   approvePassword: string
@@ -61,7 +61,7 @@ function AppProfileForm({
       address: yup.string().optional(),
       department: yup.string().optional(),
       position: yup.string().required(),
-      userName: yup.string().optional(),
+      userName: yup.string().required(),
       startWorkDate: yup.mixed().optional(),
       password: yup.string().required(),
       approvePassword: yup

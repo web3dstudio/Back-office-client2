@@ -4,10 +4,7 @@ import AppProfileForm from '../../../components/Profile/AppProfileForm'
 
 import { useCurrentUserQuery } from '../../../query/user.query'
 // import { TAvatarUpload, TProfileFormInput } from '../../../types'
-import {
-  useUpdateAvatarMutation,
-  useUpdateProfileMutation,
-} from '../../../query/user.query'
+import { useUpdateProfileMutation } from '../../../query/user.query'
 import AppLoading from '../../../components/AppLoading'
 import AppError from '../../../components/AppError'
 import { createFileRoute } from '@tanstack/react-router'
@@ -28,7 +25,6 @@ function ProfilePage() {
     isError: currentUserIsError,
   } = useCurrentUserQuery()
   const { mutate: updateProfileMutation, isPending: updateProfileIsPending } = useUpdateProfileMutation()
-  const { mutate: updateAvatarMutation } = useUpdateAvatarMutation()
 
 
   const saveProfile = (
@@ -37,17 +33,7 @@ function ProfilePage() {
   ) => {
     if (currentUser?.id) {
       updateProfileMutation(
-        { ...currentUser, ...data },
-        {
-          onSuccess: (response) => {
-            if (avatar && response?.imageUploadUri) {
-              updateAvatarMutation({
-                ...avatar,
-                imageUploadUri: response?.imageUploadUri,
-              })
-            }
-          },
-        }
+        { data: { ...currentUser, ...data }, avatar }
       )
     }
   }

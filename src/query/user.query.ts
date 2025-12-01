@@ -1,6 +1,6 @@
 import { useMutation, type UseMutationResult, type UseQueryResult, useQuery, useQueryClient } from '@tanstack/react-query'
 import axiosAPI from '../utils/axiosAPI'
-import type { TCurrentUser, TLogoutResponse } from '../types';
+import type { TCurrentUser, TLogoutResponse, TAvatarUpload } from '../types';
 import { useAuthStore } from '../store/authStore';
 import { useNavigate } from '@tanstack/react-router';
 import { useAccessTokenStore } from '../store/accessTokenStore';
@@ -88,41 +88,36 @@ export function useCurrentUserQuery(): UseQueryResult<TCurrentUser, Error> {
     queryKey: ['current_user'],
     queryFn: async (): Promise<TCurrentUser> => {
       const response = await axiosAPI.get('/users/current')
-      return response.data.data
+      return response.data
     }
   })
 }
 
-export function useUpdateProfileMutation(): UseMutationResult<TCurrentUser, Error, TCurrentUser> {
+export function useUpdateProfileMutation(): UseMutationResult<TCurrentUser, Error, { data: TCurrentUser; avatar: TAvatarUpload | null }> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (user: TCurrentUser): Promise<TCurrentUser> => {
-      const response = await axiosAPI.put('/users/profile', user)
-      return response.data
-    },
-    onSuccess: (_data) => {
-      queryClient.invalidateQueries({ queryKey: ['current_user'] })
-      toast.success(t('profile_updated_successfully'))
-    },
-    onError: (error) => {
-      console.log('ERROR', error.message)
-      toast.error(t('error_occurred') || 'Error!')
-    },
-  })
-}
+    mutationFn: async ({ data, avatar }: { data: TCurrentUser; avatar: TAvatarUpload | null }): Promise<TCurrentUser> => {
+      const formData = new FormData()
 
-export function useUpdateAvatarMutation(): UseMutationResult<TCurrentUser, Error, any> {
-  const { t } = useTranslation('notifications')
-  const queryClient = useQueryClient()
+      Object.entries(data).forEach(([key, value]) => {
+        if (value !== undefined) {
+          if (value === null) {
+            formData.append(key, '')
+          } else if (typeof value === 'boolean') {
+            formData.append(key, value ? 'true' : 'false')
+          } else {
+            formData.append(key, String(value))
+          }
+        }
+      })
 
-  return useMutation({
-    mutationFn: async (avatar: any): Promise<TCurrentUser> => {
-      const formData = new FormData();
-      formData.append('file', avatar.file);
+      if (avatar && avatar.file) {
+        formData.append('ImageFile', avatar.file)
+      }
 
-      const response = await axiosAPI.post('/users/avatar', formData, {
+      const response = await axiosAPI.put('/users/profile', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
@@ -131,7 +126,7 @@ export function useUpdateAvatarMutation(): UseMutationResult<TCurrentUser, Error
     },
     onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['current_user'] })
-      toast.success(t('avatar_updated_successfully'))
+      toast.success(t('profile_updated_successfully'))
     },
     onError: (error) => {
       console.log('ERROR', error.message)

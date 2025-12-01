@@ -1,4 +1,4 @@
-import { Outlet, createFileRoute, redirect } from '@tanstack/react-router'
+import { Outlet, createFileRoute, redirect, useNavigate, useRouterState } from '@tanstack/react-router'
 import Logo from '../assets/logo.png'
 import { useAuthStore } from '../store/authStore'
 import AppChangeLanguage from '../components/AppChangeLanguage'
@@ -16,7 +16,7 @@ import ClientSupport from '../components/ClientSupport'
 import ProfileMenu from '../components/ProfileMenu'
 import AppSettings from '../components/AppSettings'
 import { useCurrentUserQuery } from '../query/user.query'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 
 
@@ -41,13 +41,22 @@ const drawerWidth = 130
 // Layout for auth pages
 export default function Layout() {
   const theme = useTheme()
+  const navigate = useNavigate()
+  const router = useRouterState()
   const { data: currentUserData } = useCurrentUserQuery()
+  const hasRedirected = useRef(false)
 
   useEffect(() => {
-    if (currentUserData) {
-      useAuthStore.setState({ userType: currentUserData.type })
+    if (currentUserData?.defaultPage && !hasRedirected.current) {
+      const currentPath = router.location.pathname
+      const defaultPage = currentUserData.defaultPage
+      // Редирект если defaultPage установлен и отличается от текущего пути
+      if (defaultPage && defaultPage !== currentPath) {
+        hasRedirected.current = true
+        navigate({ to: defaultPage as any })
+      }
     }
-  }, [currentUserData])
+  }, [currentUserData, navigate, router.location.pathname])
 
 
   return (

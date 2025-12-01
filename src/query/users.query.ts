@@ -104,10 +104,21 @@ export function useCreateUserMutation(): UseMutationResult<TUser, Error, { data:
     return useMutation({
         mutationFn: async ({ data, avatar }: { data: TUserMutationData; avatar: TAvatarUpload | null }): Promise<TUser> => {
             const formData = new FormData()
-            formData.append('data', JSON.stringify(data))
+
+            Object.entries(data).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    if (value === null) {
+                        formData.append(key, '')
+                    } else if (typeof value === 'boolean') {
+                        formData.append(key, value ? 'true' : 'false')
+                    } else {
+                        formData.append(key, String(value))
+                    }
+                }
+            })
 
             if (avatar && avatar.file) {
-                formData.append('image', avatar.file)
+                formData.append('ImageFile', avatar.file)
             }
 
             const response = await axiosAPI.post('/users', formData, {
