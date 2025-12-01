@@ -18,7 +18,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { object } from 'yup'
 import AppChangeLanguage from '../../../components/AppChangeLanguage'
-import { useLoginMutation } from '../../../query/user.query'
+import { useLoginMutation, type TLoginResponse } from '../../../query/user.query'
 import { useAccessTokenStore } from '../../../store/accessTokenStore'
 import { useAuthStore } from '../../../store/authStore'
 import { useNavigate } from '@tanstack/react-router'
@@ -63,16 +63,14 @@ function LoginPage() {
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
     loginMutation(data, {
-      onSuccess: (response) => {
-        if (response.status === 0 && response.data?.token) {
+      onSuccess: (response: TLoginResponse) => {
+        if ('token' in response) {
           // Тут надо расшифровать токен!!!
-          accessTokenStore.setToken(response.data?.token)
+          accessTokenStore.setToken(response.token)
           authStore.isAuthenticated = true
           navigate({ to: '/' })
         } else {
-          if (response.status === 2) {
-            toast.error(`${response.message}`)
-          }
+          toast.error(response.message)
         }
       },
       onError: (_error) => {

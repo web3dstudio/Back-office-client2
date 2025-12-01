@@ -13,14 +13,15 @@ type TLoginParams = {
   password: string
 }
 
-type TLoginResponse = {
-  data: {
-    token: string;
-  };
-  status: number;
-  message: unknown;
-};
+interface ILoginSuccessResponse {
+  token: string
+}
 
+interface ILoginErrorResponse {
+  message: string
+}
+
+export type TLoginResponse = ILoginSuccessResponse | ILoginErrorResponse
 
 
 export function useLoginMutation(): UseMutationResult<

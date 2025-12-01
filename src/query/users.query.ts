@@ -79,6 +79,7 @@ export function useGetUserQuery(id: string): UseQueryResult<TUser, Error> {
 type TUserMutationData = {
     id?: string
     adSid: string | null
+    adUser: boolean
     userName: string
     firstName: string
     middleName?: string | null
@@ -93,6 +94,7 @@ type TUserMutationData = {
     startWorkDate?: string | null
     password: string
     imageFileName?: string | null
+    role: number
 }
 
 export function useCreateUserMutation(): UseMutationResult<TUser, Error, { data: TUserMutationData; avatar: TAvatarUpload | null }> {
@@ -133,19 +135,34 @@ export function useUpdateUserMutation(): UseMutationResult<TUser, Error, { id: s
     return useMutation({
         mutationFn: async ({ id, data, avatar }: { id: string; data: TUserMutationData; avatar: TAvatarUpload | null }): Promise<TUser> => {
             const formData = new FormData()
-            formData.append('data', JSON.stringify(data))
-            formData.append('id', id)
+
+            Object.entries(data).forEach(([key, value]) => {
+                if (value !== undefined) {
+                    if (value === null) {
+                        formData.append(key, '')
+                    } else if (typeof value === 'boolean') {
+                        formData.append(key, value ? 'true' : 'false')
+                    } else {
+                        formData.append(key, String(value))
+                    }
+                }
+            })
 
             if (avatar && avatar.file) {
-                formData.append('image', avatar.file)
+                formData.append('ImageFile', avatar.file)
             }
 
-            const response = await axiosAPI.put(`/users/${id}`, formData)
+            const response = await axiosAPI.put(`/users/${id}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            })
             return response.data
         },
         onSuccess: (_data) => {
             queryClient.invalidateQueries({ queryKey: ['users'] })
             queryClient.invalidateQueries({ queryKey: ['user'] })
+            queryClient.refetchQueries({ queryKey: ['users'] })
             toast.success(t('user_updated_successfully') || 'User updated successfully')
         },
         onError: (error) => {

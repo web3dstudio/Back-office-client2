@@ -16,7 +16,7 @@ import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledDatePicker } from '../AppControlledDatePicker'
 import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
 import { useAdUsersQuery } from '../../query/users.query'
-import { roleRows, initRolesState, createRolesState } from '../../utils/roles'
+import { roleRows, initRolesState, createRolesState, createRole } from '../../utils/roles'
 import type { TAvatarUpload, TUser, TAdUser } from '../../types'
 import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Checkbox, Paper } from '@mui/material'
 import AppConfirmDialog from '../AppDialog/AppConfirmDialog'
@@ -161,14 +161,14 @@ function UserForm({
     }
   }, [reset, user, adUsers])
 
-  const handleAdUserChange = (adUser: TAdUser | null) => {
-    if (adUser) {
-      setValue('adSid', adUser)
-      setValue('firstName', adUser.givenName || '')
-      setValue('lastName', adUser.surname || '')
-      setValue('email', adUser.emailAddress || '')
-      setValue('userName', adUser.samAccountName || '')
-      setValue('mobileNumber', adUser.voiceTelephoneNumber || '')
+  const handleAdUserChange = (adUserData: TAdUser | null) => {
+    if (adUserData) {
+      setValue('adSid', adUserData)
+      setValue('firstName', adUserData.givenName || '')
+      setValue('lastName', adUserData.surname || '')
+      setValue('email', adUserData.emailAddress || '')
+      setValue('userName', adUserData.samAccountName || '')
+      setValue('mobileNumber', adUserData.voiceTelephoneNumber || '')
     } else {
       setValue('adSid', null)
     }
@@ -215,6 +215,8 @@ function UserForm({
       position: profileData.position || '',
       password: profileData.password || '',
       adSid: adSid?.id || null,
+      adUser: adUser,
+      role: createRole(roles),
       imageFileName: profileData.imageFileName === undefined ? null : profileData.imageFileName,
     }
 
