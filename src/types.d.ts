@@ -701,15 +701,23 @@ export type TUsersParamsResponse = {
   adUsers: TAdUser[]
 }
 
-export type TSupportArticle = {
+export type TSupportArticleList = {
   id: string
   title: string
   application: number
   categoryName: string
 }
 
+export type TSupportArticle = {
+  id: string
+  title: string
+  content: string
+  application: number
+  categoryName: string
+}
+
 export type TSupportArticlesResponse = {
-  data: TSupportArticle[]
+  data: TSupportArticleList[]
 } & TPagination
 
 

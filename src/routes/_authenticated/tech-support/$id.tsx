@@ -1,29 +1,35 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
 import { Box, Grid, Typography } from '@mui/material'
 import SupportArticleForm from '../../../components/TechSupport/SupportArticleForm'
-import { useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
+import { useSupportArticleQuery } from '../../../query/supportArticles.query'
+import AppLoading from '../../../components/AppLoading'
 
-export const Route = createFileRoute('/_authenticated/tech-support/new')({
-  component: NewSupportArticlePage,
+export const Route = createFileRoute('/_authenticated/tech-support/$id')({
+  component: EditSupportArticlePage,
 })
 
-function NewSupportArticlePage() {
+function EditSupportArticlePage() {
   const { t } = useTranslation()
+  const { id } = Route.useParams()
   const navigate = useNavigate()
 
+  const { data: article, isLoading } = useSupportArticleQuery(id)
+
   const saveArticle = (data: any) => {
-    // TODO: Implement create article mutation
-    console.log('Save article:', data)
+    // TODO: Implement update article mutation
+    console.log('Update article:', data)
     navigate({ to: '/tech-support' })
   }
+
+  if (isLoading) return <AppLoading />
 
   return (
     <Grid container spacing={3}>
       <Grid size={12}>
-        <AppBackBtn to="/tech-support" from="/tech-support/new" children={t('back', { ns: 'common' })} />
+        <AppBackBtn children={t('back', { ns: 'common' })} />
       </Grid>
       <Grid
         size={12}
@@ -35,7 +41,7 @@ function NewSupportArticlePage() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
-            {t('addNewArticle', { ns: 'techSupport' })}
+            {t('edit', { ns: 'techSupport' })} {article?.title}
           </Typography>
         </Box>
       </Grid>
@@ -51,7 +57,7 @@ function NewSupportArticlePage() {
         >
           <SupportArticleForm
             isPending={false}
-            article={null}
+            article={article || null}
             onArticleSave={saveArticle}
           />
         </StyledPaper>
@@ -59,3 +65,4 @@ function NewSupportArticlePage() {
     </Grid>
   )
 }
+

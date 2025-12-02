@@ -4,33 +4,33 @@ import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { object } from 'yup'
-import LoadingButton from '@mui/lab/LoadingButton'
+import { Box, CircularProgress, Button } from '@mui/material'
 import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
-import { Box, CircularProgress } from '@mui/material'
-import { useMemo, lazy, Suspense } from 'react'
+import { useMemo, lazy, Suspense, useEffect } from 'react'
 import { selectOptionTypes } from '../../constants'
+import type { TSupportArticle } from '../../types'
+import { useSupportArticleCategoriesQuery } from '../../query/supportArticles.query'
 
 // Ленивая загрузка Rich Text Editor для ускорения загрузки страницы
 const AppControlledRichTextEditor = lazy(() => import('../AppControlledRichTextEditor'))
 
-// TODO: Определить реальный тип для application из API
-// type TApplication = { ... }
-
 type TSupportArticleFormInput = {
   title: string
   application: any | null // TODO: Заменить на реальный тип
+  category: any | null
   content: string
 }
 
 type TSupportArticleSubmitData = {
   title: string
   application: number | null
+  category: string | null
   content: string
 }
 
 type TSupportArticleFormProps = {
-  article: { id: string; title: string; application: number; categoryName: string } | null
+  article: TSupportArticle | null
   onArticleSave: (data: TSupportArticleSubmitData) => void
   isPending: boolean
 }
@@ -38,17 +38,21 @@ type TSupportArticleFormProps = {
 function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArticleFormProps) {
   const { t } = useTranslation()
 
+  const { data: categories = [], isLoading: categoriesLoading } = useSupportArticleCategoriesQuery()
+
   const applicationOptions = useMemo(() => {
     return selectOptionTypes.map(o => ({ id: o, name: t(String(o), { ns: 'newSupportArticle' }) }))
   }, [t])
 
   const defaultApplication = applicationOptions.find((app: any) => app.id === article?.application) || null
+  const defaultCategory = categories.find((cat: any) => cat.name === article?.categoryName) || null
 
 
   const schema = object()
     .shape({
       title: yup.string().required(t('form-field.required', { ns: 'common' })),
       application: yup.mixed().nullable().required(t('form-field.required', { ns: 'common' })),
+      category: yup.mixed().nullable().required(t('form-field.required', { ns: 'common' })),
       content: yup.string().optional(),
     })
     .required()
@@ -60,17 +64,39 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
     defaultValues: {
       title: article?.title || '',
       application: defaultApplication,
+      category: defaultCategory,
       content: '',
     },
   })
 
-  const { handleSubmit, control, formState } = methods
+  const { handleSubmit, control, formState, reset } = methods
   const errors = formState.errors
+
+  useEffect(() => {
+    if (article) {
+      const defaultApplication = applicationOptions.find((app: any) => app.id === article.application) || null
+      const defaultCategory = categories.find((cat: any) => cat.name === article.categoryName) || null
+      reset({
+        title: article.title || '',
+        application: defaultApplication,
+        category: defaultCategory,
+        content: article.content || '',
+      })
+    } else {
+      reset({
+        title: '',
+        application: null,
+        category: null,
+        content: '',
+      })
+    }
+  }, [article, applicationOptions, categories, reset])
 
   const onSubmit = (data: any) => {
     const submitData: TSupportArticleSubmitData = {
       title: data.title,
       application: data.application?.id || null,
+      category: data.category?.id || data.category?.name || null,
       content: data.content,
     }
     onArticleSave(submitData)
@@ -103,6 +129,20 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
           />
         </Grid>
         <Grid size={12}>
+          <AppControlledAutocomplete<any>
+            required
+            name="category"
+            control={control}
+            options={categories}
+            errors={errors}
+            getOptionLabel={(option: any) => String(option?.name || option?.id || '')}
+            isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id || option?.name === value?.name}
+            label={t('category', { ns: 'techSupport' })}
+            placeholder={t('category', { ns: 'techSupport' })}
+            loading={categoriesLoading}
+          />
+        </Grid>
+        <Grid size={12}>
           <Suspense
             fallback={
               <Box
@@ -121,6 +161,7 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
             }
           >
             <AppControlledRichTextEditor
+              key={article?.id || 'new'}
               name="content"
               control={control}
               errors={errors}
@@ -131,14 +172,14 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
         </Grid>
         <Grid size={12}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>
-            <LoadingButton
+            <Button
               type="submit"
               variant="contained"
               loading={isPending}
               disabled={!formState.isValid}
             >
               {t('save', { ns: 'common' })}
-            </LoadingButton>
+            </Button>
           </Box>
         </Grid>
       </Grid>

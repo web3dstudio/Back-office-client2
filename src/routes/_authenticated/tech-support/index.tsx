@@ -3,9 +3,10 @@ import StyledPaper from '../../../components/StyledPaper'
 import { useSupportArticlesQuery } from '../../../query/supportArticles.query'
 import { useTranslation } from 'react-i18next'
 import { useState, useMemo } from 'react'
-import type { TSupportArticle } from '../../../types'
+import type { TSupportArticleList } from '../../../types'
 import AppActionButton from '../../../components/AppActionButton'
-import { Box, Typography, Grid, Button } from '@mui/material'
+import { Box, Typography, Grid } from '@mui/material'
+import LinkButton from '../../../components/LinkButton'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppDataTable from '../../../components/AppDataTable'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/_authenticated/tech-support/')({
 function TechSupportPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -31,7 +33,7 @@ function TechSupportPage() {
     sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' }))
   )
 
-  const columns = useMemo<ColumnDef<TSupportArticle>[]>(
+  const columns = useMemo<ColumnDef<TSupportArticleList>[]>(
     () => [
       {
         accessorKey: 'title',
@@ -59,6 +61,10 @@ function TechSupportPage() {
         size: 150,
         minSize: 100,
         maxSize: 200,
+        cell: ({ row }) => {
+          const applicationId = row.original.application
+          return t(String(applicationId), { ns: 'newSupportArticle' })
+        },
       },
       {
         id: 'actions',
@@ -74,8 +80,7 @@ function TechSupportPage() {
             <AppActionButton
               type='edit'
               onClick={() => {
-                // TODO: Navigate to edit page when route is created
-                console.log('Edit article:', row.original.id)
+                navigate({ to: `/tech-support/${row.original.id}` })
               }}
             />
             <AppActionButton
@@ -102,14 +107,9 @@ function TechSupportPage() {
             <Typography variant="h5" sx={{ fontWeight: 'bold', textTransform: 'capitalize' }}>
               {t('title', { ns: 'techSupport' })}
             </Typography>
-            <Button
-              variant="contained"
-              onClick={() => {
-                navigate({ to: '/tech-support/new' })
-              }}
-            >
+            <LinkButton to="/tech-support/new" variant="contained">
               {t('add', { ns: 'techSupport' })}
-            </Button>
+            </LinkButton>
           </Box>
         </Grid>
 

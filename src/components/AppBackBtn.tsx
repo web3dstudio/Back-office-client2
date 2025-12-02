@@ -6,9 +6,11 @@ import { useTranslation } from 'react-i18next'
 
 type Props = {
   children?: React.ReactNode
+  to?: string
+  from?: string
 }
 
-function AppBackBtn({ children }: Props) {
+function AppBackBtn({ children, to, from }: Props) {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const transform = i18next.dir() === 'rtl' ? 'rotate(180deg)' : ''
@@ -18,7 +20,7 @@ function AppBackBtn({ children }: Props) {
       variant='text'
       size='small'
       onClick={() => {
-        navigate({ to: '..' });
+        navigate({ to: to || '..', from } as any);
       }}
       startIcon={
         <KeyboardBackspaceOutlined

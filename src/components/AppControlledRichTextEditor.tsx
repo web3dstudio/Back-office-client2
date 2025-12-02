@@ -7,7 +7,7 @@ import {
   Box,
 } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { useRef } from 'react'
+import { useRef, useEffect } from 'react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Image from '@tiptap/extension-image'
@@ -55,13 +55,125 @@ const ControlledRichTextEditor = ({
 }: ControlledRichTextEditorProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
-  const rteRef = useRef<RichTextEditorRef>(null)
 
   // Локальная функция get для вложенных путей
   const get = (obj: any, path: string) => path.split('.').reduce((o, k) => (o ? o[k] : undefined), obj)
 
   const errorObj = get(errors, name)
   const errorMessage = errorObj?.message
+
+  // Внутренний компонент для обновления контента редактора
+  const RichTextEditorWithUpdate = ({
+    value,
+    onChange,
+    editorTheme,
+    editorSx
+  }: {
+    value: string
+    onChange: (html: string) => void
+    editorTheme: typeof theme
+    editorSx: SxProps
+  }) => {
+    const localRef = useRef<RichTextEditorRef>(null)
+
+    // Обновляем контент редактора при изменении value
+    useEffect(() => {
+      if (localRef.current?.editor && value !== undefined) {
+        const currentContent = localRef.current.editor.getHTML()
+        // Обновляем только если контент действительно изменился
+        if (currentContent !== value) {
+          localRef.current.editor.commands.setContent(value || '')
+        }
+      }
+    }, [value])
+
+    return (
+      <RichTextEditor
+        ref={localRef}
+        extensions={[
+          StarterKit.configure({
+            // Исключаем Link из StarterKit, чтобы добавить его с нашими настройками
+            link: false,
+          }),
+          TextAlign.configure({
+            types: ['heading', 'paragraph'],
+          }),
+          Image.configure({
+            inline: true,
+            allowBase64: true,
+          }),
+          Link.configure({
+            openOnClick: false,
+            autolink: true,
+            defaultProtocol: 'https',
+            HTMLAttributes: {
+              target: '_blank',
+              rel: 'noopener noreferrer',
+            },
+          }),
+          LinkBubbleMenuHandler,
+        ]}
+        content={value || ''}
+        onUpdate={({ editor }) => {
+          onChange(editor.getHTML())
+        }}
+        editable={!disabled}
+        renderControls={() => (
+          <MenuControlsContainer>
+            <MenuSelectHeading />
+            <MenuDivider />
+            <MenuButtonBold />
+            <MenuButtonItalic />
+            <MenuDivider />
+            <MenuButtonAlignLeft />
+            <MenuButtonAlignCenter />
+            <MenuButtonAlignRight />
+            <MenuDivider />
+            <MenuButtonBlockquote />
+            <MenuDivider />
+            <MenuButtonBulletedList />
+            <MenuButtonOrderedList />
+            <MenuDivider />
+            <MenuButtonEditLink />
+            <MenuDivider />
+            <MenuButtonImageUpload
+              onUploadFiles={async (files: File[]) => {
+                // Преобразуем файлы в base64 для вставки в редактор
+                return files.map((file) => ({
+                  src: URL.createObjectURL(file),
+                  alt: file.name,
+                }))
+              }}
+            />
+          </MenuControlsContainer>
+        )}
+        children={() => (
+          <>
+            <LinkBubbleMenu />
+          </>
+        )}
+        sx={{
+          marginTop: editorTheme.spacing(2),
+          borderRadius: '24px',
+          overflow: 'hidden',
+          '& .MuiOutlinedInput-root': {
+            borderRadius: '24px',
+            '&.Mui-focused fieldset': {
+              boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.09)',
+            },
+          },
+          '& .mui-tiptap-RichTextContent-root': {
+            borderRadius: '24px',
+            minHeight: '600px',
+          },
+          '& .mui-tiptap-RichTextEditor-root': {
+            borderRadius: '24px',
+          },
+          ...editorSx,
+        }}
+      />
+    )
+  }
 
   return (
     <Controller
@@ -82,86 +194,11 @@ const ControlledRichTextEditor = ({
             )}
           </InputLabel>
           <Box>
-            <RichTextEditor
-              ref={rteRef}
-              extensions={[
-                StarterKit,
-                TextAlign.configure({
-                  types: ['heading', 'paragraph'],
-                }),
-                Image.configure({
-                  inline: true,
-                  allowBase64: true,
-                }),
-                Link.configure({
-                  openOnClick: false,
-                  autolink: true,
-                  defaultProtocol: 'https',
-                  HTMLAttributes: {
-                    target: '_blank',
-                    rel: 'noopener noreferrer',
-                  },
-                }),
-                LinkBubbleMenuHandler,
-              ]}
-              content={field.value || ''}
-              onUpdate={({ editor }) => {
-                field.onChange(editor.getHTML())
-              }}
-              editable={!disabled}
-              renderControls={() => (
-                <MenuControlsContainer>
-                  <MenuSelectHeading />
-                  <MenuDivider />
-                  <MenuButtonBold />
-                  <MenuButtonItalic />
-                  <MenuDivider />
-                  <MenuButtonAlignLeft />
-                  <MenuButtonAlignCenter />
-                  <MenuButtonAlignRight />
-                  <MenuDivider />
-                  <MenuButtonBlockquote />
-                  <MenuDivider />
-                  <MenuButtonBulletedList />
-                  <MenuButtonOrderedList />
-                  <MenuDivider />
-                  <MenuButtonEditLink />
-                  <MenuDivider />
-                  <MenuButtonImageUpload
-                    onUploadFiles={async (files: File[]) => {
-                      // Преобразуем файлы в base64 для вставки в редактор
-                      return files.map((file) => ({
-                        src: URL.createObjectURL(file),
-                        alt: file.name,
-                      }))
-                    }}
-                  />
-                </MenuControlsContainer>
-              )}
-              children={() => (
-                <>
-                  <LinkBubbleMenu />
-                </>
-              )}
-              sx={{
-                marginTop: theme.spacing(2),
-                borderRadius: '24px',
-                overflow: 'hidden',
-                '& .MuiOutlinedInput-root': {
-                  borderRadius: '24px',
-                  '&.Mui-focused fieldset': {
-                    boxShadow: '0px 0px 30px rgba(0, 0, 0, 0.09)',
-                  },
-                },
-                '& .mui-tiptap-RichTextContent-root': {
-                  borderRadius: '24px',
-                  minHeight: '600px',
-                },
-                '& .mui-tiptap-RichTextEditor-root': {
-                  borderRadius: '24px',
-                },
-                ...sx,
-              }}
+            <RichTextEditorWithUpdate
+              value={field.value || ''}
+              onChange={field.onChange}
+              editorTheme={theme}
+              editorSx={sx}
             />
           </Box>
           {!errorMessage && (
