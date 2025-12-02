@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
-import { useSupportArticlesQuery } from '../../../query/supportArticles.query'
+import { useSupportArticlesQuery, useSupportArticleDeleteMutation } from '../../../query/supportArticles.query'
 import { useTranslation } from 'react-i18next'
 import { useState, useMemo } from 'react'
 import type { TSupportArticleList } from '../../../types'
@@ -10,6 +10,8 @@ import LinkButton from '../../../components/LinkButton'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppDataTable from '../../../components/AppDataTable'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
+import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
+import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 
 export const Route = createFileRoute('/_authenticated/tech-support/')({
   component: TechSupportPage,
@@ -18,7 +20,7 @@ export const Route = createFileRoute('/_authenticated/tech-support/')({
 function TechSupportPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
-
+  const dateTimeFormat = useDateTimeFormat()
 
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -26,12 +28,24 @@ function TechSupportPage() {
   })
 
   const [sorting, setSorting] = useState<SortingState>([])
+  const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
+  const [selectedArticleId, setSelectedArticleId] = useState<string | null>(null)
 
   const { data: articles, isLoading } = useSupportArticlesQuery(
     pagination.pageIndex,
     {},
     sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' }))
   )
+
+  const { mutate: deleteArticle, isPending: isDeleting } = useSupportArticleDeleteMutation()
+
+  const handleDelete = () => {
+    if (selectedArticleId) {
+      deleteArticle(selectedArticleId)
+      setOpenConfirmDialog(false)
+      setSelectedArticleId(null)
+    }
+  }
 
   const columns = useMemo<ColumnDef<TSupportArticleList>[]>(
     () => [
@@ -67,6 +81,18 @@ function TechSupportPage() {
         },
       },
       {
+        accessorKey: 'updatedAt',
+        header: t('updatedAt', { ns: 'techSupport' }) || 'Updated At',
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
+        cell: ({ row }) => {
+          return row.original.updatedAt ? dateTimeFormat(row.original.updatedAt) : '–'
+        },
+      },
+      {
         id: 'actions',
         header: 'Actions',
         enableSorting: false,
@@ -86,7 +112,8 @@ function TechSupportPage() {
             <AppActionButton
               type='delete'
               onClick={() => {
-                console.log('Delete article:', row.original.id)
+                setSelectedArticleId(row.original.id)
+                setOpenConfirmDialog(true)
               }}
             />
           </Box>
@@ -137,6 +164,17 @@ function TechSupportPage() {
           </StyledPaper>
         </Grid>
       </Grid>
+
+      <AppConfirmDialog
+        open={openConfirmDialog}
+        onClose={() => {
+          setOpenConfirmDialog(false)
+          setSelectedArticleId(null)
+        }}
+        onSubmit={handleDelete}
+        title={t('modals.approveDelete', { ns: 'common' })}
+        isPending={isDeleting}
+      />
     </>
   )
 }

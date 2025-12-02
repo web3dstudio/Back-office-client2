@@ -1,10 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
 import { Box, Grid, Typography } from '@mui/material'
 import SupportArticleForm from '../../../components/TechSupport/SupportArticleForm'
-import { useNavigate } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
+import { useSupportArticleCreateMutation } from '../../../query/supportArticles.query'
 
 export const Route = createFileRoute('/_authenticated/tech-support/new')({
   component: NewSupportArticlePage,
@@ -13,11 +13,14 @@ export const Route = createFileRoute('/_authenticated/tech-support/new')({
 function NewSupportArticlePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const { mutate: createArticle, isPending } = useSupportArticleCreateMutation()
 
   const saveArticle = (data: any) => {
-    // TODO: Implement create article mutation
-    console.log('Save article:', data)
-    navigate({ to: '/tech-support' })
+    createArticle(data, {
+      onSuccess: () => {
+        navigate({ to: '/tech-support' })
+      },
+    })
   }
 
   return (
@@ -50,7 +53,7 @@ function NewSupportArticlePage() {
           }}
         >
           <SupportArticleForm
-            isPending={false}
+            isPending={isPending}
             article={null}
             onArticleSave={saveArticle}
           />

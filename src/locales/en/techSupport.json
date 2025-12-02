@@ -7,5 +7,6 @@
   "application": "Application",
   "addNewArticle": "Add new article",
   "nameOrTitle": "Name / title of the article",
-  "content": "Content"
+  "content": "Content",
+  "updatedAt": "Updated At"
 }

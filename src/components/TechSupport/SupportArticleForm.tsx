@@ -10,28 +10,26 @@ import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
 import { useMemo, lazy, Suspense, useEffect } from 'react'
 import { selectOptionTypes } from '../../constants'
 import type { TSupportArticle } from '../../types'
-import { useSupportArticleCategoriesQuery } from '../../query/supportArticles.query'
+import { useSupportArticleCategoriesQuery, type TSupportArticleCategory, type TSupportArticleCreateData } from '../../query/supportArticles.query'
 
 // Ленивая загрузка Rich Text Editor для ускорения загрузки страницы
 const AppControlledRichTextEditor = lazy(() => import('../AppControlledRichTextEditor'))
 
-type TSupportArticleFormInput = {
-  title: string
-  application: any | null // TODO: Заменить на реальный тип
-  category: any | null
-  content: string
+type TApplicationOption = {
+  id: number
+  name: string
 }
 
-type TSupportArticleSubmitData = {
+type TSupportArticleFormInput = {
   title: string
-  application: number | null
-  category: string | null
+  application: TApplicationOption | null
+  category: TSupportArticleCategory | null
   content: string
 }
 
 type TSupportArticleFormProps = {
   article: TSupportArticle | null
-  onArticleSave: (data: TSupportArticleSubmitData) => void
+  onArticleSave: (data: TSupportArticleCreateData) => void
   isPending: boolean
 }
 
@@ -45,7 +43,7 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
   }, [t])
 
   const defaultApplication = applicationOptions.find((app: any) => app.id === article?.application) || null
-  const defaultCategory = categories.find((cat: any) => cat.name === article?.categoryName) || null
+  const defaultCategory = article?.category ? categories.find((cat: any) => cat.id === article.category.id) || null : null
 
 
   const schema = object()
@@ -73,16 +71,17 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
   const errors = formState.errors
 
   useEffect(() => {
-    if (article) {
+    if (article && categories.length > 0) {
       const defaultApplication = applicationOptions.find((app: any) => app.id === article.application) || null
-      const defaultCategory = categories.find((cat: any) => cat.name === article.categoryName) || null
+      const defaultCategory = article.category ? categories.find((cat: any) => cat.id === article.category.id) || null : null
       reset({
         title: article.title || '',
         application: defaultApplication,
         category: defaultCategory,
         content: article.content || '',
       })
-    } else {
+    } else if (!article && applicationOptions.length > 0 && categories.length > 0) {
+      // Сбрасываем форму только если данные загружены
       reset({
         title: '',
         application: null,
@@ -90,13 +89,13 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
         content: '',
       })
     }
-  }, [article, applicationOptions, categories, reset])
+  }, [article?.id, article?.title, article?.application, article?.category?.id, article?.content, applicationOptions, categories, reset])
 
   const onSubmit = (data: any) => {
-    const submitData: TSupportArticleSubmitData = {
+    const submitData: TSupportArticleCreateData = {
       title: data.title,
-      application: data.application?.id || null,
-      category: data.category?.id || data.category?.name || null,
+      application: data.application?.id,
+      supportArticleCategoryId: data.category?.id,
       content: data.content,
     }
     onArticleSave(submitData)

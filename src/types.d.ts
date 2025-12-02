@@ -706,6 +706,7 @@ export type TSupportArticleList = {
   title: string
   application: number
   categoryName: string
+  updatedAt: string | null
 }
 
 export type TSupportArticle = {
@@ -713,7 +714,12 @@ export type TSupportArticle = {
   title: string
   content: string
   application: number
-  categoryName: string
+  supportArticleCategoryId: string
+  updatedAt: string | null
+  category: {
+    id: string
+    name: string
+  }
 }
 
 export type TSupportArticlesResponse = {

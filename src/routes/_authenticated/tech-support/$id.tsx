@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { Box, Grid, Typography } from '@mui/material'
 import SupportArticleForm from '../../../components/TechSupport/SupportArticleForm'
 import StyledPaper from '../../../components/StyledPaper'
-import { useSupportArticleQuery } from '../../../query/supportArticles.query'
+import { useSupportArticleQuery, useSupportArticleUpdateMutation } from '../../../query/supportArticles.query'
 import AppLoading from '../../../components/AppLoading'
 
 export const Route = createFileRoute('/_authenticated/tech-support/$id')({
@@ -17,11 +17,17 @@ function EditSupportArticlePage() {
   const navigate = useNavigate()
 
   const { data: article, isLoading } = useSupportArticleQuery(id)
+  const { mutate: updateArticle, isPending } = useSupportArticleUpdateMutation()
 
   const saveArticle = (data: any) => {
-    // TODO: Implement update article mutation
-    console.log('Update article:', data)
-    navigate({ to: '/tech-support' })
+    updateArticle(
+      { id, data },
+      {
+        onSuccess: () => {
+          navigate({ to: '/tech-support' })
+        },
+      }
+    )
   }
 
   if (isLoading) return <AppLoading />
@@ -56,7 +62,7 @@ function EditSupportArticlePage() {
           }}
         >
           <SupportArticleForm
-            isPending={false}
+            isPending={isPending}
             article={article || null}
             onArticleSave={saveArticle}
           />

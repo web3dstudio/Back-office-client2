@@ -7,5 +7,6 @@
   "application": "שיוך למערכת",
   "addNewArticle": "הוספת מאמר תמיכה טכנית",
   "nameOrTitle": "שם / כותרת המאמר",
-  "content": "תוכן"
+  "content": "תוכן",
+  "updatedAt": "תאריך עדכון"
 }

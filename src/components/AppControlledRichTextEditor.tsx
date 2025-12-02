@@ -75,14 +75,19 @@ const ControlledRichTextEditor = ({
     editorSx: SxProps
   }) => {
     const localRef = useRef<RichTextEditorRef>(null)
+    const previousValueRef = useRef<string>(value)
 
-    // Обновляем контент редактора при изменении value
+    // Обновляем контент редактора при изменении value извне
     useEffect(() => {
       if (localRef.current?.editor && value !== undefined) {
-        const currentContent = localRef.current.editor.getHTML()
-        // Обновляем только если контент действительно изменился
-        if (currentContent !== value) {
-          localRef.current.editor.commands.setContent(value || '')
+        // Обновляем только если значение изменилось извне (не из-за нашего onUpdate)
+        if (previousValueRef.current !== value) {
+          const currentContent = localRef.current.editor.getHTML()
+          // Обновляем только если контент действительно отличается
+          if (currentContent !== value) {
+            localRef.current.editor.commands.setContent(value || '')
+          }
+          previousValueRef.current = value
         }
       }
     }, [value])
@@ -115,7 +120,10 @@ const ControlledRichTextEditor = ({
         ]}
         content={value || ''}
         onUpdate={({ editor }) => {
-          onChange(editor.getHTML())
+          const newContent = editor.getHTML()
+          // Обновляем previousValueRef, чтобы useEffect не сработал снова
+          previousValueRef.current = newContent
+          onChange(newContent)
         }}
         editable={!disabled}
         renderControls={() => (

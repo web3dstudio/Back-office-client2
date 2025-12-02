@@ -137,3 +137,78 @@ export function useSupportArticleCategoryDeleteMutation(): UseMutationResult<str
   })
 }
 
+export type TSupportArticleCreateData = {
+  title: string
+  application: number
+  supportArticleCategoryId: string
+  content: string
+}
+
+export function useSupportArticleCreateMutation(): UseMutationResult<TSupportArticle, Error, TSupportArticleCreateData> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: TSupportArticleCreateData): Promise<TSupportArticle> => {
+      const response = await axiosAPI.post('/supportArticles', data)
+      return response.data
+    },
+    onSuccess: (_data) => {
+      queryClient.invalidateQueries({ queryKey: ['supportArticles'] })
+      queryClient.refetchQueries({ queryKey: ['supportArticles'] })
+      toast.success(t('article_added_successfully') || 'Article added successfully')
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+
+export function useSupportArticleUpdateMutation(): UseMutationResult<TSupportArticle, Error, { id: string; data: TSupportArticleCreateData }> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: TSupportArticleCreateData }): Promise<TSupportArticle> => {
+      const payload = {
+        ...data,
+        id,
+      }
+      const response = await axiosAPI.put(`/supportArticles/${id}`, payload)
+      return response.data
+    },
+    onSuccess: (_data) => {
+      queryClient.invalidateQueries({ queryKey: ['supportArticles'] })
+      queryClient.invalidateQueries({ queryKey: ['supportArticle'] })
+      queryClient.refetchQueries({ queryKey: ['supportArticles'] })
+      toast.success(t('article_updated_successfully') || 'Article updated successfully')
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+
+export function useSupportArticleDeleteMutation(): UseMutationResult<string, Error, string> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (id: string): Promise<string> => {
+      await axiosAPI.delete(`/supportArticles/${id}`)
+      return id
+    },
+    onSuccess: (_data) => {
+      queryClient.invalidateQueries({ queryKey: ['supportArticles'] })
+      queryClient.refetchQueries({ queryKey: ['supportArticles'] })
+      toast.success(t('article_deleted_successfully') || 'Article deleted successfully')
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+
