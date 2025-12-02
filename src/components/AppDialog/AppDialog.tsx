@@ -33,6 +33,8 @@ export default function AppDialog({ open, onClose, title, children, sx, maxWidth
 			role='dialog'
 			aria-labelledby='dialog-title'
 			aria-describedby='dialog-description'
+			disableEnforceFocus
+			disableAutoFocus
 			sx={sx}
 		>
 			<DialogTitle>

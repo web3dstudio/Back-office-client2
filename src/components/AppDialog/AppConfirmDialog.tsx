@@ -19,6 +19,7 @@ interface Props {
   confirmText?: string
   confirmColor?: 'error' | 'primary' | 'secondary' | 'info' | 'success' | 'warning'
   cancelText?: string
+  disabled?: boolean
 }
 
 const AppConfirmDialog = ({
@@ -31,6 +32,7 @@ const AppConfirmDialog = ({
   confirmText,
   confirmColor = 'error',
   cancelText,
+  disabled = false,
 }: Props) => {
 
   const { t } = useTranslation('common')
@@ -67,6 +69,7 @@ const AppConfirmDialog = ({
           color={confirmColor}
           variant='contained'
           onClick={() => handleSubmut()}
+          disabled={disabled || isPending}
         >
           {confirmText || t('modals.delete')}
         </Button>

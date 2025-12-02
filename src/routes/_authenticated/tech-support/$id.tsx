@@ -65,6 +65,7 @@ function EditSupportArticlePage() {
             isPending={isPending}
             article={article || null}
             onArticleSave={saveArticle}
+            articleId={id}
           />
         </StyledPaper>
       </Grid>

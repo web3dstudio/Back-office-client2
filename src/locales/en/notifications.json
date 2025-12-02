@@ -1,5 +1,5 @@
 {
-  "loginSuccess" : "You have successfully logged in",
+  "loginSuccess": "You have successfully logged in",
   "article_added_successfully": "Article added successfully",
   "article_updated_successfully": "Article updated successfully",
   "article_deleted_successfully": "Article deleted successfully",

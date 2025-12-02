@@ -75,6 +75,22 @@ export function useSupportArticleCategoriesQuery(): UseQueryResult<TSupportArtic
   })
 }
 
+export function useSupportArticleCategoryHasArticlesQuery(categoryId: string | null): UseQueryResult<boolean, Error> {
+  return useQuery({
+    queryKey: ['supportArticleCategoryHasArticles', categoryId],
+    queryFn: async (): Promise<boolean> => {
+      if (!categoryId) return false
+      const response = await axiosAPI.get(`/supportArticles/categories/${categoryId}/hasArticles`)
+      return response.data
+    },
+    enabled: !!categoryId,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: 3,
+  })
+}
+
 export function useSupportArticleCategoryAddMutation(): UseMutationResult<TSupportArticleCategory, Error, Omit<TSupportArticleCategory, 'id'>> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
@@ -128,6 +144,7 @@ export function useSupportArticleCategoryDeleteMutation(): UseMutationResult<str
     onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['supportArticleCategories'] })
       queryClient.invalidateQueries({ queryKey: ['supportArticles'] })
+      queryClient.refetchQueries({ queryKey: ['supportArticles'] })
       toast.success(t('category_deleted_successfully') || 'Category deleted successfully')
     },
     onError: (error) => {

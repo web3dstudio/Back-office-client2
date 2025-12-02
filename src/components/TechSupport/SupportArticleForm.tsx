@@ -11,6 +11,7 @@ import { useMemo, lazy, Suspense, useEffect } from 'react'
 import { selectOptionTypes } from '../../constants'
 import type { TSupportArticle } from '../../types'
 import { useSupportArticleCategoriesQuery, type TSupportArticleCategory, type TSupportArticleCreateData } from '../../query/supportArticles.query'
+import ArticleCategorySelect from './ArticleCategorySelect'
 
 // Ленивая загрузка Rich Text Editor для ускорения загрузки страницы
 const AppControlledRichTextEditor = lazy(() => import('../AppControlledRichTextEditor'))
@@ -31,12 +32,13 @@ type TSupportArticleFormProps = {
   article: TSupportArticle | null
   onArticleSave: (data: TSupportArticleCreateData) => void
   isPending: boolean
+  articleId?: string | null
 }
 
-function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArticleFormProps) {
+function SupportArticleForm({ article, onArticleSave, isPending, articleId }: TSupportArticleFormProps) {
   const { t } = useTranslation()
 
-  const { data: categories = [], isLoading: categoriesLoading } = useSupportArticleCategoriesQuery()
+  const { data: categories = [] } = useSupportArticleCategoriesQuery()
 
   const applicationOptions = useMemo(() => {
     return selectOptionTypes.map(o => ({ id: o, name: t(String(o), { ns: 'newSupportArticle' }) }))
@@ -67,7 +69,7 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
     },
   })
 
-  const { handleSubmit, control, formState, reset } = methods
+  const { handleSubmit, control, formState, reset, setValue, watch } = methods
   const errors = formState.errors
 
   useEffect(() => {
@@ -128,17 +130,16 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
           />
         </Grid>
         <Grid size={12}>
-          <AppControlledAutocomplete<any>
+          <ArticleCategorySelect
             required
             name="category"
             control={control}
-            options={categories}
             errors={errors}
-            getOptionLabel={(option: any) => String(option?.name || option?.id || '')}
-            isOptionEqualToValue={(option: any, value: any) => option?.id === value?.id || option?.name === value?.name}
+            setValue={setValue}
+            watch={watch}
+            articleId={articleId}
             label={t('category', { ns: 'techSupport' })}
             placeholder={t('category', { ns: 'techSupport' })}
-            loading={categoriesLoading}
           />
         </Grid>
         <Grid size={12}>
