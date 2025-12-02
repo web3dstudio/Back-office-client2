@@ -11,6 +11,7 @@ import { useRef } from 'react'
 import StarterKit from '@tiptap/starter-kit'
 import TextAlign from '@tiptap/extension-text-align'
 import Image from '@tiptap/extension-image'
+import Link from '@tiptap/extension-link'
 import {
   MenuButtonBold,
   MenuButtonItalic,
@@ -19,12 +20,15 @@ import {
   MenuButtonAlignRight,
   MenuButtonBlockquote,
   MenuButtonImageUpload,
+  MenuButtonEditLink,
   MenuControlsContainer,
   MenuButtonBulletedList,
   MenuButtonOrderedList,
   MenuDivider,
   MenuSelectHeading,
   RichTextEditor,
+  LinkBubbleMenu,
+  LinkBubbleMenuHandler,
   type RichTextEditorRef,
 } from 'mui-tiptap'
 import type { SxProps } from '@mui/system'
@@ -89,6 +93,16 @@ const ControlledRichTextEditor = ({
                   inline: true,
                   allowBase64: true,
                 }),
+                Link.configure({
+                  openOnClick: false,
+                  autolink: true,
+                  defaultProtocol: 'https',
+                  HTMLAttributes: {
+                    target: '_blank',
+                    rel: 'noopener noreferrer',
+                  },
+                }),
+                LinkBubbleMenuHandler,
               ]}
               content={field.value || ''}
               onUpdate={({ editor }) => {
@@ -111,6 +125,8 @@ const ControlledRichTextEditor = ({
                   <MenuButtonBulletedList />
                   <MenuButtonOrderedList />
                   <MenuDivider />
+                  <MenuButtonEditLink />
+                  <MenuDivider />
                   <MenuButtonImageUpload
                     onUploadFiles={async (files: File[]) => {
                       // Преобразуем файлы в base64 для вставки в редактор
@@ -121,6 +137,11 @@ const ControlledRichTextEditor = ({
                     }}
                   />
                 </MenuControlsContainer>
+              )}
+              children={() => (
+                <>
+                  <LinkBubbleMenu />
+                </>
               )}
               sx={{
                 marginTop: theme.spacing(2),

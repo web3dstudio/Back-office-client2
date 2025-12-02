@@ -7,8 +7,12 @@ import { object } from 'yup'
 import LoadingButton from '@mui/lab/LoadingButton'
 import AppControlledTextField from '../AppControlledTextField'
 import { AppControlledAutocomplete } from '../AppControlledAutocomplete'
-import AppControlledRichTextEditor from '../AppControlledRichTextEditor'
-import { Box } from '@mui/material'
+import { Box, CircularProgress } from '@mui/material'
+import { useMemo, lazy, Suspense } from 'react'
+import { selectOptionTypes } from '../../constants'
+
+// Ленивая загрузка Rich Text Editor для ускорения загрузки страницы
+const AppControlledRichTextEditor = lazy(() => import('../AppControlledRichTextEditor'))
 
 // TODO: Определить реальный тип для application из API
 // type TApplication = { ... }
@@ -34,11 +38,12 @@ type TSupportArticleFormProps = {
 function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArticleFormProps) {
   const { t } = useTranslation()
 
-  // TODO: Заменить на реальный запрос для получения списка applications
-  // const { data: applications } = useApplicationsQuery()
-  const applicationOptions: any[] = [] // TODO: Заменить на реальный тип
+  const applicationOptions = useMemo(() => {
+    return selectOptionTypes.map(o => ({ id: o, name: t(String(o), { ns: 'newSupportArticle' }) }))
+  }, [t])
 
   const defaultApplication = applicationOptions.find((app: any) => app.id === article?.application) || null
+
 
   const schema = object()
     .shape({
@@ -98,13 +103,31 @@ function SupportArticleForm({ article, onArticleSave, isPending }: TSupportArtic
           />
         </Grid>
         <Grid size={12}>
-          <AppControlledRichTextEditor
-            name="content"
-            control={control}
-            errors={errors}
-            label={t('content', { ns: 'techSupport' })}
-            placeholder={t('content', { ns: 'techSupport' })}
-          />
+          <Suspense
+            fallback={
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  minHeight: '200px',
+                  border: '1px dashed',
+                  borderColor: 'divider',
+                  borderRadius: '24px',
+                }}
+              >
+                <CircularProgress />
+              </Box>
+            }
+          >
+            <AppControlledRichTextEditor
+              name="content"
+              control={control}
+              errors={errors}
+              label={t('content', { ns: 'techSupport' })}
+              placeholder={t('content', { ns: 'techSupport' })}
+            />
+          </Suspense>
         </Grid>
         <Grid size={12}>
           <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 2, mt: 2 }}>

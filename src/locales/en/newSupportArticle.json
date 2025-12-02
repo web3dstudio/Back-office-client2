@@ -1,7 +1,10 @@
 {
   "title": "Added technical support article",
+  "addNewArticle": "Add New Article",
   "application": "application",
   "articleTitle": "Name / title of the article",
+  "nameOrTitle": "Name / Title",
+  "content": "Content",
   "1": "Management",
   "2": "Appraisers",
   "4": "Opinions",

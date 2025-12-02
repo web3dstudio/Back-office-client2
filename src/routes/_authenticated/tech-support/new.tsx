@@ -8,6 +8,12 @@ import StyledPaper from '../../../components/StyledPaper'
 
 export const Route = createFileRoute('/_authenticated/tech-support/new')({
   component: NewSupportArticlePage,
+  loader: async () => {
+    // Предзагрузка компонента формы и его зависимостей (mui-tiptap)
+    await import('../../../components/TechSupport/SupportArticleForm')
+    // Предзагрузка Rich Text Editor компонента
+    await import('../../../components/AppControlledRichTextEditor')
+  },
 })
 
 function NewSupportArticlePage() {
