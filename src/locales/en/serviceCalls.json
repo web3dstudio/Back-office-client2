@@ -3,6 +3,7 @@
   "open": "Open",
   "close": "Close",
   "inProgress": "In Progress",
+  "total": "Total",
   "serviceCalls": "Service Calls",
   "loading": "Loading...",
   "selectCall": "Select a service call to view details"

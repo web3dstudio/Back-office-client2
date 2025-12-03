@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import {
   Grid,
   Typography,
@@ -16,7 +16,9 @@ import { CheckCircle, Warning, InfoOutlined, HourglassEmpty } from '@mui/icons-m
 import AppLoading from '../../../components/AppLoading'
 import StyledPaper from '../../../components/StyledPaper'
 import AppBackBtn from '../../../components/AppBackBtn'
-import { useServiceCallsQuery, useServiceCallUpdateStatusMutation } from '../../../query/serviceCalls.query'
+import ServiceCallsStats from '../../../components/ServiceCalls/ServiceCallsStats'
+import { useServiceCallsInfiniteQuery, useServiceCallsStatsQuery, useServiceCallUpdateStatusMutation } from '../../../query/serviceCalls.query'
+import type { TServiceCall, TServiceCallsResponse } from '../../../types'
 import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 
 export const Route = createFileRoute('/_authenticated/service-calls/')({
@@ -27,14 +29,45 @@ function ServiceCallsPage() {
   const { t } = useTranslation('serviceCalls')
   const [selectedCallId, setSelectedCallId] = useState<string | null>(null)
   const [selectedStatus, setSelectedStatus] = useState<string>('')
-  const [page] = useState(0)
   const dateTimeFormat = useDateTimeFormat()
+  const observerTarget = useRef<HTMLDivElement>(null)
 
-  const { data: serviceCallsData, isLoading } = useServiceCallsQuery(page, {})
+  const {
+    data: serviceCallsData,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage
+  } = useServiceCallsInfiniteQuery({})
+  const { data: stats, isLoading: isStatsLoading } = useServiceCallsStatsQuery()
   const { mutate: updateStatus, isPending: isUpdating } = useServiceCallUpdateStatusMutation()
 
-  const serviceCalls = serviceCallsData?.data ?? []
-  const selectedCall = serviceCalls.find(call => call.id === selectedCallId)
+  const serviceCalls = serviceCallsData ? (serviceCallsData as any).pages.flatMap((page: TServiceCallsResponse) => page.data) : []
+  const selectedCall = serviceCalls.find((call: TServiceCall) => call.id === selectedCallId)
+
+  const handleObserver = useCallback((entries: IntersectionObserverEntry[]) => {
+    const [target] = entries
+    if (target.isIntersecting && hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  useEffect(() => {
+    const element = observerTarget.current
+    if (!element) return
+
+    const observer = new IntersectionObserver(handleObserver, {
+      threshold: 0.1,
+    })
+
+    observer.observe(element)
+
+    return () => {
+      if (element) {
+        observer.unobserve(element)
+      }
+    }
+  }, [handleObserver])
 
   useEffect(() => {
     if (selectedCall) {
@@ -74,10 +107,14 @@ function ServiceCallsPage() {
         </Box>
       </Grid>
 
+      <Grid size={12}>
+        <ServiceCallsStats stats={stats} isLoading={isStatsLoading} />
+      </Grid>
+
       <Grid size={4}>
         <StyledPaper sx={{ p: 0, py: 2, maxHeight: 'calc(100vh - 200px)', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
           <Box sx={{ display: 'flex', flexDirection: 'column', gap: 0, overflowY: 'auto' }}>
-            {serviceCalls.map((call, index) => (
+            {serviceCalls.map((call: TServiceCall, index: number) => (
               <Box key={call.id}>
                 <Box
                   onClick={() => setSelectedCallId(call.id)}
@@ -120,6 +157,14 @@ function ServiceCallsPage() {
                 {index < serviceCalls.length - 1 && <Divider />}
               </Box>
             ))}
+            <div ref={observerTarget} style={{ height: '20px' }} />
+            {isFetchingNextPage && (
+              <Box sx={{ p: 2, textAlign: 'center' }}>
+                <Typography variant="body2" color="text.secondary">
+                  {t('loading')}
+                </Typography>
+              </Box>
+            )}
           </Box>
         </StyledPaper>
       </Grid>

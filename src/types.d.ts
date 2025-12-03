@@ -767,4 +767,11 @@ export type TServiceCallsResponse = {
   data: TServiceCall[]
 } & TPagination
 
+export type TServiceCallsStats = {
+  total: number
+  open: number
+  inProgress: number
+  closed: number
+}
+
 
