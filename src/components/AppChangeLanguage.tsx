@@ -9,14 +9,16 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  Typography,
 } from '@mui/material'
-import { LanguageOutlined } from '@mui/icons-material'
 import { changeLanguage } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import USFlagIcon from '../assets/icons/flags/UsaFlagIcon'
 import IsraelFlagIcon from '../assets/icons/flags/IsraelFlagIcon'
 
 function AppChangeLanguage() {
   const muiUtils = useContext(ColorModeContext)
+  const { i18n } = useTranslation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -40,8 +42,17 @@ function AppChangeLanguage() {
     }
   }
 
+  const currentLanguage = i18n.language || 'he'
+  const FlagIcon = currentLanguage === 'he' ? IsraelFlagIcon : USFlagIcon
+  const isHebrew = currentLanguage === 'he'
+
   return (
-    <Box sx={{ display: 'flex', alignItems: 'center' }}>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, flexDirection: isHebrew ? 'row-reverse' : 'row' }}>
+      {isHebrew && (
+        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+          He
+        </Typography>
+      )}
       <IconButton
         color='primary'
         aria-controls={open ? 'change-lang-menu' : undefined}
@@ -49,8 +60,13 @@ function AppChangeLanguage() {
         aria-expanded={open ? 'true' : undefined}
         onClick={handleClick}
       >
-        <LanguageOutlined />
+        <FlagIcon />
       </IconButton>
+      {!isHebrew && (
+        <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+          En
+        </Typography>
+      )}
 
       <Menu
         id='change-lang-menu'

@@ -1,7 +1,7 @@
 import { type UseQueryResult, type UseMutationResult, useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
 import type { GridSortModel } from "@mui/x-data-grid"
-import type { TSupportArticlesResponse, TSupportArticle } from "../types"
+import type { TSupportArticlesResponse, TSupportArticle, TClientSupportCategoriesResponse, TClientSupportSearchResponse } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from "react-toastify"
 
@@ -226,6 +226,43 @@ export function useSupportArticleDeleteMutation(): UseMutationResult<string, Err
       console.log('ERROR', error.message)
       toast.error(t('error_occurred') || 'Error!')
     },
+  })
+}
+
+// Client support queries
+export function useClientSupportCategoriesQuery(): UseQueryResult<TClientSupportCategoriesResponse, Error> {
+  return useQuery({
+    queryKey: ['clientSupportCategories'],
+    queryFn: async (): Promise<TClientSupportCategoriesResponse> => {
+      const response = await axiosAPI.get('/supportArticles/support')
+      return response.data
+    },
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: Infinity,
+    retry: 3,
+  })
+}
+
+export function useClientSupportSearchQuery(searchString: string): UseQueryResult<TClientSupportSearchResponse, Error> {
+  return useQuery({
+    queryKey: ['clientSupportSearch', searchString],
+    queryFn: async (): Promise<TClientSupportSearchResponse> => {
+      if (!searchString) {
+        return []
+      }
+      const response = await axiosAPI.get('/supportArticles/support/search', {
+        params: { Title: searchString },
+      })
+      return response.data
+    },
+    enabled: !!searchString && searchString.length > 0,
+    refetchOnWindowFocus: false,
+    refetchOnMount: true,
+    refetchOnReconnect: false,
+    staleTime: 0,
+    retry: 3,
   })
 }
 

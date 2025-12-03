@@ -2,6 +2,8 @@
   "save": "Save",
   "open": "Open",
   "close": "Close",
+  "inProgress": "In Progress",
   "serviceCalls": "Service Calls",
-  "loading": "Loading..."
+  "loading": "Loading...",
+  "selectCall": "Select a service call to view details"
 }

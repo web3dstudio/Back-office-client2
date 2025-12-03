@@ -726,4 +726,45 @@ export type TSupportArticlesResponse = {
   data: TSupportArticleList[]
 } & TPagination
 
+// Types for client support page
+export type TClientSupportArticle = {
+  id: string
+  title: string
+  content: string
+}
+
+export type TClientSupportCategory = {
+  categoryId: string
+  categoryName: string
+  articles: TClientSupportArticle[]
+}
+
+export type TClientSupportCategoriesResponse = {
+  categories: TClientSupportCategory[]
+}
+
+export type TClientSupportSearchResponse = TClientSupportArticle[]
+
+// Types for service calls
+export type TServiceCall = {
+  id: string
+  subject: string
+  content: string
+  userId: string
+  date: string
+  status: number
+  user: {
+    id: string
+    firstName: string
+    lastName: string
+    userName: string
+    email: string
+    phoneNumber: string
+  }
+}
+
+export type TServiceCallsResponse = {
+  data: TServiceCall[]
+} & TPagination
+
 

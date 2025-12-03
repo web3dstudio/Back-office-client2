@@ -2,6 +2,8 @@
   "save": "שמירה",
   "open": "פתוח",
   "close": "סגור",
+  "inProgress": "בתהליך",
   "serviceCalls": "קריאות שירות",
-  "loading": "טוען..."
+  "loading": "טוען...",
+  "selectCall": "בחר קריאת שירות כדי לצפות בפרטים"
 }

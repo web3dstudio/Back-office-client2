@@ -88,8 +88,9 @@ export default function Layout() {
             <Divider orientation="vertical" sx={{ mx: 1 }} flexItem />
             <ProfileMenu />
             <ClientSupport />
+            <Divider orientation="vertical" sx={{ mx: 1 }} flexItem />
             <AppChangeLanguage />
-            <ChangeLightDarkMode />
+            {/* <ChangeLightDarkMode /> */}
           </Box>
         </Toolbar>
       </AppBar>
