@@ -13,7 +13,7 @@ export function useServiceCallsQuery(
     queryFn: async (): Promise<TServiceCallsResponse> => {
       const params = new URLSearchParams({
         Page: String(page + 1),
-        PageSize: '20',
+        PageSize: '10',
         ...Object.fromEntries(
           Object.entries(filters).filter(([_, v]) => v !== '')
         ),
