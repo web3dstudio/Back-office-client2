@@ -88,10 +88,11 @@ function ServiceCallsPage() {
   if (isLoading) return <AppLoading />
 
   return (
-    <Grid container spacing={3}>
+    <Grid container columnSpacing={3} rowSpacing={3}>
       <Grid size={12}>
         <AppBackBtn children={t('back', { ns: 'common' })} />
       </Grid>
+
       <Grid
         size={12}
         sx={{
@@ -159,7 +160,7 @@ function ServiceCallsPage() {
             ))}
             <div ref={observerTarget} style={{ height: '20px' }} />
             {isFetchingNextPage && (
-              <Box sx={{ p: 2, textAlign: 'center' }}>
+              <Box sx={{ p: 3, textAlign: 'center' }}>
                 <Typography variant="body2" color="text.secondary">
                   {t('loading')}
                 </Typography>

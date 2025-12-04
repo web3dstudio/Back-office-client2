@@ -12,7 +12,7 @@ function ServiceCallsStats({ stats, isLoading }: ServiceCallsStatsProps) {
   const { t } = useTranslation('serviceCalls')
 
   return (
-    <StyledPaper sx={{ p: 3, mb: 3 }}>
+    <StyledPaper sx={{ p: 3 }}>
       <Grid container spacing={3}>
         <Grid size={3}>
           <Box>
