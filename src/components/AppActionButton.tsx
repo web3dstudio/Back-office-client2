@@ -14,13 +14,14 @@ interface IProps {
     onClick: () => void
     sx?: SxProps
     loading?: boolean
+    disabled?: boolean
 }
 
-function AppActionButton({ type, onClick, sx, loading }: IProps) {
+function AppActionButton({ type, onClick, sx, loading, disabled }: IProps) {
     const theme = useTheme()
     return (
         <Box
-            onClick={onClick}
+            onClick={disabled ? undefined : onClick}
             sx={{
                 width: '28px',
                 height: '28px',
@@ -38,15 +39,16 @@ function AppActionButton({ type, onClick, sx, loading }: IProps) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
+                opacity: disabled ? 0.5 : 1,
+                cursor: disabled ? 'not-allowed' : 'pointer',
                 '&:hover': {
-                    backgroundColor: type === 'edit' || type === 'duplicate' || type === 'add' || type === 'remove'
+                    backgroundColor: disabled ? undefined : (type === 'edit' || type === 'duplicate' || type === 'add' || type === 'remove'
                         ? 'primary.main'
                         : type === 'delete'
                             ? 'error.main'
                             : type === 'send'
                                 ? 'success.main'
-                                : undefined,
-                    cursor: 'pointer',
+                                : undefined),
                 },
                 ...sx,
             }}

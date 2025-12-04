@@ -22,13 +22,17 @@ interface DropZoneFieldProps {
   defaultFiles?: string[]
   onRemoveFile?: (file: FileWithPath) => void
   onDrop?: () => void
+  previewWidth?: number
+  previewHeight?: number
 }
 
 type FileWithPreview = FileWithPath & { preview: string };
 
-const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFiles, onRemoveFile, onDrop }: DropZoneFieldProps) => {
+const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFiles, onRemoveFile, onDrop, previewWidth, previewHeight }: DropZoneFieldProps) => {
 
   const MAX_FILE_SIZE = maxFileSize || 204800 // 200 килобайт
+  const PREVIEW_WIDTH = previewWidth || 100
+  const PREVIEW_HEIGHT = previewHeight || 100
 
   const { t } = useTranslation()
   const theme = useTheme()
@@ -111,8 +115,8 @@ const DropZoneField = ({ name, label, onChange, maxFiles, maxFileSize, defaultFi
         >
           <Box
             sx={{
-              width: 100,
-              height: 100,
+              width: PREVIEW_WIDTH,
+              height: PREVIEW_HEIGHT,
               border: '1px solid #ccc',
               borderRadius: theme.shape.borderRadius,
               display: 'flex',

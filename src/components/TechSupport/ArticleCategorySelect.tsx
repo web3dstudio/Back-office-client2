@@ -197,7 +197,7 @@ function ArticleCategorySelect({ name, control, errors, required = false, label,
               <AddIcon />
             </IconButton>
           </Tooltip>
-          <Tooltip title={t('modals.edit', { ns: 'common' })}>
+            <Tooltip title={t('modals.edit', { ns: 'common' })}>
             <span>
               <IconButton
                 onClick={() => selectedCategoryValue && handleOpenEditDialog(selectedCategoryValue)}
@@ -220,7 +220,7 @@ function ArticleCategorySelect({ name, control, errors, required = false, label,
                 <DeleteIcon />
               </IconButton>
             </span>
-          </Tooltip>
+            </Tooltip>
         </Box>
       </Box>
 

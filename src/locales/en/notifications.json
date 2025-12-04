@@ -3,5 +3,8 @@
   "article_added_successfully": "Article added successfully",
   "article_updated_successfully": "Article updated successfully",
   "article_deleted_successfully": "Article deleted successfully",
+  "advertisement_added_successfully": "Advertisement added successfully",
+  "advertisement_updated_successfully": "Advertisement updated successfully",
+  "advertisement_deleted_successfully": "Advertisement deleted successfully",
   "error_occurred": "An error occurred"
 }

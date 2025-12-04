@@ -774,4 +774,16 @@ export type TServiceCallsStats = {
   closed: number
 }
 
+export type TAdvertisement = {
+  pageType: number
+  dock: number
+  pageNumber: string | null
+  link: string | null
+  script: string | null
+  imageFileName: string | null
+  imageDownloadUri: string | null
+  imageUploadUri: string | null
+  id: string
+}
+
 

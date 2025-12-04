@@ -1,7 +1,10 @@
 {
-  "loginSuccess": "You have successfully logged in",
+  "loginSuccess": "התחברת בהצלחה",
   "article_added_successfully": "המאמר נוסף בהצלחה",
   "article_updated_successfully": "המאמר עודכן בהצלחה",
   "article_deleted_successfully": "המאמר נמחק בהצלחה",
+  "advertisement_added_successfully": "הפרסומת נוספה בהצלחה",
+  "advertisement_updated_successfully": "הפרסומת עודכנה בהצלחה",
+  "advertisement_deleted_successfully": "הפרסומת נמחקה בהצלחה",
   "error_occurred": "אירעה שגיאה"
 }

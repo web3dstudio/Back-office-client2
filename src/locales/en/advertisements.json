@@ -1,5 +1,5 @@
 {
-  "title": "Price list advertisement management",
+  "title": "Advertisement",
   "priceTitle": "Advertising Price",
   "placement1": "Advertisement at the top",
   "placement2": "Advertisement at the bottom",
@@ -8,10 +8,12 @@
   "link": "link",
   "content": "The content of the advertisement",
   "replace": "Ad replacement",
-  "1": "home page",
-  "2": "search page",
-  "3": "favorites page",
-  "4": "help page",
-  "5": "messages page",
-  "back": "Back"
+  "1": "Home Page",
+  "2": "Search Page",
+  "3": "Favorites Page",
+  "4": "Help Page",
+  "5": "Messages Page",
+  "back": "Back",
+  "uploadImage": "Upload Image",
+  "dropImage": "Drop image here"
 }

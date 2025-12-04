@@ -45,8 +45,6 @@ import { Route as AuthenticatedClientSupportIndexRouteImport } from './routes/_a
 import { Route as AuthenticatedCategoriesIndexRouteImport } from './routes/_authenticated/categories/index'
 import { Route as AuthenticatedCatalogIndexRouteImport } from './routes/_authenticated/catalog/index'
 import { Route as AuthenticatedCarTypesIndexRouteImport } from './routes/_authenticated/car-types/index'
-import { Route as AuthenticatedCarPropertiesIndexRouteImport } from './routes/_authenticated/car-properties/index'
-import { Route as AuthenticatedCarMarksIndexRouteImport } from './routes/_authenticated/car-marks/index'
 import { Route as AuthenticatedAppraisersIndexRouteImport } from './routes/_authenticated/appraisers/index'
 import { Route as AuthenticatedAdvertisementsIndexRouteImport } from './routes/_authenticated/advertisements/index'
 import { Route as AuthenticatedAccessoriesIndexRouteImport } from './routes/_authenticated/accessories/index'
@@ -282,18 +280,6 @@ const AuthenticatedCarTypesIndexRoute =
     path: '/car-types/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedCarPropertiesIndexRoute =
-  AuthenticatedCarPropertiesIndexRouteImport.update({
-    id: '/car-properties/',
-    path: '/car-properties/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
-const AuthenticatedCarMarksIndexRoute =
-  AuthenticatedCarMarksIndexRouteImport.update({
-    id: '/car-marks/',
-    path: '/car-marks/',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedAppraisersIndexRoute =
   AuthenticatedAppraisersIndexRouteImport.update({
     id: '/appraisers/',
@@ -470,8 +456,6 @@ export interface FileRoutesByFullPath {
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
   '/appraisers': typeof AuthenticatedAppraisersIndexRoute
-  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
-  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
   '/car-types': typeof AuthenticatedCarTypesIndexRoute
   '/catalog': typeof AuthenticatedCatalogIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
@@ -534,8 +518,6 @@ export interface FileRoutesByTo {
   '/accessories': typeof AuthenticatedAccessoriesIndexRoute
   '/advertisements': typeof AuthenticatedAdvertisementsIndexRoute
   '/appraisers': typeof AuthenticatedAppraisersIndexRoute
-  '/car-marks': typeof AuthenticatedCarMarksIndexRoute
-  '/car-properties': typeof AuthenticatedCarPropertiesIndexRoute
   '/car-types': typeof AuthenticatedCarTypesIndexRoute
   '/catalog': typeof AuthenticatedCatalogIndexRoute
   '/categories': typeof AuthenticatedCategoriesIndexRoute
@@ -602,8 +584,6 @@ export interface FileRoutesById {
   '/_authenticated/accessories/': typeof AuthenticatedAccessoriesIndexRoute
   '/_authenticated/advertisements/': typeof AuthenticatedAdvertisementsIndexRoute
   '/_authenticated/appraisers/': typeof AuthenticatedAppraisersIndexRoute
-  '/_authenticated/car-marks/': typeof AuthenticatedCarMarksIndexRoute
-  '/_authenticated/car-properties/': typeof AuthenticatedCarPropertiesIndexRoute
   '/_authenticated/car-types/': typeof AuthenticatedCarTypesIndexRoute
   '/_authenticated/catalog/': typeof AuthenticatedCatalogIndexRoute
   '/_authenticated/categories/': typeof AuthenticatedCategoriesIndexRoute
@@ -669,8 +649,6 @@ export interface FileRouteTypes {
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
-    | '/car-marks'
-    | '/car-properties'
     | '/car-types'
     | '/catalog'
     | '/categories'
@@ -733,8 +711,6 @@ export interface FileRouteTypes {
     | '/accessories'
     | '/advertisements'
     | '/appraisers'
-    | '/car-marks'
-    | '/car-properties'
     | '/car-types'
     | '/catalog'
     | '/categories'
@@ -800,8 +776,6 @@ export interface FileRouteTypes {
     | '/_authenticated/accessories/'
     | '/_authenticated/advertisements/'
     | '/_authenticated/appraisers/'
-    | '/_authenticated/car-marks/'
-    | '/_authenticated/car-properties/'
     | '/_authenticated/car-types/'
     | '/_authenticated/catalog/'
     | '/_authenticated/categories/'
@@ -1108,20 +1082,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCarTypesIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/car-properties/': {
-      id: '/_authenticated/car-properties/'
-      path: '/car-properties'
-      fullPath: '/car-properties'
-      preLoaderRoute: typeof AuthenticatedCarPropertiesIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
-    '/_authenticated/car-marks/': {
-      id: '/_authenticated/car-marks/'
-      path: '/car-marks'
-      fullPath: '/car-marks'
-      preLoaderRoute: typeof AuthenticatedCarMarksIndexRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/appraisers/': {
       id: '/_authenticated/appraisers/'
       path: '/appraisers'
@@ -1372,8 +1332,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedAccessoriesIndexRoute: typeof AuthenticatedAccessoriesIndexRoute
   AuthenticatedAdvertisementsIndexRoute: typeof AuthenticatedAdvertisementsIndexRoute
   AuthenticatedAppraisersIndexRoute: typeof AuthenticatedAppraisersIndexRoute
-  AuthenticatedCarMarksIndexRoute: typeof AuthenticatedCarMarksIndexRoute
-  AuthenticatedCarPropertiesIndexRoute: typeof AuthenticatedCarPropertiesIndexRoute
   AuthenticatedCarTypesIndexRoute: typeof AuthenticatedCarTypesIndexRoute
   AuthenticatedCatalogIndexRoute: typeof AuthenticatedCatalogIndexRoute
   AuthenticatedCategoriesIndexRoute: typeof AuthenticatedCategoriesIndexRoute
@@ -1426,8 +1384,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedAccessoriesIndexRoute: AuthenticatedAccessoriesIndexRoute,
   AuthenticatedAdvertisementsIndexRoute: AuthenticatedAdvertisementsIndexRoute,
   AuthenticatedAppraisersIndexRoute: AuthenticatedAppraisersIndexRoute,
-  AuthenticatedCarMarksIndexRoute: AuthenticatedCarMarksIndexRoute,
-  AuthenticatedCarPropertiesIndexRoute: AuthenticatedCarPropertiesIndexRoute,
   AuthenticatedCarTypesIndexRoute: AuthenticatedCarTypesIndexRoute,
   AuthenticatedCatalogIndexRoute: AuthenticatedCatalogIndexRoute,
   AuthenticatedCategoriesIndexRoute: AuthenticatedCategoriesIndexRoute,
