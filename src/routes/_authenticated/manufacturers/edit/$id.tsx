@@ -53,6 +53,7 @@ function MenufacturerEditPage() {
   const schema = yup.object().shape({
     name: yup.string().required(t('form-field.required')),
     engName: yup.string().required(t('form-field.required')),
+    manufacturerCode: yup.string().required(t('form-field.required')).max(5),
     serieses: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('form-field.required')),

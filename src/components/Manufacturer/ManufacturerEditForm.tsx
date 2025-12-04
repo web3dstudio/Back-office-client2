@@ -46,11 +46,19 @@ function ManufacturerEditForm({ manufacturer, isPending }: Props) {
       </Grid>
       <Grid size={6}>
         <AppControlledTextField
+          required
           name='manufacturerCode'
           control={control}
           errors={errors}
           label={t('manufacturerCode', { ns: 'manufacturers' })}
           placeholder={t('manufacturerCode', { ns: 'manufacturers' })}
+          slotProps={{
+            input: {
+              inputProps: {
+                maxLength: 5,
+              },
+            },
+          }}
         />
       </Grid>
 

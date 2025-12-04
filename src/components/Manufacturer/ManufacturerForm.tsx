@@ -27,6 +27,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 		.shape({
 			name: yup.string().required(t('form-field.required')),
 			engName: yup.string().required(t('form-field.required')),
+			manufacturerCode: yup.string().required(t('form-field.required')).max(5, t('form-field.required')),
 		})
 		.required()
 
@@ -34,9 +35,11 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 		// @ts-ignore
 		resolver: yupResolver(schema),
 		mode: 'onChange',
+		reValidateMode: 'onChange',
 		defaultValues: {
 			name: data?.name || '',
 			engName: data?.engName || '',
+			manufacturerCode: data?.manufacturerCode || '',
 		},
 	})
 
@@ -69,6 +72,23 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 						errors={errors}
 						label={t('engName', { ns: 'manufacturers' })}
 						placeholder={t('engName', { ns: 'manufacturers' })}
+					/>
+				</Grid>
+				<Grid size={12}>
+					<AppControlledTextField
+						required
+						name='manufacturerCode'
+						control={control}
+						errors={errors}
+						label={t('manufacturerCode', { ns: 'manufacturers' })}
+						placeholder={t('manufacturerCode', { ns: 'manufacturers' })}
+						slotProps={{
+							input: {
+								inputProps: {
+									maxLength: 5,
+								},
+							},
+						}}
 					/>
 				</Grid>
 
