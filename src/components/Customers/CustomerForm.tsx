@@ -23,7 +23,7 @@ interface Props {
 type TFormInput = Omit<TCustomer, 'id'> & { confirmPassword?: string }
 
 function CustomerForm({ customer }: Props) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { data: customerTypes, isLoading: isCustomerTypesLoading } = useCustomerTypesQuery()
   const { mutate: updateCustomer, isPending: isUpdatingCustomer } = useCustomersUpdateMutation()
@@ -94,21 +94,16 @@ function CustomerForm({ customer }: Props) {
   }
 
   const selectedCustomerTypes = watch('customerTypes')
-  const hasCompanyUser = selectedCustomerTypes?.some((type: any) => type.value === 16)
+  const hasCompanyUser = selectedCustomerTypes?.some((type: any) => type.code === 'COMPANY_USER')
 
   const onSubmit = (data: any) => {
     // Если поле numberOfUsers отключено, устанавливаем его в null
     if (!hasCompanyUser) {
       data.numberOfUsers = null
     }
-
-    // Создаем FormData для отправки файла
     const formData = new FormData()
-
-    // Добавляем JSON данные в поле 'data'
     formData.append('data', JSON.stringify(data))
 
-    // Добавляем файл изображения, если он выбран
     if (selectedImage) {
       formData.append('image', selectedImage)
     }
@@ -127,7 +122,6 @@ function CustomerForm({ customer }: Props) {
         }
       })
     }
-    // reset()
   }
 
   return (
@@ -144,7 +138,7 @@ function CustomerForm({ customer }: Props) {
             errors={errors}
             label={t('customerType', { ns: 'customer' })}
             options={customerTypes as any[] || []}
-            getOptionLabel={(option) => option.name}
+            getOptionLabel={(option) => i18n.language === 'he' ? option.name : (option.nameEn || option.name)}
             isOptionEqualToValue={(option, value) => option.id === value.id}
           />
         </Grid>

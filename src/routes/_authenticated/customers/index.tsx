@@ -23,7 +23,7 @@ export type CustomersFilters = {
 }
 
 function CustomersPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TCustomerList | null>(null)
 
@@ -118,7 +118,7 @@ function CustomersPage() {
         size: 150,
         minSize: 100,
         maxSize: 200,
-        cell: ({ row }) => row.original.customerTypes.map((type: TCustomerType) => type.name).join(', '),
+        cell: ({ row }) => row.original.customerTypes.map((type: TCustomerType) => i18n.language === 'he' ? type.name : (type.nameEn || type.name)).join(', '),
       },
       {
         accessorKey: 'subscriptionValidity',

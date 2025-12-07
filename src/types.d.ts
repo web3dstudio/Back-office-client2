@@ -576,7 +576,7 @@ export type TCustomerType = {
   id: string
   name: string
   nameEn: string | null
-  value: number
+  code: string
 }
 
 export type TPriceList = {

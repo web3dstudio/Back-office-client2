@@ -20,22 +20,12 @@ export function useAdvertisementsQuery(): UseQueryResult<TAdvertisement[], Error
   })
 }
 
-export type TAdvertisementCreateData = {
-  pageType: number
-  dock: number
-  pageNumber?: number | null
-  link: string | null
-  script: string | null
-  file?: File | null
-  id?: string
-}
-
-export function useAdvertisementAddMutation(): UseMutationResult<TAdvertisement, Error, TAdvertisementCreateData> {
+export function useAdvertisementAddMutation(): UseMutationResult<TAdvertisement, Error, Omit<TAdvertisement, 'id' | 'imageFileName' | 'imageDownloadUri' | 'imageUploadUri' | 'pageNumber'> & { pageNumber?: number | null; file?: File | null }> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (advertisement: TAdvertisementCreateData): Promise<TAdvertisement> => {
+    mutationFn: async (advertisement: Omit<TAdvertisement, 'id' | 'imageFileName' | 'imageDownloadUri' | 'imageUploadUri' | 'pageNumber'> & { pageNumber?: number | null; file?: File | null }): Promise<TAdvertisement> => {
       const formData = new FormData()
 
       const { file, ...advertisementData } = advertisement
@@ -79,12 +69,12 @@ export function useAdvertisementAddMutation(): UseMutationResult<TAdvertisement,
   })
 }
 
-export function useAdvertisementUpdateMutation(): UseMutationResult<TAdvertisement, Error, TAdvertisementCreateData> {
+export function useAdvertisementUpdateMutation(): UseMutationResult<TAdvertisement, Error, Omit<TAdvertisement, 'id' | 'imageFileName' | 'imageDownloadUri' | 'imageUploadUri' | 'pageNumber'> & { id: string; pageNumber?: number | null; file?: File | null }> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (advertisement: TAdvertisementCreateData): Promise<TAdvertisement> => {
+    mutationFn: async (advertisement: Omit<TAdvertisement, 'id' | 'imageFileName' | 'imageDownloadUri' | 'imageUploadUri' | 'pageNumber'> & { id: string; pageNumber?: number | null; file?: File | null }): Promise<TAdvertisement> => {
       const formData = new FormData()
 
       const { file, id, ...advertisementData } = advertisement

@@ -1,11 +1,6 @@
 import { create } from 'zustand';
 import { devtools, persist, createJSONStorage } from 'zustand/middleware'
 
-export const CUSTOMER_TYPE_Opinion = 1
-export const CUSTOMER_TYPE_Assessor = 2
-export const CUSTOMER_TYPE_Company = 4
-export const CUSTOMER_TYPE_Subscription = 8
-export const CUSTOMER_TYPE_CompanyUser = 16
 
 interface AuthState {
   isAuthenticated: boolean;
