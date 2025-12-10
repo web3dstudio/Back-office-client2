@@ -108,7 +108,7 @@ function CustomersPage() {
         size: 250,
         minSize: 200,
         maxSize: 350,
-        cell: ({ row }) => row.original.city + ' ' + row.original.street + ' ' + row.original.houseNumber + ' ' + row.original.zipCode,
+        cell: ({ row }) => [row.original.city, row.original.street, row.original.houseNumber, row.original.zipCode].filter(Boolean).join(' '),
       },
       {
         accessorKey: 'type',
@@ -246,7 +246,7 @@ function CustomersPage() {
             const companyMatch = row.original.company?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const mobileMatch = row.original.mobileNumber?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const emailMatch = row.original.email?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-            const addressMatch = (row.original.city + ' ' + row.original.street + ' ' + row.original.houseNumber + ' ' + row.original.zipCode).toLowerCase().includes(filterValue.toLowerCase())
+            const addressMatch = [row.original.city, row.original.street, row.original.houseNumber, row.original.zipCode].filter(Boolean).join(' ').toLowerCase().includes(filterValue.toLowerCase())
             const typeMatch = row.original.customerTypes.map((type: TCustomerType) => type.name).join(', ').toLowerCase().includes(filterValue.toLowerCase())
             const queriesMatch = row.original.dailyQueries?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             return fullnameMatch || companyMatch || mobileMatch || emailMatch || addressMatch || typeMatch || queriesMatch

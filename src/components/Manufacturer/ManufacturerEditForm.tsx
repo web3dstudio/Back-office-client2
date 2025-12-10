@@ -10,9 +10,10 @@ import { useRouter } from "@tanstack/react-router"
 interface Props {
   manufacturer: TManufacturer
   isPending: boolean
+  onOpenCodesDialog?: () => void
 }
 
-function ManufacturerEditForm({ manufacturer, isPending }: Props) {
+function ManufacturerEditForm({ manufacturer, isPending, onOpenCodesDialog }: Props) {
   const { t } = useTranslation()
   const { control, formState } = useFormContext()
   const errors = formState.errors
@@ -23,85 +24,91 @@ function ManufacturerEditForm({ manufacturer, isPending }: Props) {
   const [_files, setFiles] = useState<File[]>([])
 
   return (
-    <Grid container columnSpacing={3} rowSpacing={2} columns={12} >
-      <Grid size={6}>
-        <AppControlledTextField
-          required
-          name='name'
-          control={control}
-          errors={errors}
-          label={t('name', { ns: 'manufacturers' })}
-          placeholder={t('name', { ns: 'manufacturers' })}
-        />
-      </Grid>
-      <Grid size={6}>
-        <AppControlledTextField
-          required
-          name='engName'
-          control={control}
-          errors={errors}
-          label={t('engName', { ns: 'manufacturers' })}
-          placeholder={t('engName', { ns: 'manufacturers' })}
-        />
-      </Grid>
-      <Grid size={6}>
-        <AppControlledTextField
-          required
-          name='manufacturerCode'
-          control={control}
-          errors={errors}
-          label={t('manufacturerCode', { ns: 'manufacturers' })}
-          placeholder={t('manufacturerCode', { ns: 'manufacturers' })}
-          slotProps={{
-            input: {
-              inputProps: {
-                maxLength: 5,
+    <>
+      <Grid container columnSpacing={3} rowSpacing={2} columns={12} >
+        <Grid size={6}>
+          <AppControlledTextField
+            required
+            name='name'
+            control={control}
+            errors={errors}
+            label={t('name', { ns: 'manufacturers' })}
+            placeholder={t('name', { ns: 'manufacturers' })}
+          />
+        </Grid>
+        <Grid size={6}>
+          <AppControlledTextField
+            required
+            name='engName'
+            control={control}
+            errors={errors}
+            label={t('engName', { ns: 'manufacturers' })}
+            placeholder={t('engName', { ns: 'manufacturers' })}
+          />
+        </Grid>
+        {/* <Grid size={6}>
+          <AppControlledTextField
+            required
+            name='manufacturerCode'
+            control={control}
+            errors={errors}
+            label={t('manufacturerCode', { ns: 'manufacturers' })}
+            placeholder={t('manufacturerCode', { ns: 'manufacturers' })}
+            slotProps={{
+              input: {
+                inputProps: {
+                  maxLength: 5,
+                },
               },
-            },
-          }}
-        />
-      </Grid>
-
-      <Grid size={6} sx={{ pt: 2 }}>
-        <AppDropzoneField
-          name='manufacturerLogo'
-          label={t('logo', { ns: 'manufacturers' })}
-          maxFiles={1}
-          onChange={(files) => {
-            setFiles(files)
-          }}
-          defaultFiles={manufacturer?.logoDownloadUri ? [manufacturer.logoDownloadUri] : []}
-        />
-      </Grid>
-      <Grid size={12} sx={{ mt: 3 }}>
-        <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+            }}
+          />
+        </Grid> */}
+        <Grid size={6}>
           <Button
-            color='primary'
-            size='small'
-            onClick={() => router.navigate({ to: '/manufacturers' })}
-            variant='outlined'
+            variant="outlined"
+            onClick={onOpenCodesDialog}
           >
-            <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
-              {t('modals.cancel', { ns: 'common' })}
-            </Typography>
+            {t('manufacturerCodes', { ns: 'manufacturers' })}
           </Button>
-          <Button
-            color='primary'
-            type='submit'
-            variant='contained'
-            loading={isPending}
-            disabled={!isDirty || !isValid}
-          >
-            <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
-              {t('modals.save', { ns: 'common' })}
-            </Typography>
-          </Button>
-        </Box>
+        </Grid>
+        <Grid size={6} sx={{ pt: 2 }}>
+          <AppDropzoneField
+            name='manufacturerLogo'
+            label={t('logo', { ns: 'manufacturers' })}
+            maxFiles={1}
+            onChange={(files) => {
+              setFiles(files)
+            }}
+            defaultFiles={manufacturer?.logoDownloadUri ? [manufacturer.logoDownloadUri] : []}
+          />
+        </Grid>
+        <Grid size={12} sx={{ mt: 3 }}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+            <Button
+              color='primary'
+              size='small'
+              onClick={() => router.navigate({ to: '/manufacturers' })}
+              variant='outlined'
+            >
+              <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
+                {t('modals.cancel', { ns: 'common' })}
+              </Typography>
+            </Button>
+            <Button
+              color='primary'
+              type='submit'
+              variant='contained'
+              loading={isPending}
+              disabled={!isDirty || !isValid}
+            >
+              <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
+                {t('modals.save', { ns: 'common' })}
+              </Typography>
+            </Button>
+          </Box>
+        </Grid>
       </Grid>
-
-    </Grid>
-
-
+    </>
   )
 }
 

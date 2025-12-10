@@ -1,13 +1,13 @@
 {
-  "manufacturerCode": "Manufacturer Code",
-  "modelCode": "Model Code",
+  "manufacturerCode": "Manufacturer",
+  "modelCode": "Model",
   "year": "Year",
   "carType": "Car Type",
   "isAuto": "Is Auto",
-  "manufacturerName": "Manufacturer Name",
-  "modelName": "Model Name",
+  "manufacturerName": "Manufacturer",
+  "modelName": "Model",
   "body": "Body",
-  "innerCode": "Inner Code",
+  "innerCode": "Model Code",
   "innerSubCode": "Sub Code",
   "fromYear": "From Year",
   "toYear": "To Year",
@@ -17,7 +17,9 @@
   "series": "Series",
   "save": "Save",
   "editTitle": "Edit Code",
-  "externalCarType": "External Car Type",
+  "externalCarType": "Inner Car Type Code",
   "chassis": "Chassis",
-  "modelDescription": "Model Description"
+  "modelDescription": "Model Description",
+  "innerCarTypeCode": "Inner Car Type Code",
+  "editCode": "Edit Code"
 }

@@ -19,5 +19,7 @@
   "editTitle": "ערוך קוד",
   "externalCarType": "קוד משרד התחבורה",
   "chassis": "מרכב",
-  "modelDescription": "תיאור הדגם"
+  "modelDescription": "תיאור הדגם",
+  "innerCarTypeCode": "קוד משרד התחבורה",
+  "editCode": "עריכת קוד"
 }

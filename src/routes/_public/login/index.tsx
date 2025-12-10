@@ -68,6 +68,7 @@ function LoginPage() {
           // Тут надо расшифровать токен!!!
           accessTokenStore.setToken(response.token)
           authStore.isAuthenticated = true
+          authStore.setShouldRedirectToDefaultPage(true)
           navigate({ to: '/' })
         } else {
           toast.error(response.message)

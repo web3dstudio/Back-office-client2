@@ -56,6 +56,9 @@ import { Route as AuthenticatedOpinionsNewRouteImport } from './routes/_authenti
 import { Route as AuthenticatedOpinionsIdRouteImport } from './routes/_authenticated/opinions/$id'
 import { Route as AuthenticatedCustomersNewRouteImport } from './routes/_authenticated/customers/new'
 import { Route as AuthenticatedCustomersIdRouteImport } from './routes/_authenticated/customers/$id'
+import { Route as AuthenticatedCodesSyncRouteImport } from './routes/_authenticated/codes/sync'
+import { Route as AuthenticatedCodesNewRouteImport } from './routes/_authenticated/codes/new'
+import { Route as AuthenticatedCodesIdRouteImport } from './routes/_authenticated/codes/$id'
 import { Route as AuthenticatedClientSupportIdRouteImport } from './routes/_authenticated/client-support/$id'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
 import { Route as AuthenticatedCatalogIdRouteImport } from './routes/_authenticated/catalog/$id'
@@ -343,6 +346,21 @@ const AuthenticatedCustomersIdRoute =
     path: '/customers/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCodesSyncRoute = AuthenticatedCodesSyncRouteImport.update({
+  id: '/codes/sync',
+  path: '/codes/sync',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCodesNewRoute = AuthenticatedCodesNewRouteImport.update({
+  id: '/codes/new',
+  path: '/codes/new',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
+const AuthenticatedCodesIdRoute = AuthenticatedCodesIdRouteImport.update({
+  id: '/codes/$id',
+  path: '/codes/$id',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedClientSupportIdRoute =
   AuthenticatedClientSupportIdRouteImport.update({
     id: '/client-support/$id',
@@ -445,6 +463,9 @@ export interface FileRoutesByFullPath {
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/client-support/$id': typeof AuthenticatedClientSupportIdRoute
+  '/codes/$id': typeof AuthenticatedCodesIdRoute
+  '/codes/new': typeof AuthenticatedCodesNewRoute
+  '/codes/sync': typeof AuthenticatedCodesSyncRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
@@ -507,6 +528,9 @@ export interface FileRoutesByTo {
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/client-support/$id': typeof AuthenticatedClientSupportIdRoute
+  '/codes/$id': typeof AuthenticatedCodesIdRoute
+  '/codes/new': typeof AuthenticatedCodesNewRoute
+  '/codes/sync': typeof AuthenticatedCodesSyncRoute
   '/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/customers/new': typeof AuthenticatedCustomersNewRoute
   '/opinions/$id': typeof AuthenticatedOpinionsIdRoute
@@ -573,6 +597,9 @@ export interface FileRoutesById {
   '/_authenticated/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
   '/_authenticated/client-support/$id': typeof AuthenticatedClientSupportIdRoute
+  '/_authenticated/codes/$id': typeof AuthenticatedCodesIdRoute
+  '/_authenticated/codes/new': typeof AuthenticatedCodesNewRoute
+  '/_authenticated/codes/sync': typeof AuthenticatedCodesSyncRoute
   '/_authenticated/customers/$id': typeof AuthenticatedCustomersIdRoute
   '/_authenticated/customers/new': typeof AuthenticatedCustomersNewRoute
   '/_authenticated/opinions/$id': typeof AuthenticatedOpinionsIdRoute
@@ -638,6 +665,9 @@ export interface FileRouteTypes {
     | '/catalog/$id'
     | '/catalog/new-car'
     | '/client-support/$id'
+    | '/codes/$id'
+    | '/codes/new'
+    | '/codes/sync'
     | '/customers/$id'
     | '/customers/new'
     | '/opinions/$id'
@@ -700,6 +730,9 @@ export interface FileRouteTypes {
     | '/catalog/$id'
     | '/catalog/new-car'
     | '/client-support/$id'
+    | '/codes/$id'
+    | '/codes/new'
+    | '/codes/sync'
     | '/customers/$id'
     | '/customers/new'
     | '/opinions/$id'
@@ -765,6 +798,9 @@ export interface FileRouteTypes {
     | '/_authenticated/catalog/$id'
     | '/_authenticated/catalog/new-car'
     | '/_authenticated/client-support/$id'
+    | '/_authenticated/codes/$id'
+    | '/_authenticated/codes/new'
+    | '/_authenticated/codes/sync'
     | '/_authenticated/customers/$id'
     | '/_authenticated/customers/new'
     | '/_authenticated/opinions/$id'
@@ -1159,6 +1195,27 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCustomersIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/codes/sync': {
+      id: '/_authenticated/codes/sync'
+      path: '/codes/sync'
+      fullPath: '/codes/sync'
+      preLoaderRoute: typeof AuthenticatedCodesSyncRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/codes/new': {
+      id: '/_authenticated/codes/new'
+      path: '/codes/new'
+      fullPath: '/codes/new'
+      preLoaderRoute: typeof AuthenticatedCodesNewRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/codes/$id': {
+      id: '/_authenticated/codes/$id'
+      path: '/codes/$id'
+      fullPath: '/codes/$id'
+      preLoaderRoute: typeof AuthenticatedCodesIdRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/client-support/$id': {
       id: '/_authenticated/client-support/$id'
       path: '/client-support/$id'
@@ -1321,6 +1378,9 @@ interface AuthenticatedRouteChildren {
   AuthenticatedCatalogIdRoute: typeof AuthenticatedCatalogIdRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
   AuthenticatedClientSupportIdRoute: typeof AuthenticatedClientSupportIdRoute
+  AuthenticatedCodesIdRoute: typeof AuthenticatedCodesIdRoute
+  AuthenticatedCodesNewRoute: typeof AuthenticatedCodesNewRoute
+  AuthenticatedCodesSyncRoute: typeof AuthenticatedCodesSyncRoute
   AuthenticatedCustomersIdRoute: typeof AuthenticatedCustomersIdRoute
   AuthenticatedCustomersNewRoute: typeof AuthenticatedCustomersNewRoute
   AuthenticatedOpinionsIdRoute: typeof AuthenticatedOpinionsIdRoute
@@ -1373,6 +1433,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedCatalogIdRoute: AuthenticatedCatalogIdRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
   AuthenticatedClientSupportIdRoute: AuthenticatedClientSupportIdRoute,
+  AuthenticatedCodesIdRoute: AuthenticatedCodesIdRoute,
+  AuthenticatedCodesNewRoute: AuthenticatedCodesNewRoute,
+  AuthenticatedCodesSyncRoute: AuthenticatedCodesSyncRoute,
   AuthenticatedCustomersIdRoute: AuthenticatedCustomersIdRoute,
   AuthenticatedCustomersNewRoute: AuthenticatedCustomersNewRoute,
   AuthenticatedOpinionsIdRoute: AuthenticatedOpinionsIdRoute,

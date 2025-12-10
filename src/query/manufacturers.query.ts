@@ -1,6 +1,6 @@
 import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from '../utils/axiosAPI'
-import type { TManufacturer } from '../types'
+import type { TManufacturer, ManufacturerCode, ManufacturerCodeUpsertDto } from '../types'
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 
@@ -25,7 +25,7 @@ export function useManufacturersWithSeriesAndModelsQuery(): UseQueryResult<TManu
     queryKey: ['manufacturers-names'],
     queryFn: async (): Promise<TManufacturer[]> => {
       const response = await axiosAPI.get('/manufacturers/names')
-      return response.data.data
+      return response.data
     },
     refetchOnWindowFocus: false,
     refetchOnMount: false,
@@ -123,6 +123,59 @@ export default function useManufacturerSeriesModelsMutation(): UseMutationResult
     },
     onSuccess: (_data) => {
       toast.success(t('manufacturer_updated_successfully'))
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+
+export function useManufacturerCodesMutation(): UseMutationResult<ManufacturerCode[], Error, { manufacturerId: string, codes: ManufacturerCodeUpsertDto[] }> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ manufacturerId, codes }: { manufacturerId: string, codes: ManufacturerCodeUpsertDto[] }): Promise<ManufacturerCode[]> => {
+      const response = await axiosAPI.put(`/manufacturers/${manufacturerId}/codes`, codes)
+      return response.data
+    },
+    onSuccess: (data, variables) => {
+      const updatedCodes = Array.isArray(data) ? [...data] : []
+
+      // Обновляем только поле codes у открытого производителя
+      queryClient.setQueryData<TManufacturer>(['manufacturer', variables.manufacturerId], (oldData) => {
+        if (oldData) {
+          return {
+            ...oldData,
+            codes: updatedCodes
+          }
+        }
+        return oldData
+      })
+
+      // Обновляем только поле codes у этого производителя в списке всех производителей
+      queryClient.setQueryData<TManufacturer[]>(['manufacturers'], (oldData) => {
+        if (!oldData) return oldData
+
+        const manufacturerIndex = oldData.findIndex(m => m.id === variables.manufacturerId)
+        if (manufacturerIndex === -1) return oldData
+
+        const updated = [...oldData]
+        updated[manufacturerIndex] = {
+          ...updated[manufacturerIndex],
+          codes: updatedCodes
+        }
+
+        return updated
+      })
+
+      // Инвалидируем и перезапрашиваем запросы для принудительного обновления UI
+      queryClient.invalidateQueries({ queryKey: ['manufacturer', variables.manufacturerId] })
+      queryClient.invalidateQueries({ queryKey: ['manufacturers'] })
+      queryClient.refetchQueries({ queryKey: ['manufacturers'] })
+
+      toast.success(t('manufacturer_codes_updated_successfully') || 'Codes updated successfully')
     },
     onError: (error) => {
       console.log('ERROR', error.message)

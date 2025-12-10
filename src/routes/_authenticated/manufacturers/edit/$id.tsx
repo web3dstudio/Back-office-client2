@@ -11,7 +11,8 @@ import ManufacturerEditForm from '../../../../components/Manufacturer/Manufactur
 import { yupResolver } from "@hookform/resolvers/yup"
 import { useForm, type SubmitHandler, FormProvider, useFieldArray } from 'react-hook-form'
 import * as yup from 'yup'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
+import ManufacturerCodesDialog from '../../../../components/Manufacturer/ManufacturerCodesDialog'
 import SortableSerie from '../../../../components/Manufacturer/SortableSerie'
 import {
   DndContext,
@@ -44,6 +45,7 @@ function MenufacturerEditPage() {
 
   const [filterByCode, setFilterByCode] = useState('')
   const [filterByCodeInput, setFilterByCodeInput] = useState('')
+  const [openCodesDialog, setOpenCodesDialog] = useState(false)
 
   const { data: manufacturer, isLoading, isError, refetch } = useManufacturerQuery(id)
 
@@ -53,7 +55,7 @@ function MenufacturerEditPage() {
   const schema = yup.object().shape({
     name: yup.string().required(t('form-field.required')),
     engName: yup.string().required(t('form-field.required')),
-    manufacturerCode: yup.string().required(t('form-field.required')).max(5),
+    // manufacturerCode: yup.string().required(t('form-field.required')).max(5),
     serieses: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('form-field.required')),
@@ -77,7 +79,7 @@ function MenufacturerEditPage() {
       dbId: manufacturer?.id ?? '',
       name: manufacturer?.name ?? '',
       engName: manufacturer?.engName ?? '',
-      manufacturerCode: manufacturer?.manufacturerCode ?? '',
+      // manufacturerCode: manufacturer?.manufacturerCode ?? '',
       serieses: manufacturer?.serieses?.map(serie => ({
         dbId: serie.id,
         name: serie.name,
@@ -103,29 +105,45 @@ function MenufacturerEditPage() {
     name: 'serieses',
   });
 
+  const prevManufacturerRef = useRef<string>('')
+
+
   useEffect(() => {
     if (manufacturer) {
-      reset({
-        dbId: manufacturer.id,
-        name: manufacturer.name ?? '',
-        engName: manufacturer.engName ?? '',
-        manufacturerCode: manufacturer.manufacturerCode ?? '',
-        serieses: manufacturer.serieses?.map(serie => ({
-          dbId: serie.id,
-          name: serie.name,
-          seriesCode: serie.seriesCode ?? '',
-          priority: serie.priority ?? 0,
-          models: serie.models?.map(model => ({
-            dbId: model.id,
-            name: model.name,
-            code: model.code,
-            modelCode: model.modelCode ?? '',
-            volume: model.volume ?? 0,
-            manufacturerCode: manufacturer?.manufacturerCode ?? '',
-            priority: model.priority ?? 0,
+      // Создаем ключ для сравнения без поля codes
+      const manufacturerKey = JSON.stringify({
+        id: manufacturer.id,
+        name: manufacturer.name,
+        engName: manufacturer.engName,
+        // manufacturerCode: manufacturer.manufacturerCode,
+        serieses: manufacturer.serieses
+      })
+
+      // Обновляем форму только если изменились поля, кроме codes
+      if (prevManufacturerRef.current !== manufacturerKey) {
+        prevManufacturerRef.current = manufacturerKey
+        reset({
+          dbId: manufacturer.id,
+          name: manufacturer.name ?? '',
+          engName: manufacturer.engName ?? '',
+          // manufacturerCode: manufacturer.manufacturerCode ?? '',
+          serieses: manufacturer.serieses?.map(serie => ({
+            dbId: serie.id,
+            name: serie.name,
+            seriesCode: serie.seriesCode ?? '',
+            priority: serie.priority ?? 0,
+            models: serie.models?.map(model => ({
+              dbId: model.id,
+              name: model.name,
+              code: model.code,
+              modelCode: model.modelCode ?? '',
+              volume: model.volume ?? 0,
+              // manufacturerCode: manufacturer?.manufacturerCode ?? '',
+              priority: model.priority ?? 0,
+            })) ?? [],
           })) ?? [],
-        })) ?? [],
-      });
+        });
+      }
     }
   }, [manufacturer, reset]);
 
@@ -191,105 +209,120 @@ function MenufacturerEditPage() {
   }
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={3} >
-          <Grid size={12}>
-            <AppBackBtn children={t('back', { ns: 'common' })} />
-          </Grid>
-          <Grid
-            size={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}
-          >
-            <Box>
-              <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-                {`${t('title', { ns: 'manufacturers' })} > ${i18n.language === 'he'
-                  ? manufacturer?.name || manufacturer?.engName
-                  : manufacturer?.engName || manufacturer?.name}`}
-              </Typography>
-            </Box>
-          </Grid>
-
-          <StyledPaper
-            sx={{
-              overflow: 'hidden',
-              padding: 3,
-              width: '100%',
-              maxWidth: '100%',
-            }}
-          >
-            {manufacturer && (
-              <ManufacturerEditForm manufacturer={manufacturer} isPending={isUpsertPending} />
-            )}
-          </StyledPaper>
-
-          <Grid size={12}
-            sx={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-            }}>
-
-            {/* Поле фильтра по коду  */}
-            <OutlinedInput
-              size="small"
-              placeholder={t('filter', { ns: 'manufacturers' })}
-              value={filterByCodeInput}
-              onChange={(e) => setFilterByCodeInput(e.target.value)}
-              endAdornment={
-                <InputAdornment position="end">
-                  <IconButton onClick={() => setFilterByCodeInput('')}>
-                    <ClearIcon />
-                  </IconButton>
-                </InputAdornment>
-              }
-            />
-
-            <Button variant="contained" onClick={() => prepend({ name: '', seriesCode: '', dbId: null, models: [] })}>
-              {t('addSerie', { ns: 'manufacturers' })}
-            </Button>
-          </Grid>
-
-          <DndContext
-            sensors={sensors}
-            collisionDetection={closestCenter}
-            onDragEnd={handleDragEnd}
-          >
-            <SortableContext
-              items={fields.map(f => f.id)}
-              strategy={verticalListSortingStrategy}
+    <>
+      <FormProvider {...methods}>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <Grid container spacing={3} >
+            <Grid size={12}>
+              <AppBackBtn to="/manufacturers" children={t('back', { ns: 'common' })} />
+            </Grid>
+            <Grid
+              size={12}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}
             >
-              {fields
-                .map((field, originalIndex) => ({ field, originalIndex }))
-                .filter(({ field }) => {
-                  if (!filterByCode) return true;
-                  const models = (field as TSerie).models ?? [];
-                  const hasMatchingModel = models.some(
-                    model => (model.code || '').toLowerCase().includes(filterByCode.toLowerCase())
-                  );
-                  const isNewSerie = !(field as TSerie).dbId;
-                  return hasMatchingModel || isNewSerie;
-                })
-                .map(({ field, originalIndex }) => (
-                  <SortableSerie
-                    key={field.id}
-                    serie={field as TSerie}
-                    serieIndex={originalIndex}
-                    onDelete={(serie) => onSerieDelete(originalIndex, serie)}
-                    filterByCode={filterByCode}
-                  />
-                ))
-              }
-            </SortableContext>
-          </DndContext>
+              <Box>
+                <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
+                  {`${t('title', { ns: 'manufacturers' })} > ${i18n.language === 'he'
+                    ? manufacturer?.name || manufacturer?.engName
+                    : manufacturer?.engName || manufacturer?.name}`}
+                </Typography>
+              </Box>
+            </Grid>
 
-        </Grid>
-      </form>
-    </FormProvider>
+            <StyledPaper
+              sx={{
+                overflow: 'hidden',
+                padding: 3,
+                width: '100%',
+                maxWidth: '100%',
+              }}
+            >
+              {manufacturer && (
+                <ManufacturerEditForm
+                  manufacturer={manufacturer}
+                  isPending={isUpsertPending}
+                  onOpenCodesDialog={() => setOpenCodesDialog(true)}
+                />
+              )}
+            </StyledPaper>
+
+            <Grid size={12}
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+              }}>
+
+              {/* Поле фильтра по коду  */}
+              <OutlinedInput
+                size="small"
+                placeholder={t('filter', { ns: 'manufacturers' })}
+                value={filterByCodeInput}
+                onChange={(e) => setFilterByCodeInput(e.target.value)}
+                endAdornment={
+                  <InputAdornment position="end">
+                    <IconButton onClick={() => setFilterByCodeInput('')}>
+                      <ClearIcon />
+                    </IconButton>
+                  </InputAdornment>
+                }
+              />
+
+              <Button variant="contained" onClick={() => prepend({ name: '', seriesCode: '', dbId: null, models: [] })}>
+                {t('addSerie', { ns: 'manufacturers' })}
+              </Button>
+            </Grid>
+
+            <DndContext
+              sensors={sensors}
+              collisionDetection={closestCenter}
+              onDragEnd={handleDragEnd}
+            >
+              <SortableContext
+                items={fields.map(f => f.id)}
+                strategy={verticalListSortingStrategy}
+              >
+                {fields
+                  .map((field, originalIndex) => ({ field, originalIndex }))
+                  .filter(({ field }) => {
+                    if (!filterByCode) return true;
+                    const models = (field as TSerie).models ?? [];
+                    const hasMatchingModel = models.some(
+                      model => (model.code || '').toLowerCase().includes(filterByCode.toLowerCase())
+                    );
+                    const isNewSerie = !(field as TSerie).dbId;
+                    return hasMatchingModel || isNewSerie;
+                  })
+                  .map(({ field, originalIndex }) => (
+                    <SortableSerie
+                      key={field.id}
+                      serie={field as TSerie}
+                      serieIndex={originalIndex}
+                      onDelete={(serie) => onSerieDelete(originalIndex, serie)}
+                      filterByCode={filterByCode}
+                    />
+                  ))
+                }
+              </SortableContext>
+            </DndContext>
+
+          </Grid>
+        </form>
+      </FormProvider>
+
+      {manufacturer && (
+        <ManufacturerCodesDialog
+          open={openCodesDialog}
+          onClose={() => setOpenCodesDialog(false)}
+          manufacturerId={manufacturer.id}
+          codes={manufacturer.codes || []}
+        />
+      )}
+    </>
   )
 }
 

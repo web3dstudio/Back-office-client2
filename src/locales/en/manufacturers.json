@@ -15,5 +15,6 @@
   "logo": "Manufacturer logo",
   "Filter": "Filter",
   "manufacturerCode": "Manufacturer Code",
-  "seriesCode": "Series Code"
+  "seriesCode": "Series Code",
+  "manufacturerCodes": "Manufacturer Codes"
 }

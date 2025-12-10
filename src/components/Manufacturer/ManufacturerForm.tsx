@@ -27,7 +27,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 		.shape({
 			name: yup.string().required(t('form-field.required')),
 			engName: yup.string().required(t('form-field.required')),
-			manufacturerCode: yup.string().required(t('form-field.required')).max(5, t('form-field.required')),
+			// manufacturerCode: yup.string().required(t('form-field.required')).max(5, t('form-field.required')),
 		})
 		.required()
 
@@ -39,7 +39,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 		defaultValues: {
 			name: data?.name || '',
 			engName: data?.engName || '',
-			manufacturerCode: data?.manufacturerCode || '',
+			// manufacturerCode: data?.manufacturerCode || '',
 		},
 	})
 
@@ -74,7 +74,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 						placeholder={t('engName', { ns: 'manufacturers' })}
 					/>
 				</Grid>
-				<Grid size={12}>
+				{/* <Grid size={12}>
 					<AppControlledTextField
 						required
 						name='manufacturerCode'
@@ -90,7 +90,7 @@ function ManufacturerForm({ data, isPending, onCancel, onConfirm }: Props) {
 							},
 						}}
 					/>
-				</Grid>
+				</Grid> */}
 
 				<Grid size={12} sx={{ mb: 3, pt: 2 }}>
 					<AppDropzoneField

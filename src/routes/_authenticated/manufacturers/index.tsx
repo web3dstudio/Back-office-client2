@@ -6,7 +6,7 @@ import StyledPaper from '../../../components/StyledPaper'
 import { useManufacturerAddMutation, useManufacturerDeleteMutation, useManufacturersQuery } from '../../../query/manufacturers.query'
 import AppError from '../../../components/AppError'
 import AppDataTable from '../../../components/AppDataTable'
-import type { TManufacturer } from '../../../types'
+import type { TManufacturer, ManufacturerCode } from '../../../types'
 import type { ColumnDef, SortingState } from '@tanstack/react-table'
 import AppActionButton from '../../../components/AppActionButton'
 import { useEffect, useState, useMemo } from 'react'
@@ -68,6 +68,9 @@ function ManufacturersPage() {
         size: 200,
         minSize: 150,
         maxSize: 300,
+        cell: ({ row }) => {
+          return row.original.codes?.filter(code => code.code).map(code => code.code).join(', ') || ''
+        },
       },
       {
         accessorKey: 'logo',
@@ -203,8 +206,8 @@ function ManufacturersPage() {
           globalFilterFn={(row, _columnId, filterValue) => {
             const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const engNameMatch = row.original.engName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-            const codeMatch = row.original.manufacturerCode?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-            return nameMatch || engNameMatch || codeMatch
+            const codesMatch = row.original.codes?.some((code: ManufacturerCode) => code.code?.toLowerCase().includes(filterValue.toLowerCase())) || false
+            return nameMatch || engNameMatch || codesMatch
           }}
         />
 

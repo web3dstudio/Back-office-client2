@@ -44,19 +44,22 @@ export default function Layout() {
   const navigate = useNavigate()
   const router = useRouterState()
   const { data: currentUserData } = useCurrentUserQuery()
-  const hasRedirected = useRef(false)
+  const shouldRedirectToDefaultPage = useAuthStore((state) => state.shouldRedirectToDefaultPage)
+  const setShouldRedirectToDefaultPage = useAuthStore((state) => state.setShouldRedirectToDefaultPage)
 
   useEffect(() => {
-    if (currentUserData?.defaultPage && !hasRedirected.current) {
+    if (currentUserData?.defaultPage && shouldRedirectToDefaultPage) {
       const currentPath = router.location.pathname
       const defaultPage = currentUserData.defaultPage
       // Редирект если defaultPage установлен и отличается от текущего пути
       if (defaultPage && defaultPage !== currentPath) {
-        hasRedirected.current = true
+        setShouldRedirectToDefaultPage(false)
         navigate({ to: defaultPage as any })
+      } else {
+        setShouldRedirectToDefaultPage(false)
       }
     }
-  }, [currentUserData, navigate, router.location.pathname])
+  }, [currentUserData, shouldRedirectToDefaultPage, navigate, router.location.pathname, setShouldRedirectToDefaultPage])
 
 
   return (

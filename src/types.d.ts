@@ -110,15 +110,28 @@ export type TFuelType = {
   code: number
 }
 
+export type ManufacturerCode = {
+  id: string
+  oldId: string | null
+  manufacturerId: string
+  code: string | null
+}
+
+export type ManufacturerCodeUpsertDto = {
+  id?: string
+  code: string
+}
+
 export type TManufacturer = {
   id: string
   name: string
   dbId?: string | null
   engName: string | null
-  manufacturerCode: string
+  manufacturerCode?: string
   logoDownloadUri: string | null
   coutry?: string
   serieses?: TSerie[]
+  codes: ManufacturerCode[]
 }
 
 export type TSerie = {
@@ -784,6 +797,89 @@ export type TAdvertisement = {
   imageDownloadUri: string | null
   imageUploadUri: string | null
   id: string
+}
+
+export type TCodeList = {
+  manufacturerName: string
+  modelName: string
+  year: number
+  carType: string
+  isAuto: string
+  innerCarTypeCode: string
+  innerCode: string
+  innerSubCode: string
+  chassis: string | null
+  chassisName: string | null
+  fromYear: number
+  toYear: number
+  description: string
+  id: string
+}
+
+export type TCode = {
+  id: string
+  carType: TCarType
+  innerCarTypeCode: string
+  manufacturerId: string
+  seriesId: string
+  modelId: string
+  innerCode: string
+  innerSubCode: string
+  isAuto: string
+  chassis: string | null
+  year: number
+  fromYear: number
+  toYear: number
+  modelDescription: string
+  description: string
+}
+
+export type TCodesResponse = {
+  data: TCodeList[]
+} & TPagination
+
+export type TChassis = {
+  id: string
+  name: string
+}
+
+export type TCodeFromApi = {
+  id: string
+  api_Id: number
+  manufacturerCode: string
+  modelCode: string
+  yearOfManufacture: number
+  modelName: string
+  serieName: string
+  manufacturerName: string
+  modelType: string
+  country: string
+  finishingLevel: string
+  horsepower: number
+  automaticTransmission: boolean
+  engineCapacity: number
+  bodyType: string
+  fromYear: number | null
+  toYear: number | null
+  innerCarTypeCode: string | null
+  modelDescription: string | null
+  description: string | null
+  innerCode: string | null
+  innerSubCode?: string | null // Не было в объекте, но есть в `TCode`
+  isAuto?: string | null // Не было в объекте, но есть в `TCode`
+  series?: string | null // Не было в объекте, но есть в `TCode`
+  year?: string | null // Не было в объекте, но есть в `TCode`
+  codeId: string
+  carTypeId: string | null
+  modelId: string | null
+  chassis: string | null
+  manufacturerId?: string | null
+  seriesId?: string | null
+}
+
+export type TCodesSyncResponse = {
+  totalApiRecords: number
+  newRecordsAdded: number
 }
 
 

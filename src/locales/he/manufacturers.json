@@ -15,5 +15,6 @@
   "logo": "לוגו יצרן",
   "Filter": "חיפוש",
   "manufacturerCode": "קוד יצרן",
-  "seriesCode": "קוד סדרה"
+  "seriesCode": "קוד סדרה",
+  "manufacturerCodes": "קודי יצרן"
 }
