@@ -13,6 +13,7 @@ import PriceListForm from '../../../components/PriceList/PriceListForm';
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog';
 import AppDataTable from '../../../components/AppDataTable';
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table';
+import { toast } from 'react-toastify';
 
 export const Route = createFileRoute('/_authenticated/price-list/')({
   component: PriceListPage,
@@ -44,6 +45,7 @@ function PriceListPage() {
   const { t } = useTranslation()
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TPriceList | null>(null)
+  const [loadingPdfIds, setLoadingPdfIds] = useState<Set<string>>(new Set())
   const dateTimeFormat = useDateTimeFormat()
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -99,30 +101,61 @@ function PriceListPage() {
         maxSize: 140,
         meta: { align: 'right' },
         cell: ({ row }) => {
+          const rowId = row.original.id
+          const isLoading = loadingPdfIds.has(rowId)
+
           const handleView = async () => {
+            setLoadingPdfIds(prev => new Set(prev).add(rowId))
             try {
-              const blob = await fetchPriceListPdf(row.original.id)
-              const fileName = `price-list-${row.original.id}.pdf`
+              const blob = await fetchPriceListPdf(rowId)
+              const fileName = `price-list-${rowId}.pdf`
               downloadFile(blob, fileName, false)
+              toast.success(t('priceList_pdf_opened_successfully', { ns: 'notifications' }) || 'PDF opened successfully')
             } catch (error) {
               console.error('Error fetching PDF:', error)
+              toast.error(t('error_occurred', { ns: 'notifications' }) || 'Error occurred')
+            } finally {
+              setLoadingPdfIds(prev => {
+                const next = new Set(prev)
+                next.delete(rowId)
+                return next
+              })
             }
           }
 
           const handleDownload = async () => {
+            setLoadingPdfIds(prev => new Set(prev).add(rowId))
             try {
-              const blob = await fetchPriceListPdf(row.original.id)
-              const fileName = `price-list-${row.original.id}.pdf`
+              const blob = await fetchPriceListPdf(rowId)
+              const fileName = `price-list-${rowId}.pdf`
               downloadFile(blob, fileName, true)
+              toast.success(t('priceList_pdf_downloaded_successfully', { ns: 'notifications' }) || 'PDF downloaded successfully')
             } catch (error) {
               console.error('Error downloading PDF:', error)
+              toast.error(t('error_occurred', { ns: 'notifications' }) || 'Error occurred')
+            } finally {
+              setLoadingPdfIds(prev => {
+                const next = new Set(prev)
+                next.delete(rowId)
+                return next
+              })
             }
           }
 
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
-              <AppActionButton type='view' onClick={handleView} />
-              <AppActionButton type='download' onClick={handleDownload} />
+              <AppActionButton
+                type='view'
+                onClick={handleView}
+                loading={isLoading}
+                disabled={isLoading}
+              />
+              <AppActionButton
+                type='download'
+                onClick={handleDownload}
+                loading={isLoading}
+                disabled={isLoading}
+              />
               <AppActionButton
                 type='delete'
                 onClick={() => {
@@ -135,7 +168,7 @@ function PriceListPage() {
         },
       },
     ],
-    [t, dateTimeFormat, priceListTypes]
+    [t, dateTimeFormat, priceListTypes, loadingPdfIds]
   )
 
   const handleDeletePriceList = () => {
