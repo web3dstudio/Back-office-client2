@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next'
-import { useDeletePriceListMutation, usePriceListsQuery } from '../../../query/priceList.query';
+import { useDeletePriceListMutation, usePriceListsQuery, fetchPriceListPdf } from '../../../query/priceList.query';
 import { usePriceListTypesQuery } from '../../../query/priceListTypes.querty';
 import AppActionButton from '../../../components/AppActionButton';
 import type { TPriceList } from '../../../types';
@@ -18,6 +18,27 @@ export const Route = createFileRoute('/_authenticated/price-list/')({
   component: PriceListPage,
 })
 
+const downloadFile = (file: Blob, name: string, download: boolean) => {
+  if (file.size === 0) {
+    console.error('Received empty blob')
+    return
+  }
+  const url = window.URL.createObjectURL(file)
+  if (download) {
+    // Скачивание
+    const link = document.createElement('a')
+    link.download = name
+    link.href = url
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    window.URL.revokeObjectURL(url)
+  } else {
+    // Просмотр
+    window.open(url, '_blank')
+    // URL будет освобожден при закрытии окна
+  }
+}
 
 function PriceListPage() {
   const { t } = useTranslation()
@@ -77,26 +98,41 @@ function PriceListPage() {
         minSize: 140,
         maxSize: 140,
         meta: { align: 'right' },
-        cell: ({ row }) => (
-          <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
-            <AppActionButton type='view' onClick={() => {
-              // navigate({ to: '/customers/$id', params: { id: row.original.id } })
-            }} />
-            <AppActionButton type='download' onClick={() => {
-              // navigate({
-              //   to: '/customers/new',
-              //   search: { duplicateId: row.original.id }
-              // })
-            }} />
-            <AppActionButton
-              type='delete'
-              onClick={() => {
-                setSelected(() => row.original)
-                setOpenConfirmDialog(true)
-              }}
-            />
-          </Box>
-        ),
+        cell: ({ row }) => {
+          const handleView = async () => {
+            try {
+              const blob = await fetchPriceListPdf(row.original.id)
+              const fileName = `price-list-${row.original.id}.pdf`
+              downloadFile(blob, fileName, false)
+            } catch (error) {
+              console.error('Error fetching PDF:', error)
+            }
+          }
+
+          const handleDownload = async () => {
+            try {
+              const blob = await fetchPriceListPdf(row.original.id)
+              const fileName = `price-list-${row.original.id}.pdf`
+              downloadFile(blob, fileName, true)
+            } catch (error) {
+              console.error('Error downloading PDF:', error)
+            }
+          }
+
+          return (
+            <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
+              <AppActionButton type='view' onClick={handleView} />
+              <AppActionButton type='download' onClick={handleDownload} />
+              <AppActionButton
+                type='delete'
+                onClick={() => {
+                  setSelected(() => row.original)
+                  setOpenConfirmDialog(true)
+                }}
+              />
+            </Box>
+          )
+        },
       },
     ],
     [t, dateTimeFormat, priceListTypes]

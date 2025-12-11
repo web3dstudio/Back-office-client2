@@ -1,5 +1,5 @@
 import { type UseMutationResult, type UseQueryResult, keepPreviousData, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import axiosAPI from '../utils/axiosAPI'
+import axiosAPI, { axiosDownload } from '../utils/axiosAPI'
 import type { TPriceList, TPriceListResponse } from '../types'
 import type { GridSortModel } from "@mui/x-data-grid";
 import { useTranslation } from "react-i18next";
@@ -70,4 +70,13 @@ export function useDeletePriceListMutation(): UseMutationResult<string, Error, s
       toast.error(t('priceList_deleted_failed'))
     },
   })
+}
+
+export async function fetchPriceListPdf(id: string): Promise<Blob> {
+  const response = await axiosDownload.get(`/priceLists/${id}/pdf`)
+  // Проверяем, что получили blob
+  if (!(response.data instanceof Blob)) {
+    throw new Error('Response is not a Blob')
+  }
+  return response.data
 }
