@@ -60,6 +60,7 @@ import { Route as AuthenticatedCodesSyncRouteImport } from './routes/_authentica
 import { Route as AuthenticatedCodesNewRouteImport } from './routes/_authenticated/codes/new'
 import { Route as AuthenticatedCodesIdRouteImport } from './routes/_authenticated/codes/$id'
 import { Route as AuthenticatedClientSupportIdRouteImport } from './routes/_authenticated/client-support/$id'
+import { Route as AuthenticatedCatalogPricesRouteImport } from './routes/_authenticated/catalog/prices'
 import { Route as AuthenticatedCatalogNewCarRouteImport } from './routes/_authenticated/catalog/new-car'
 import { Route as AuthenticatedCatalogIdRouteImport } from './routes/_authenticated/catalog/$id'
 import { Route as AuthenticatedReportsSubscriptionIndexRouteImport } from './routes/_authenticated/reports/subscription/index'
@@ -367,6 +368,12 @@ const AuthenticatedClientSupportIdRoute =
     path: '/client-support/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCatalogPricesRoute =
+  AuthenticatedCatalogPricesRouteImport.update({
+    id: '/catalog/prices',
+    path: '/catalog/prices',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedCatalogNewCarRoute =
   AuthenticatedCatalogNewCarRouteImport.update({
     id: '/catalog/new-car',
@@ -462,6 +469,7 @@ export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/catalog/prices': typeof AuthenticatedCatalogPricesRoute
   '/client-support/$id': typeof AuthenticatedClientSupportIdRoute
   '/codes/$id': typeof AuthenticatedCodesIdRoute
   '/codes/new': typeof AuthenticatedCodesNewRoute
@@ -527,6 +535,7 @@ export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
   '/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/catalog/prices': typeof AuthenticatedCatalogPricesRoute
   '/client-support/$id': typeof AuthenticatedClientSupportIdRoute
   '/codes/$id': typeof AuthenticatedCodesIdRoute
   '/codes/new': typeof AuthenticatedCodesNewRoute
@@ -596,6 +605,7 @@ export interface FileRoutesById {
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/catalog/$id': typeof AuthenticatedCatalogIdRoute
   '/_authenticated/catalog/new-car': typeof AuthenticatedCatalogNewCarRoute
+  '/_authenticated/catalog/prices': typeof AuthenticatedCatalogPricesRoute
   '/_authenticated/client-support/$id': typeof AuthenticatedClientSupportIdRoute
   '/_authenticated/codes/$id': typeof AuthenticatedCodesIdRoute
   '/_authenticated/codes/new': typeof AuthenticatedCodesNewRoute
@@ -664,6 +674,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog/$id'
     | '/catalog/new-car'
+    | '/catalog/prices'
     | '/client-support/$id'
     | '/codes/$id'
     | '/codes/new'
@@ -729,6 +740,7 @@ export interface FileRouteTypes {
     | '/'
     | '/catalog/$id'
     | '/catalog/new-car'
+    | '/catalog/prices'
     | '/client-support/$id'
     | '/codes/$id'
     | '/codes/new'
@@ -797,6 +809,7 @@ export interface FileRouteTypes {
     | '/_authenticated/'
     | '/_authenticated/catalog/$id'
     | '/_authenticated/catalog/new-car'
+    | '/_authenticated/catalog/prices'
     | '/_authenticated/client-support/$id'
     | '/_authenticated/codes/$id'
     | '/_authenticated/codes/new'
@@ -1223,6 +1236,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedClientSupportIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/catalog/prices': {
+      id: '/_authenticated/catalog/prices'
+      path: '/catalog/prices'
+      fullPath: '/catalog/prices'
+      preLoaderRoute: typeof AuthenticatedCatalogPricesRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/catalog/new-car': {
       id: '/_authenticated/catalog/new-car'
       path: '/catalog/new-car'
@@ -1377,6 +1397,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedCatalogIdRoute: typeof AuthenticatedCatalogIdRoute
   AuthenticatedCatalogNewCarRoute: typeof AuthenticatedCatalogNewCarRoute
+  AuthenticatedCatalogPricesRoute: typeof AuthenticatedCatalogPricesRoute
   AuthenticatedClientSupportIdRoute: typeof AuthenticatedClientSupportIdRoute
   AuthenticatedCodesIdRoute: typeof AuthenticatedCodesIdRoute
   AuthenticatedCodesNewRoute: typeof AuthenticatedCodesNewRoute
@@ -1432,6 +1453,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedCatalogIdRoute: AuthenticatedCatalogIdRoute,
   AuthenticatedCatalogNewCarRoute: AuthenticatedCatalogNewCarRoute,
+  AuthenticatedCatalogPricesRoute: AuthenticatedCatalogPricesRoute,
   AuthenticatedClientSupportIdRoute: AuthenticatedClientSupportIdRoute,
   AuthenticatedCodesIdRoute: AuthenticatedCodesIdRoute,
   AuthenticatedCodesNewRoute: AuthenticatedCodesNewRoute,

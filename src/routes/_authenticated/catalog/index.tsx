@@ -291,7 +291,12 @@ function CatalogPage() {
             <Button variant="outlined" onClick={() => {}}>
               {t('duplicate', { ns: 'carCatalog' })}
             </Button>
-            <Button variant="outlined" onClick={() => {}}>
+            <Button 
+              variant="outlined" 
+              onClick={() => {
+                navigate({ to: '/catalog/prices' })
+              }}
+            >
               {t('change', { ns: 'carCatalog' })}
             </Button>
           </Box>
