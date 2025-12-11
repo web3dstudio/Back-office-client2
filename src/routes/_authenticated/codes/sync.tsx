@@ -1,17 +1,17 @@
 import { createFileRoute } from '@tanstack/react-router'
 import AppBackBtn from '../../../components/AppBackBtn'
 import { useTranslation } from 'react-i18next'
-import { Box, Grid, Typography, Button, TextField, Autocomplete } from '@mui/material'
+import { Box, Grid, Typography, Button, TextField, Autocomplete, Select, MenuItem, FormControl } from '@mui/material'
 import StyledPaper from '../../../components/StyledPaper'
-import { useState, useEffect, useMemo, useRef } from 'react'
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
-import AppDataTable from '../../../components/AppDataTable'
-import { useCodesFromApiQuery, useCodesSyncQuery, useCodeAddMutation, useCodeDeleteMutation } from '../../../query/codesFromApi.query'
+import SyncTable from '../../../components/Codes/SyncTable'
+import { useCodesFromApiQuery, useCodesSyncQuery } from '../../../query/codesFromApi.query'
 import { useManufacturersWithSeriesAndModelsQuery } from '../../../query/manufacturers.query'
 import { useCarTypesQuery } from '../../../query/carTypes.query'
 import { useChassisQuery } from '../../../query/chassis.query'
 import type { TCodeFromApi } from '../../../types'
-import { toast } from 'react-toastify'
+
 
 export const Route = createFileRoute('/_authenticated/codes/sync')({
   component: SyncPage,
@@ -29,16 +29,14 @@ function SyncPage() {
   const [rows, setRows] = useState<TCodeFromApi[]>([])
 
   const { data: codesData, isLoading: codesIsLoading } = useCodesFromApiQuery()
-  const { data: manufacturers } = useManufacturersWithSeriesAndModelsQuery()
-  const { data: carTypes } = useCarTypesQuery()
-  const { data: chassisList } = useChassisQuery()
+  const { data: manufacturers, isLoading: manufacturersIsLoading } = useManufacturersWithSeriesAndModelsQuery()
+  const { data: carTypes, isLoading: carTypesIsLoading } = useCarTypesQuery()
+  const { data: chassisList, isLoading: chassisIsLoading } = useChassisQuery()
+
+  const isLoading = codesIsLoading || manufacturersIsLoading || carTypesIsLoading || chassisIsLoading
 
   const selectedYearsNames = useMemo(() => selectedYears.map(y => y.name), [selectedYears])
-  const { data: syncData, refetch: syncRefetch } = useCodesSyncQuery(selectedYearsNames)
-  const { mutate: codeAddMutation } = useCodeAddMutation()
-  const { mutate: codeDeleteMutation } = useCodeDeleteMutation()
-  const { t: tNotifications } = useTranslation('notifications')
-  const processedSyncDataRef = useRef<typeof syncData>(undefined)
+  const { refetch: syncRefetch } = useCodesSyncQuery(selectedYearsNames)
 
   useEffect(() => {
     const start = 1995
@@ -49,39 +47,17 @@ function SyncPage() {
   }, [])
 
   useEffect(() => {
-    if (codesData && manufacturers) {
-      setRows(
-        codesData.map(row => {
-          if (row.manufacturerId && row.seriesId) return row
-
-          const manufacturer = manufacturers.find(m =>
-            m.serieses?.some(s => s.models?.some(mdl => mdl.id === row.modelId))
-          )
-          if (!manufacturer) return row
-
-          const series = manufacturer.serieses?.find(s =>
-            s.models?.some(mdl => mdl.id === row.modelId)
-          )
-          if (!series) return row
-
-          return {
-            ...row,
-            manufacturerId: manufacturer.id,
-            seriesId: series.id,
-          }
-        })
-      )
+    if (codesData) {
+      setRows(codesData)
     }
-  }, [codesData, manufacturers])
+  }, [codesData])
 
-  useEffect(() => {
-    if (syncData && processedSyncDataRef.current !== syncData) {
-      processedSyncDataRef.current = syncData
-      toast.success(tNotifications('codes_sync_successfully'))
-    }
-  }, [syncData, tNotifications])
 
-  const generateModelDescription = (row: TCodeFromApi): string => {
+  const getNewCodes = () => {
+    syncRefetch()
+  }
+
+  const generateModelDescription = (row: TCodeFromApi) => {
     const transmission = row.automaticTransmission ? 'Automatic' : ''
     const serieName = row.serieName ?? ''
     const modelName = row.modelName ?? ''
@@ -89,34 +65,29 @@ function SyncPage() {
     const horsepower = row.horsepower > 0 ? row.horsepower + 'ks' : ''
     const finishingLevel = row.finishingLevel ?? ''
 
-    return `${serieName} ${modelName} ${engineCapacity} ${horsepower} ${transmission} ${finishingLevel}`.trim()
+    const description =
+      serieName +
+      ' ' +
+      modelName +
+      ' ' +
+      engineCapacity +
+      ' ' +
+      horsepower +
+      ' ' +
+      transmission +
+      ' ' +
+      finishingLevel
+
+    return description
   }
 
-  const getNewCodes = () => {
-    syncRefetch()
-  }
-
-  const addCode = (data: TCodeFromApi) => {
-    const newCode = {
-      carTypeId: data.carTypeId || '',
-      chassis: data.chassis,
-      description: '',
-      year: data.yearOfManufacture || 0,
-      fromYear: data.fromYear || data.yearOfManufacture || 0,
-      toYear: data.toYear || 0,
-      innerCarTypeCode: `${data.manufacturerCode.padStart(5, '0')}-${data.modelCode.padStart(5, '0')}`,
-      innerCode: data.innerCode || '',
-      innerSubCode: data.modelType?.toLowerCase() || '',
-      isAuto: data.automaticTransmission?.toString() || '0',
-      manufacturerId: '',
-      modelDescription: generateModelDescription(data),
-      modelId: data.modelId || '',
-    }
-    codeAddMutation(newCode)
+  const addCode = (row: TCodeFromApi) => {
+    console.log(row)
+    // TODO: Add logic
   }
 
   const removeCode = (codeId: string) => {
-    codeDeleteMutation(codeId)
+    // TODO: Remove logic
   }
 
   const columns = useMemo<ColumnDef<TCodeFromApi>[]>(() => [
@@ -145,12 +116,11 @@ function SyncPage() {
       accessorKey: 'manufacturerName',
       header: t('manufacturerName', { ns: 'codes' }),
       size: 200,
-      cell: ({ row }) => `${row.original.manufacturerName} ${row.original.country}`,
     },
     {
-      accessorKey: 'description',
+      accessorKey: 'modelName',
       header: t('modelName', { ns: 'codes' }),
-      size: 300,
+      size: 120,
       cell: ({ row }) => generateModelDescription(row.original),
     },
     {
@@ -159,42 +129,77 @@ function SyncPage() {
       size: 120,
     },
     {
+      accessorKey: 'bodyType',
+      header: t('bodyType', { ns: 'codes' }),
+      size: 120,
+    },
+    {
       accessorKey: 'manufacturerId',
       header: t('manufacturerName', { ns: 'codes' }),
       size: 200,
-      cell: ({ row }) => {
-        const manufacturer = manufacturers?.find(m => m.id === row.original.manufacturerId)
-        return manufacturer?.name || ''
-      },
     },
     {
       accessorKey: 'seriesId',
       header: t('series', { ns: 'newCode' }),
       size: 200,
-      cell: ({ row }) => {
-        const manufacturer = manufacturers?.find(m => m.id === row.original.manufacturerId)
-        const series = manufacturer?.serieses?.find(s => s.id === row.original.seriesId)
-        return series?.name || ''
-      },
     },
     {
       accessorKey: 'modelId',
       header: t('modelName', { ns: 'codes' }),
       size: 200,
-      cell: ({ row }) => {
-        const manufacturer = manufacturers?.find(m => m.id === row.original.manufacturerId)
-        const series = manufacturer?.serieses?.find(s => s.id === row.original.seriesId)
-        const model = series?.models?.find(m => m.id === row.original.modelId)
-        return model?.name || ''
-      },
     },
     {
       accessorKey: 'carTypeId',
       header: t('carType', { ns: 'codes' }),
       size: 150,
       cell: ({ row }) => {
-        const selectedCarType = carTypes?.find(option => option.id === row.original.carTypeId)
-        return selectedCarType?.name || ''
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          const carType = carTypes?.find(c => c.id === row.original.carTypeId)
+          return carType?.name || ''
+        }
+        return (
+          <FormControl size="small" fullWidth>
+            <Select
+              value={row.original.carTypeId || ''}
+              onChange={(e) => {
+                const newValue = e.target.value as string
+                setRows(prevRows =>
+                  prevRows.map(r =>
+                    r.id === row.original.id
+                      ? { ...r, carTypeId: newValue || null }
+                      : r
+                  )
+                )
+              }}
+              displayEmpty
+              variant="standard"
+              disableUnderline
+              size='small'
+              sx={{
+                border: 'none',
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              }}
+              renderValue={(value) => {
+                if (!value) return ''
+                const carType = carTypes?.find(c => c.id === value)
+                return carType?.name || ''
+              }}
+            >
+              {carTypes?.map((carType) => (
+                <MenuItem key={carType.id} value={carType.id}>
+                  {carType.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )
       },
     },
     {
@@ -202,26 +207,143 @@ function SyncPage() {
       header: t('chassis', { ns: 'codes' }),
       size: 150,
       cell: ({ row }) => {
-        const selectedChassis = chassisList?.find(option => option.id === row.original.chassis)
-        return selectedChassis?.name || ''
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          const chassis = chassisList?.find(c => c.id === row.original.chassis)
+          return chassis?.name || ''
+        }
+        return (
+          <FormControl size="small" fullWidth>
+            <Select
+              value={row.original.chassis || ''}
+              onChange={(e) => {
+                const newValue = e.target.value as string
+                setRows(prevRows =>
+                  prevRows.map(r =>
+                    r.id === row.original.id
+                      ? { ...r, chassis: newValue || null }
+                      : r
+                  )
+                )
+              }}
+              displayEmpty
+              variant="standard"
+              disableUnderline
+              size='small'
+              sx={{
+                border: 'none',
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              {chassisList?.map((chassis) => (
+                <MenuItem key={chassis.id} value={chassis.id}>
+                  {chassis.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )
       },
-    },
-    {
-      accessorKey: 'bodyType',
-      header: t('bodyType', { ns: 'codes' }),
-      size: 120,
     },
     {
       accessorKey: 'innerCode',
       header: t('innerCode', { ns: 'newCode' }),
       size: 120,
+      cell: ({ row }) => {
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        const currentValue = row.original.innerCode ?? ''
+        if (hasCodeId) {
+          return currentValue
+        }
+        return (
+          <TextField
+            defaultValue={currentValue}
+            onBlur={(e) => {
+              const value = e.target.value
+              setRows(prevRows =>
+                prevRows.map(r =>
+                  r.id === row.original.id
+                    ? { ...r, innerCode: value || null }
+                    : r
+                )
+              )
+            }}
+            size="small"
+            variant="standard"
+            fullWidth
+            sx={{
+              '& .MuiInputBase-root': {
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              },
+            }}
+          />
+        )
+      },
     },
     {
       accessorKey: 'fromYear',
       header: t('fromYear', { ns: 'codes' }),
       size: 120,
       cell: ({ row }) => {
-        return row.original.fromYear || row.original.yearOfManufacture || ''
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          const defaultValue = row.original.fromYear || row.original.yearOfManufacture
+          return defaultValue && defaultValue > 0 ? defaultValue.toString() : ''
+        }
+        const defaultValue = row.original.fromYear || row.original.yearOfManufacture
+        const yearValue = defaultValue && defaultValue > 0 ? defaultValue.toString() : ''
+        return (
+          <FormControl size="small" fullWidth>
+            <Select
+              value={yearValue}
+              onChange={(e) => {
+                const newValue = e.target.value ? Number(e.target.value) : null
+                setRows(prevRows =>
+                  prevRows.map(r =>
+                    r.id === row.original.id
+                      ? { ...r, fromYear: newValue || 0 }
+                      : r
+                  )
+                )
+              }}
+              displayEmpty
+              variant="standard"
+              disableUnderline
+              size='small'
+              sx={{
+                border: 'none',
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              }}
+            >
+              {years.map((year) => (
+                <MenuItem key={year.id} value={year.id}>
+                  {year.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )
       },
     },
     {
@@ -229,30 +351,91 @@ function SyncPage() {
       header: t('toYear', { ns: 'codes' }),
       size: 120,
       cell: ({ row }) => {
-        return row.original.toYear || ''
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          return row.original.toYear && row.original.toYear > 0 ? row.original.toYear.toString() : ''
+        }
+        const yearValue = row.original.toYear && row.original.toYear > 0 ? row.original.toYear.toString() : ''
+        return (
+          <FormControl size="small" fullWidth>
+            <Select
+              value={yearValue}
+              onChange={(e) => {
+                const newValue = e.target.value ? Number(e.target.value) : null
+                setRows(prevRows =>
+                  prevRows.map(r =>
+                    r.id === row.original.id
+                      ? { ...r, toYear: newValue || 0 }
+                      : r
+                  )
+                )
+              }}
+              displayEmpty
+              variant="standard"
+              disableUnderline
+              size='small'
+              sx={{
+                border: 'none',
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              }}
+            >
+              {years.map((year) => (
+                <MenuItem key={year.id} value={year.id}>
+                  {year.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )
       },
     },
     {
       id: 'actions',
-      header: t('actions', { ns: 'common' }),
-      size: 120,
+      header: t('actions', { ns: 'codes' }),
+      enableSorting: false,
+      enableHiding: false,
+      size: 90,
+      minSize: 80,
+      maxSize: 100,
+      meta: { align: 'right' },
       cell: ({ row }) => {
-        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
-        return (
-          <Button
-            disabled={!hasCodeId ? (!row.original.innerCode || !row.original.modelId || !row.original.carTypeId) : false}
-            variant="outlined"
-            color={hasCodeId ? 'secondary' : 'primary'}
-            size="small"
-            fullWidth
-            onClick={() => hasCodeId ? removeCode(row.original.codeId) : addCode(row.original)}
-          >
-            {hasCodeId ? t('remove', { ns: 'common' }) : t('add', { ns: 'common' })}
-          </Button>
-        )
+        return !row.original.codeId ||
+          row.original.codeId === '00000000-0000-0000-0000-000000000000'
+          ? (
+            <Button
+              disabled={
+                !row.original.innerCode
+                || !row.original.modelId
+                || !row.original.carTypeId
+              }
+              variant="text"
+              color="primary"
+              size="small"
+              fullWidth
+              onClick={() => addCode(row.original)}
+            >
+              {t('add', { ns: 'codes' })}
+            </Button>
+          ) : (
+            <Button
+              fullWidth
+              variant="text"
+              color="error"
+              size="small"
+              onClick={() => removeCode(row.original.codeId)}
+            >
+              {t('remove', { ns: 'codes' })}
+            </Button>
+          )
       },
     },
-  ], [manufacturers, carTypes, chassisList, t])
+  ], [carTypes, chassisList, t, generateModelDescription, years, setRows])
 
   return (
     <Grid container spacing={3}>
@@ -307,11 +490,14 @@ function SyncPage() {
           </Grid>
         </Grid>
 
-        <AppDataTable
-          tableName="codesFromApi"
+        <SyncTable
           data={rows}
           columns={columns}
-          isLoading={codesIsLoading}
+          isLoading={isLoading}
+          columnGroups={[
+            { label: 'Imported', startIndex: 0, endIndex: 7, hasBackground: true },
+            { label: 'Levi Data', startIndex: 8, endIndex: 15, hasBackground: false }
+          ]}
         />
       </StyledPaper>
     </Grid>
