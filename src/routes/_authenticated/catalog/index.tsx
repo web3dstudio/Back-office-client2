@@ -11,6 +11,12 @@ import AppBackBtn from '../../../components/AppBackBtn'
 import StyledPaper from '../../../components/StyledPaper'
 import AppDataTable from '../../../components/AppDataTable'
 import AppLoading from '../../../components/AppLoading'
+import { useCarTypesQuery } from '../../../query/carTypes.query'
+import { useManufacturersWithSeriesAndModelsQuery } from '../../../query/manufacturers.query'
+import { useCategoriesQuery } from '../../../query/category.query'
+import { useCountriesQuery } from '../../../query/countries.query'
+import AppTextField from '../../../components/AppTextField'
+import { AppAutocomplete } from '../../../components/AppAutocomplete'
 
 
 export const Route = createFileRoute('/_authenticated/catalog/')({
@@ -27,6 +33,19 @@ function CatalogPage() {
   const [selectedModelId, setSelectedModelId] = useState<string | undefined>()
   const [carYearsData, setCarYearsData] = useState<Record<string, TCarYears[]>>({})
 
+  // Queries for filters
+  const { data: carTypes } = useCarTypesQuery()
+  const { data: manufacturers } = useManufacturersWithSeriesAndModelsQuery()
+  const { data: categories } = useCategoriesQuery()
+  const { data: countries } = useCountriesQuery()
+
+  // State for filters
+  const [modelCode, setModelCode] = useState('')
+  const [carType, setCarType] = useState<any>(null)
+  const [manufacturer, setManufacturer] = useState<any>(null)
+  const [category, setCategory] = useState<any>(null)
+  const [country, setCountry] = useState<any>(null)
+
   const handlePaginationChange = (newPagination: PaginationState) => {
     setPagination(newPagination)
   }
@@ -36,7 +55,23 @@ function CatalogPage() {
     setPagination(prev => ({ ...prev, pageIndex: 0 })) // сброс на первую страницу
   }
 
-  const { data: cars, isLoading } = useCarsQuery(pagination.pageIndex, {}, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
+  // Формируем объект фильтров для запроса
+  const filters = useMemo(() => {
+    const filterObj: Record<string, string> = {}
+    if (modelCode) filterObj.ModelCode = modelCode
+    if (carType?.id) filterObj.CarType = carType.id
+    if (manufacturer?.id) filterObj.Manufacturer = manufacturer.id
+    if (category?.id) filterObj.Category = category.id
+    if (country?.id) filterObj.Country = country.id
+    return filterObj
+  }, [modelCode, carType, manufacturer, category, country])
+
+  // При изменении фильтров сбрасываем страницу на 1
+  useEffect(() => {
+    setPagination(prev => ({ ...prev, pageIndex: 0 }))
+  }, [modelCode, carType?.id, manufacturer?.id, category?.id, country?.id])
+
+  const { data: cars, isLoading } = useCarsQuery(pagination.pageIndex, filters, sorting.map(s => ({ field: s.id, sort: s.desc ? 'desc' : 'asc' })))
   const { data: carYears } = useCarYearsQuery(selectedModelId || '')
 
   // Сохраняем данные в состояние при получении
@@ -190,17 +225,77 @@ function CatalogPage() {
         overflow: 'hidden',
         padding: 3,
         width: '100%',
-        display: 'flex',
-        gap: 2,
       }}>
-        {/* <OpinionsFilter
-          filters={filtersDraft}
-          setFilters={setFiltersDraft}
-          onSearch={() => {
-            setFilters(filtersDraft);
-            setPaginationModel(model => ({ ...model, page: 0 })); // сбросить страницу при поиске
-          }}
-        /> */}
+        <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
+            <AppTextField
+              name="modelCode"
+              value={modelCode}
+              onChange={setModelCode}
+              label={t('modelCode', { ns: 'carCatalog' })}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
+            <AppAutocomplete
+              value={carType}
+              onChange={setCarType}
+              options={carTypes || []}
+              getOptionLabel={(option) => option.name || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              label={t('carType', { ns: 'newCar' })}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
+            <AppAutocomplete
+              value={manufacturer}
+              onChange={setManufacturer}
+              options={manufacturers || []}
+              getOptionLabel={(option) => option.name || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              label={t('manufacturer', { ns: 'carCatalog' })}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
+            <AppAutocomplete
+              value={category}
+              onChange={setCategory}
+              options={categories || []}
+              getOptionLabel={(option) => option.name || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              label={t('category', { ns: 'carCatalog' })}
+            />
+          </Box>
+          <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
+            <AppAutocomplete
+              value={country}
+              onChange={setCountry}
+              options={countries || []}
+              getOptionLabel={(option) => option.name || ''}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              label={t('countries', { ns: 'carCatalog' })}
+            />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
+            <Button 
+              variant="outlined" 
+              onClick={() => {
+                setModelCode('')
+                setCarType(null)
+                setManufacturer(null)
+                setCategory(null)
+                setPagination(prev => ({ ...prev, pageIndex: 0 }))
+              }}
+            >
+              {t('refresh', { ns: 'carCatalog' })}
+            </Button>
+            <Button variant="outlined" onClick={() => {}}>
+              {t('duplicate', { ns: 'carCatalog' })}
+            </Button>
+            <Button variant="outlined" onClick={() => {}}>
+              {t('change', { ns: 'carCatalog' })}
+            </Button>
+          </Box>
+        </Box>
       </StyledPaper>
 
       <StyledPaper

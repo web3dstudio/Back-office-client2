@@ -1,10 +1,11 @@
 {
   "back": "Back to catalog",
   "catalog": "Cars catalog",
-  "countries": "countries",
+  "countries": "Countries",
   "add": "Add new",
   "change": "Change prices",
   "duplicate": "Country duplicate",
+  "refresh": "Reset",
   "gearbox": "Gearbox",
   "vol": "Volume",
   "year": "Year",
