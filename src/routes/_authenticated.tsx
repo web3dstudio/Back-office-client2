@@ -10,13 +10,12 @@ import {
   useTheme,
   Divider
 } from '@mui/material'
-import ChangeLightDarkMode from '../components/ChangeLightDarkMode'
 import MainNavTabs from '../components/MainNavTabs'
 import ClientSupport from '../components/ClientSupport'
 import ProfileMenu from '../components/ProfileMenu'
 import AppSettings from '../components/AppSettings'
 import { useCurrentUserQuery } from '../query/user.query'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 
 
 

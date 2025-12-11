@@ -5,9 +5,8 @@ import type { GridSortModel } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { toast } from "react-toastify"
 
-export type TCodeCreate = Omit<TCode, 'id' | 'carType' | 'manufacturerId' | 'seriesId'> & {
+export type TCodeCreate = Omit<TCode, 'id' | 'carType'> & {
   carTypeId: string
-  modelId: string
 }
 
 export type TCodeUpdate = Omit<TCodeCreate, 'chassis'> & {

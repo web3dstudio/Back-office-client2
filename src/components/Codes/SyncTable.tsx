@@ -10,9 +10,10 @@ interface SyncTableProps<T> {
   isLoading?: boolean
   tableName?: string
   columnGroups?: Array<{ label: string; startIndex: number; endIndex: number; hasBackground?: boolean }>
+  getRowSx?: (row: T) => any
 }
 
-export default function SyncTable<T>({ data, columns, isLoading, tableName = 'syncTable', columnGroups }: SyncTableProps<T>) {
+export default function SyncTable<T>({ data, columns, isLoading, tableName = 'syncTable', columnGroups, getRowSx }: SyncTableProps<T>) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 20,
@@ -252,7 +253,8 @@ export default function SyncTable<T>({ data, columns, isLoading, tableName = 'sy
                 <TableRow
                   key={row.id}
                   sx={{
-                    backgroundColor: !hasInnerCode ? 'rgba(255, 0, 0, 0.1)' : 'transparent'
+                    ...(getRowSx ? getRowSx(row.original) : {}),
+                    backgroundColor: getRowSx ? (getRowSx(row.original)?.backgroundColor || 'transparent') : (!hasInnerCode ? 'rgba(255, 0, 0, 0.1)' : 'transparent')
                   }}
                 >
                   {row.getVisibleCells().map((cell) => {
@@ -311,4 +313,3 @@ export default function SyncTable<T>({ data, columns, isLoading, tableName = 'sy
     </Box>
   )
 }
-

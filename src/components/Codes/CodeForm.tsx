@@ -201,6 +201,8 @@ function CodeForm({ code = null }: Props) {
 
     const formData = {
       modelId: data.model.id,
+      manufacturerId: data.manufacturer.id,
+      seriesId: data.series.id,
       description: data.description,
       innerCode: data.innerCode,
       innerSubCode: data.subCode,

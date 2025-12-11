@@ -48,12 +48,13 @@ export function useCodeAddMutation(): UseMutationResult<
 
   return useMutation({
     mutationFn: async (newCode: TCodeCreate): Promise<TCode> => {
-      const response = await axiosAPI.put('/codes', newCode)
+      const response = await axiosAPI.post('/codes', newCode)
       return response.data
     },
     retry: 3,
     onSuccess: (_newCode: TCode) => {
-      queryClient.invalidateQueries({ queryKey: ['codesFromApi'] })
+      // queryClient.invalidateQueries({ queryKey: ['codesFromApi'] })
+      queryClient.invalidateQueries({ queryKey: ['codes'] })
       toast.success(t('code_added_successfully') || 'Code added successfully!')
     },
     onError: (error: Error) => {
@@ -78,7 +79,8 @@ export function useCodeDeleteMutation(): UseMutationResult<
     },
     retry: 3,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['codesFromApi'] })
+      // queryClient.invalidateQueries({ queryKey: ['codesFromApi'] })
+      queryClient.invalidateQueries({ queryKey: ['codes'] })
       toast.success(t('code_deleted_successfully') || 'Code deleted successfully!')
     },
     onError: (error: Error) => {

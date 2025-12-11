@@ -875,11 +875,12 @@ export type TCodeFromApi = {
   chassis: string | null
   manufacturerId?: string | null
   seriesId?: string | null
+  systemManufacturerName?: string | null
+  systemSerieName?: string | null
+  systemModelName?: string | null
 }
 
 export type TCodesSyncResponse = {
   totalApiRecords: number
   newRecordsAdded: number
 }
-
-

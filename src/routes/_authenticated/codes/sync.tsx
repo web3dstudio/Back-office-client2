@@ -6,11 +6,12 @@ import StyledPaper from '../../../components/StyledPaper'
 import { useState, useEffect, useMemo, useCallback } from 'react'
 import type { ColumnDef } from '@tanstack/react-table'
 import SyncTable from '../../../components/Codes/SyncTable'
-import { useCodesFromApiQuery, useCodesSyncQuery } from '../../../query/codesFromApi.query'
+import { useCodesFromApiQuery, useCodesSyncQuery, useCodeAddMutation, useCodeDeleteMutation } from '../../../query/codesFromApi.query'
 import { useManufacturersWithSeriesAndModelsQuery } from '../../../query/manufacturers.query'
 import { useCarTypesQuery } from '../../../query/carTypes.query'
 import { useChassisQuery } from '../../../query/chassis.query'
 import type { TCodeFromApi } from '../../../types'
+import type { TCodeCreate } from '../../../query/codes.query'
 
 
 export const Route = createFileRoute('/_authenticated/codes/sync')({
@@ -20,6 +21,170 @@ export const Route = createFileRoute('/_authenticated/codes/sync')({
 type YearOption = {
   id: string
   name: string
+}
+
+const DebouncedTextField = ({ value, onChange, debounce = 500, ...props }: { value: string, onChange: (value: string) => void, debounce?: number } & Omit<React.ComponentProps<typeof TextField>, 'onChange'>) => {
+  const [localValue, setLocalValue] = useState(value)
+
+  useEffect(() => {
+    setLocalValue(value)
+  }, [value])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (localValue !== value) {
+        onChange(localValue)
+      }
+    }, debounce)
+
+    return () => clearTimeout(timeout)
+  }, [localValue, debounce, onChange, value])
+
+  return (
+    <TextField
+      {...props}
+      value={localValue}
+      onChange={(e) => setLocalValue(e.target.value)}
+      size="small"
+      variant="standard"
+      fullWidth
+      sx={{
+        '& .MuiInputBase-root': {
+          fontSize: '0.875rem',
+          '&:before': {
+            display: 'none',
+          },
+          '&:after': {
+            display: 'none',
+          },
+        },
+      }}
+    />
+  )
+}
+
+// Memoized Select Components to prevent re-renders
+const ManufacturerSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manufacturers: any[], setRows: React.Dispatch<React.SetStateAction<TCodeFromApi[]>> }) => {
+  const handleChange = useCallback((e: any) => {
+    const newValue = e.target.value as string
+    setRows(prevRows =>
+      prevRows.map(r =>
+        r.id === row.id
+          ? { ...r, manufacturerId: newValue || null, seriesId: null, modelId: null }
+          : r
+      )
+    )
+  }, [row.id, setRows])
+
+  return (
+    <FormControl size="small" fullWidth>
+      <Select
+        value={row.manufacturerId || ''}
+        onChange={handleChange}
+        displayEmpty
+        variant="standard"
+        disableUnderline
+        size='small'
+        sx={{
+          border: 'none',
+          fontSize: '0.875rem',
+          '&:before': { display: 'none' },
+          '&:after': { display: 'none' },
+        }}
+      >
+        {manufacturers?.map((m) => (
+          <MenuItem key={m.id} value={m.id}>
+            {m.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )
+}
+
+const SeriesSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manufacturers: any[], setRows: React.Dispatch<React.SetStateAction<TCodeFromApi[]>> }) => {
+  const manufacturer = useMemo(() => manufacturers?.find(m => m.id === row.manufacturerId), [manufacturers, row.manufacturerId])
+  const serieses = manufacturer?.serieses || []
+
+  const handleChange = useCallback((e: any) => {
+    const newValue = e.target.value as string
+    setRows(prevRows =>
+      prevRows.map(r =>
+        r.id === row.id
+          ? { ...r, seriesId: newValue || null, modelId: null }
+          : r
+      )
+    )
+  }, [row.id, setRows])
+
+  return (
+    <FormControl size="small" fullWidth>
+      <Select
+        value={row.seriesId || ''}
+        disabled={!row.manufacturerId}
+        onChange={handleChange}
+        displayEmpty
+        variant="standard"
+        disableUnderline
+        size='small'
+        sx={{
+          border: 'none',
+          fontSize: '0.875rem',
+          '&:before': { display: 'none' },
+          '&:after': { display: 'none' },
+        }}
+      >
+        {serieses.map((s: any) => (
+          <MenuItem key={s.id} value={s.id}>
+            {s.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )
+}
+
+const ModelSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manufacturers: any[], setRows: React.Dispatch<React.SetStateAction<TCodeFromApi[]>> }) => {
+  const manufacturer = useMemo(() => manufacturers?.find(m => m.id === row.manufacturerId), [manufacturers, row.manufacturerId])
+  const serie = useMemo(() => manufacturer?.serieses?.find((s: any) => s.id === row.seriesId), [manufacturer, row.seriesId])
+  const models = serie?.models || []
+
+  const handleChange = useCallback((e: any) => {
+    const newValue = e.target.value as string
+    setRows(prevRows =>
+      prevRows.map(r =>
+        r.id === row.id
+          ? { ...r, modelId: newValue || null }
+          : r
+      )
+    )
+  }, [row.id, setRows])
+
+  return (
+    <FormControl size="small" fullWidth>
+      <Select
+        value={row.modelId || ''}
+        disabled={!row.seriesId}
+        onChange={handleChange}
+        displayEmpty
+        variant="standard"
+        disableUnderline
+        size='small'
+        sx={{
+          border: 'none',
+          fontSize: '0.875rem',
+          '&:before': { display: 'none' },
+          '&:after': { display: 'none' },
+        }}
+      >
+        {models.map((m: any) => (
+          <MenuItem key={m.id} value={m.id}>
+            {m.name}
+          </MenuItem>
+        ))}
+      </Select>
+    </FormControl>
+  )
 }
 
 function SyncPage() {
@@ -81,13 +246,69 @@ function SyncPage() {
     return description
   }
 
+  const { mutate: addCodeMutation } = useCodeAddMutation()
+  const { mutate: deleteCodeMutation } = useCodeDeleteMutation()
+
   const addCode = (row: TCodeFromApi) => {
-    console.log(row)
-    // TODO: Add logic
+    const payload: TCodeCreate = {
+      carTypeId: row.carTypeId!,
+      innerCarTypeCode: row.manufacturerCode.padStart(5, '0') + '-' + row.modelCode.padStart(5, '0'),
+      manufacturerId: row.manufacturerId!,
+      seriesId: row.seriesId!,
+      modelId: row.modelId!,
+      innerCode: row.innerCode!,
+      innerSubCode: row.innerSubCode || '',
+      isAuto: row.automaticTransmission ? '1' : '0',
+      chassis: row.chassis,
+      year: row.yearOfManufacture,
+      fromYear: row.fromYear || row.yearOfManufacture,
+      toYear: row.toYear || row.yearOfManufacture,
+      modelDescription: row.modelDescription || generateModelDescription(row),
+      description: row.description || '',
+    }
+
+    addCodeMutation(payload, {
+      onSuccess: (newCode) => {
+        // syncRefetch()
+        const manufacturer = manufacturers?.find(m => m.id === row.manufacturerId)
+        const serie = manufacturer?.serieses?.find((s: any) => s.id === row.seriesId)
+        const model = serie?.models?.find((m: any) => m.id === row.modelId)
+
+        setRows(prevRows => prevRows.map(r =>
+          r.id === row.id
+            ? {
+              ...r,
+              codeId: newCode.id,
+              systemManufacturerName: manufacturer?.name,
+              systemSerieName: serie?.name,
+              systemModelName: model?.name,
+              modelDescription: row.modelDescription || generateModelDescription(row)
+            }
+            : r
+        ))
+      }
+    })
   }
 
   const removeCode = (codeId: string) => {
-    // TODO: Remove logic
+    deleteCodeMutation(codeId, {
+      onSuccess: () => {
+        setRows(prevRows => prevRows.map(r =>
+          r.codeId === codeId
+            ? {
+              ...r,
+              codeId: '00000000-0000-0000-0000-000000000000',
+              carTypeId: null,
+              chassis: null,
+              modelId: null,
+              innerCode: null,
+              seriesId: null,
+              manufacturerId: null
+            }
+            : r
+        ))
+      }
+    })
   }
 
   const columns = useMemo<ColumnDef<TCodeFromApi>[]>(() => [
@@ -137,16 +358,45 @@ function SyncPage() {
       accessorKey: 'manufacturerId',
       header: t('manufacturerName', { ns: 'codes' }),
       size: 200,
+      cell: ({ row }) => {
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          return row.original.systemManufacturerName || row.original.manufacturerName || ''
+        }
+        return (
+          <ManufacturerSelect row={row.original} manufacturers={manufacturers || []} setRows={setRows} />
+        )
+      },
     },
     {
       accessorKey: 'seriesId',
       header: t('series', { ns: 'newCode' }),
       size: 200,
+      cell: ({ row }) => {
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          return row.original.systemSerieName || row.original.serieName || ''
+        }
+
+        return (
+          <SeriesSelect row={row.original} manufacturers={manufacturers || []} setRows={setRows} />
+        )
+      },
     },
     {
       accessorKey: 'modelId',
       header: t('modelName', { ns: 'codes' }),
       size: 200,
+      cell: ({ row }) => {
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          return row.original.systemModelName || row.original.modelName || ''
+        }
+
+        return (
+          <ModelSelect row={row.original} manufacturers={manufacturers || []} setRows={setRows} />
+        )
+      },
     },
     {
       accessorKey: 'carTypeId',
@@ -265,10 +515,9 @@ function SyncPage() {
           return currentValue
         }
         return (
-          <TextField
-            defaultValue={currentValue}
-            onBlur={(e) => {
-              const value = e.target.value
+          <DebouncedTextField
+            value={currentValue}
+            onChange={(value: string) => {
               setRows(prevRows =>
                 prevRows.map(r =>
                   r.id === row.original.id
@@ -276,20 +525,6 @@ function SyncPage() {
                     : r
                 )
               )
-            }}
-            size="small"
-            variant="standard"
-            fullWidth
-            sx={{
-              '& .MuiInputBase-root': {
-                fontSize: '0.875rem',
-                '&:before': {
-                  display: 'none',
-                },
-                '&:after': {
-                  display: 'none',
-                },
-              },
             }}
           />
         )
@@ -411,6 +646,8 @@ function SyncPage() {
             <Button
               disabled={
                 !row.original.innerCode
+                || !row.original.manufacturerId
+                || !row.original.seriesId
                 || !row.original.modelId
                 || !row.original.carTypeId
               }
@@ -498,6 +735,24 @@ function SyncPage() {
             { label: 'Imported', startIndex: 0, endIndex: 7, hasBackground: true },
             { label: 'Levi Data', startIndex: 8, endIndex: 15, hasBackground: false }
           ]}
+          getRowSx={(row) => {
+            const isSynced = row.codeId && row.codeId !== '00000000-0000-0000-0000-000000000000'
+
+            if (isSynced) return {}
+
+            const isReady =
+              row.innerCode &&
+              row.manufacturerId &&
+              row.seriesId &&
+              row.modelId &&
+              row.carTypeId
+
+            if (isReady) {
+              return { backgroundColor: 'rgba(25, 118, 210, 0.08)' } // Light primary blue
+            }
+
+            return { backgroundColor: 'rgba(255, 0, 0, 0.1)' }
+          }}
         />
       </StyledPaper>
     </Grid>
