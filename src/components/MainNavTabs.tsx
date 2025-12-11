@@ -10,8 +10,13 @@ import AdvertisementsPageIcon from '../assets/icons/nav/AdvertisementsPageIcon'
 import ServiceCallsPageIcon from '../assets/icons/nav/ServiceCallsPageIcon'
 import MainNavTabItem from './MainNavTabItem'
 import MainNavTabItemSubmenu from './MainNavTabItemSubmenu'
+import { checkUserPermission, CARS_ROLE, CUSTOMERS_ROLE, SETTINGS_ROLE, ADVERTISING_ROLE } from '../utils/roles'
 
-function MainNavTabs() {
+interface MainNavTabsProps {
+  userRole: number
+}
+
+function MainNavTabs({ userRole }: MainNavTabsProps) {
 
   const { t } = useTranslation()
 
@@ -30,6 +35,7 @@ function MainNavTabs() {
       role='navigation'
       aria-label='main navigation'
     >
+      {/* mainPage - всегда показывается */}
       <MainNavTabItem
         click={() => setValue(0)}
         to='/'
@@ -37,40 +43,54 @@ function MainNavTabs() {
         label={t('slidebar.mainPage', { ns: 'common' })}
       />
 
-      <MainNavTabItem
-        click={() => setValue(1)}
-        to='/opinions'
-        icon={<OptionsPageIcon />}
-        label={t('slidebar.options', { ns: 'common' })}
-      />
+      {/* opinions - требует CARS_ROLE (8) */}
+      {checkUserPermission(CARS_ROLE, userRole) && (
+        <MainNavTabItem
+          click={() => setValue(1)}
+          to='/opinions'
+          icon={<OptionsPageIcon />}
+          label={t('slidebar.options', { ns: 'common' })}
+        />
+      )}
 
+      {/* priceList - всегда показывается (открывает подменю) */}
       <MainNavTabItemSubmenu
         click={() => setValue(2)}
         icon={<PriceListPageIcon />}
         label={t('slidebar.priceList', { ns: 'common' })}
       />
 
-      <MainNavTabItem
-        click={() => setValue(3)}
-        to='/customers'
-        icon={<CustomersPageIcon />}
-        label={t('slidebar.customers', { ns: 'common' })}
-      />
+      {/* customers - требует CUSTOMERS_ROLE (2) */}
+      {checkUserPermission(CUSTOMERS_ROLE, userRole) && (
+        <MainNavTabItem
+          click={() => setValue(3)}
+          to='/customers'
+          icon={<CustomersPageIcon />}
+          label={t('slidebar.customers', { ns: 'common' })}
+        />
+      )}
 
-      <MainNavTabItem
-        click={() => setValue(4)}
-        to='/codes'
-        icon={<CodesPageIcon />}
-        label={t('slidebar.codesSystem', { ns: 'common' })}
-      />
+      {/* codesSystem - требует SETTINGS_ROLE (256) */}
+      {checkUserPermission(SETTINGS_ROLE, userRole) && (
+        <MainNavTabItem
+          click={() => setValue(4)}
+          to='/codes'
+          icon={<CodesPageIcon />}
+          label={t('slidebar.codesSystem', { ns: 'common' })}
+        />
+      )}
 
-      <MainNavTabItem
-        click={() => setValue(5)}
-        to='/advertisements'
-        icon={<AdvertisementsPageIcon />}
-        label={t('slidebar.advertisement', { ns: 'common' })}
-      />
+      {/* advertisement - требует ADVERTISING_ROLE (4) */}
+      {checkUserPermission(ADVERTISING_ROLE, userRole) && (
+        <MainNavTabItem
+          click={() => setValue(5)}
+          to='/advertisements'
+          icon={<AdvertisementsPageIcon />}
+          label={t('slidebar.advertisement', { ns: 'common' })}
+        />
+      )}
 
+      {/* serviceCalls - всегда показывается */}
       <MainNavTabItem
         click={() => setValue(6)}
         to='/service-calls'

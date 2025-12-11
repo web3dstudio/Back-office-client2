@@ -111,7 +111,7 @@ export default function Layout() {
       >
         <Toolbar />
         <Box sx={{ overflow: 'auto' }}>
-          <MainNavTabs />
+          <MainNavTabs userRole={currentUserData?.role ?? 0} />
         </Box>
       </Drawer>
 
