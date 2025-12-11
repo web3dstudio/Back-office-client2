@@ -8,9 +8,9 @@ export const TECHSUPPORT_ROLE = 64
 export const REPORTS_ROLE = 128
 export const SETTINGS_ROLE = 256
 
-export const checkUserPermission = (permissionLevel: number | undefined, userRole: number): boolean => {
+export const checkUserPermission = (permissionLevel = 0, userRole: number) => {
   if (!permissionLevel || permissionLevel === 0) return true
-  // Проверяем, что все биты permissionLevel присутствуют в userRole
-  // Используем побитовое И (&) вместо ИЛИ (|)
   return (userRole & permissionLevel) === permissionLevel
 }
+
+

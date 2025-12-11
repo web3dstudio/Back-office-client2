@@ -10,15 +10,14 @@ import AdvertisementsPageIcon from '../assets/icons/nav/AdvertisementsPageIcon'
 import ServiceCallsPageIcon from '../assets/icons/nav/ServiceCallsPageIcon'
 import MainNavTabItem from './MainNavTabItem'
 import MainNavTabItemSubmenu from './MainNavTabItemSubmenu'
+import { useCurrentUserQuery } from '../query/user.query'
 import { checkUserPermission, CARS_ROLE, CUSTOMERS_ROLE, SETTINGS_ROLE, ADVERTISING_ROLE } from '../utils/roles'
 
-interface MainNavTabsProps {
-  userRole: number
-}
-
-function MainNavTabs({ userRole }: MainNavTabsProps) {
+function MainNavTabs() {
 
   const { t } = useTranslation()
+  const { data: currentUser } = useCurrentUserQuery()
+  const userRole = currentUser?.role ?? 0
 
   const [value, setValue] = useState(0)
 
