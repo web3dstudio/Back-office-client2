@@ -276,8 +276,8 @@ function CatalogPage() {
             />
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
-            <Button 
-              variant="outlined" 
+            <Button
+              variant="outlined"
               onClick={() => {
                 setModelCode('')
                 setCarType(null)
@@ -288,11 +288,11 @@ function CatalogPage() {
             >
               {t('refresh', { ns: 'carCatalog' })}
             </Button>
-            <Button variant="outlined" onClick={() => {}}>
+            <Button variant="outlined" onClick={() => { }}>
               {t('duplicate', { ns: 'carCatalog' })}
             </Button>
-            <Button 
-              variant="outlined" 
+            <Button
+              variant="outlined"
               onClick={() => {
                 navigate({ to: '/catalog/prices' })
               }}

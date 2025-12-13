@@ -682,6 +682,16 @@ export type TCarPrice = {
   calculateDate: number
 }
 
+export type TPriceChange = {
+  id: string
+  parameter: number
+  entityId: string | null
+  change: number // Процент изменения (110.0 = +10%, 90.0 = -10%)
+  type: number // FIX_CHANGE или ONE_TIME_CHANGE
+  from?: string | null
+  to?: string | null
+}
+
 export type TSystemSettings = {
   id: string
   twoFA: boolean
