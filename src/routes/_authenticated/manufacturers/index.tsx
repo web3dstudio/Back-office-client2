@@ -206,7 +206,9 @@ function ManufacturersPage() {
           globalFilterFn={(row, _columnId, filterValue) => {
             const nameMatch = row.original.name?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
             const engNameMatch = row.original.engName?.toString().toLowerCase().includes(filterValue.toLowerCase()) || false
-            const codesMatch = row.original.codes?.some((code: ManufacturerCode) => code.code?.toLowerCase().includes(filterValue.toLowerCase())) || false
+            const codesMatch = row.original.codes?.some((code: ManufacturerCode) =>
+              code.code && code.code.toLowerCase().includes(filterValue.toLowerCase())
+            ) || false
             return nameMatch || engNameMatch || codesMatch
           }}
         />
