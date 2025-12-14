@@ -21,11 +21,19 @@ export function useCodesFromApiQuery(): UseQueryResult<TCodeFromApi[], Error> {
 }
 
 export function useCodesSyncQuery(years: string[]): UseQueryResult<TCodesSyncResponse, Error> {
+  const queryClient = useQueryClient()
+  const { t } = useTranslation('notifications')
+
   return useQuery({
     queryKey: ['syncCodes', years],
     queryFn: async (): Promise<TCodesSyncResponse> => {
       const query = years.length ? `?years=${years.join(',')}` : ''
       const response = await axiosAPI.get(`/codesFromApi/sync${query}`)
+
+      // После успешного запроса инвалидируем кеш и показываем toast
+      queryClient.invalidateQueries({ queryKey: ['codesFromApi'] })
+      toast.success(t('codes_sync_successfully', { defaultValue: 'Codes sync successfully!' }))
+
       return response.data
     },
     refetchOnWindowFocus: false,

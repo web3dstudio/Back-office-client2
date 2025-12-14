@@ -201,7 +201,7 @@ function SyncPage() {
   const isLoading = codesIsLoading || manufacturersIsLoading || carTypesIsLoading || chassisIsLoading
 
   const selectedYearsNames = useMemo(() => selectedYears.map(y => y.name), [selectedYears])
-  const { refetch: syncRefetch } = useCodesSyncQuery(selectedYearsNames)
+  const { refetch: syncRefetch, isFetching: isSyncing } = useCodesSyncQuery(selectedYearsNames)
 
   useEffect(() => {
     const start = 1995
@@ -721,6 +721,7 @@ function SyncPage() {
               onClick={getNewCodes}
               variant="contained"
               fullWidth
+              loading={isSyncing}
             >
               {t('import', { ns: 'codes' })}
             </Button>
