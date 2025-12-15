@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, ModelCode } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -32,10 +32,11 @@ interface Props {
 type TFormInput = {
   carType: TCarType | null
   category: TCategory | null
+  country: TCountry | null
   manufacturer: TManufacturer | null
   series: TSerie | null
   model: TModel | null
-  code: string | null
+  code: ModelCode | null
   details: string | null
   manufacturerYear: number | null
   extraPrice: number | null
@@ -69,8 +70,11 @@ export default function CarForm({ data }: Props) {
   const defaultValues = useMemo(() => ({
     carType: data?.carType || null,
     category: data?.category || null,
+    country: data?.country || null,
+    manufacturer: (data?.model as any)?.series?.manufacturer || null,
+    series: (data?.model as any)?.series || null,
     model: data?.model || null,
-    code: data?.model?.code || '',
+    code: data?.codeId && data?.model?.codes ? data.model.codes.find(c => c.id === data.codeId) || null : null,
     details: data?.details || '',
     manufacturerYear: data?.manufacturerYear || null,
     extraPrice: data?.extraPrice || 0,
@@ -141,6 +145,8 @@ export default function CarForm({ data }: Props) {
   // Следим за изменениями полей
   const selectedManufacturer = useWatch({ control, name: 'manufacturer' })
   const selectedSeries = useWatch({ control, name: 'series' })
+  const selectedModel = useWatch({ control, name: 'model' })
+  const selectedCarType = useWatch({ control, name: 'carType' })
 
   // Массив годов от текущего до 1960
   const currentYear = new Date().getFullYear();
@@ -160,8 +166,43 @@ export default function CarForm({ data }: Props) {
     return series?.models || []
   }, [selectedSeries, seriesOptions])
 
+  // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
+  const codeOptions = useMemo(() => {
+    if (!selectedModel?.codes) return []
+    if (!selectedCarType) return selectedModel.codes
+    return selectedModel.codes.filter(code => code.carTypeId === selectedCarType.id)
+  }, [selectedModel, selectedCarType])
+
+  // Сбрасываем код, если он не попадает в отфильтрованный список
+  const selectedCode = useWatch({ control, name: 'code' })
+  useEffect(() => {
+    if (selectedCode && codeOptions.length > 0) {
+      const codeExists = codeOptions.some(code => code.id === selectedCode.id)
+      if (!codeExists) {
+        setValue('code', null)
+      }
+    }
+  }, [codeOptions, selectedCode, setValue])
 
   useEffect(() => {
+    // Сначала пробуем использовать данные напрямую из data.model.series.manufacturer
+    if (data?.model && (data.model as any).series?.manufacturer) {
+      const manufacturer = (data.model as any).series.manufacturer
+      const series = (data.model as any).series
+      setValue('manufacturer', manufacturer)
+      setValue('series', series)
+
+      // Загружаем code если есть
+      if (data.codeId && data.model.codes) {
+        const code = data.model.codes.find(c => c.id === data.codeId)
+        if (code) {
+          setValue('code', code)
+        }
+      }
+      return
+    }
+
+    // Если данных нет, ищем в загруженных manufacturers
     if (data?.model?.id && manufacturers) {
       for (const manufacturer of manufacturers) {
         for (const series of manufacturer.serieses || []) {
@@ -169,6 +210,14 @@ export default function CarForm({ data }: Props) {
           if (model) {
             setValue('manufacturer', manufacturer)
             setValue('series', series)
+
+            // Загружаем code если есть
+            if (data.codeId && model.codes) {
+              const code = model.codes.find(c => c.id === data.codeId)
+              if (code) {
+                setValue('code', code)
+              }
+            }
             break
           }
         }
@@ -257,11 +306,14 @@ export default function CarForm({ data }: Props) {
                 loading={isCarTypesLoading}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
+                onUserChange={() => {
+                  setValue('code', null)
+                }}
               />
             </Grid>
             <Grid size={3}>
               <AppControlledAutocomplete<TCategory>
-                name='carType'
+                name='category'
                 control={control}
                 options={categories || []}
                 label={t('category', { ns: 'newCar' })}
@@ -288,7 +340,7 @@ export default function CarForm({ data }: Props) {
                 onUserChange={() => {
                   setValue('series', null)
                   setValue('model', null)
-                  setValue('code', '')
+                  setValue('code', null)
                 }}
               />
             </Grid>
@@ -305,7 +357,7 @@ export default function CarForm({ data }: Props) {
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onUserChange={() => {
                   setValue('model', null)
-                  setValue('code', '')
+                  setValue('code', null)
                 }}
               />
             </Grid>
@@ -320,17 +372,29 @@ export default function CarForm({ data }: Props) {
                 loading={isManufacturersLoading}
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
-                onUserChange={(data) => {
-                  setValue('code', data?.code || '')
+                onUserChange={() => {
+                  setValue('code', null)
                 }}
               />
             </Grid>
             <Grid size={3}>
-              <AppControlledTextField
+              <AppControlledAutocomplete<ModelCode>
                 name='code'
                 control={control}
+                options={codeOptions}
                 label={t('modelCode', { ns: 'newCar' })}
                 placeholder={t('modelCode', { ns: 'newCar' })}
+                disabled={!selectedModel}
+                getOptionLabel={(option) => option.innerCode}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onUserChange={(code) => {
+                  if (code) {
+                    const matchingCarType = carTypes?.find(ct => ct.id === code.carTypeId)
+                    if (matchingCarType && (!selectedCarType || code.carTypeId !== selectedCarType.id)) {
+                      setValue('carType', matchingCarType)
+                    }
+                  }
+                }}
               />
             </Grid>
           </Grid>

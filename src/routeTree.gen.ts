@@ -74,6 +74,7 @@ import { Route as AuthenticatedReportsDeductedModelsIndexRouteImport } from './r
 import { Route as AuthenticatedReportsCatalogItemsIndexRouteImport } from './routes/_authenticated/reports/catalog-items/index'
 import { Route as AuthenticatedReportsCarByYearsIndexRouteImport } from './routes/_authenticated/reports/car-by-years/index'
 import { Route as AuthenticatedPriceListAdvertisementsIndexRouteImport } from './routes/_authenticated/price-list/advertisements/index'
+import { Route as AuthenticatedCatalogEditIndexRouteImport } from './routes/_authenticated/catalog/edit/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 import { Route as AuthenticatedCatalogEditIdRouteImport } from './routes/_authenticated/catalog/edit/$id'
 
@@ -451,6 +452,12 @@ const AuthenticatedPriceListAdvertisementsIndexRoute =
     path: '/price-list/advertisements/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedCatalogEditIndexRoute =
+  AuthenticatedCatalogEditIndexRouteImport.update({
+    id: '/catalog/edit/',
+    path: '/catalog/edit/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedManufacturersEditIdRoute =
   AuthenticatedManufacturersEditIdRouteImport.update({
     id: '/manufacturers/edit/$id',
@@ -519,6 +526,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof PublicLoginIndexRoute
   '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/catalog/edit': typeof AuthenticatedCatalogEditIndexRoute
   '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
   '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsIndexRoute
   '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsIndexRoute
@@ -585,6 +593,7 @@ export interface FileRoutesByTo {
   '/login': typeof PublicLoginIndexRoute
   '/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/catalog/edit': typeof AuthenticatedCatalogEditIndexRoute
   '/price-list/advertisements': typeof AuthenticatedPriceListAdvertisementsIndexRoute
   '/reports/car-by-years': typeof AuthenticatedReportsCarByYearsIndexRoute
   '/reports/catalog-items': typeof AuthenticatedReportsCatalogItemsIndexRoute
@@ -655,6 +664,7 @@ export interface FileRoutesById {
   '/_public/login/': typeof PublicLoginIndexRoute
   '/_authenticated/catalog/edit/$id': typeof AuthenticatedCatalogEditIdRoute
   '/_authenticated/manufacturers/edit/$id': typeof AuthenticatedManufacturersEditIdRoute
+  '/_authenticated/catalog/edit/': typeof AuthenticatedCatalogEditIndexRoute
   '/_authenticated/price-list/advertisements/': typeof AuthenticatedPriceListAdvertisementsIndexRoute
   '/_authenticated/reports/car-by-years/': typeof AuthenticatedReportsCarByYearsIndexRoute
   '/_authenticated/reports/catalog-items/': typeof AuthenticatedReportsCatalogItemsIndexRoute
@@ -724,6 +734,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
+    | '/catalog/edit'
     | '/price-list/advertisements'
     | '/reports/car-by-years'
     | '/reports/catalog-items'
@@ -790,6 +801,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/catalog/edit/$id'
     | '/manufacturers/edit/$id'
+    | '/catalog/edit'
     | '/price-list/advertisements'
     | '/reports/car-by-years'
     | '/reports/catalog-items'
@@ -859,6 +871,7 @@ export interface FileRouteTypes {
     | '/_public/login/'
     | '/_authenticated/catalog/edit/$id'
     | '/_authenticated/manufacturers/edit/$id'
+    | '/_authenticated/catalog/edit/'
     | '/_authenticated/price-list/advertisements/'
     | '/_authenticated/reports/car-by-years/'
     | '/_authenticated/reports/catalog-items/'
@@ -1334,6 +1347,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPriceListAdvertisementsIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/catalog/edit/': {
+      id: '/_authenticated/catalog/edit/'
+      path: '/catalog/edit'
+      fullPath: '/catalog/edit'
+      preLoaderRoute: typeof AuthenticatedCatalogEditIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/manufacturers/edit/$id': {
       id: '/_authenticated/manufacturers/edit/$id'
       path: '/manufacturers/edit/$id'
@@ -1445,6 +1465,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsersIndexRoute: typeof AuthenticatedUsersIndexRoute
   AuthenticatedCatalogEditIdRoute: typeof AuthenticatedCatalogEditIdRoute
   AuthenticatedManufacturersEditIdRoute: typeof AuthenticatedManufacturersEditIdRoute
+  AuthenticatedCatalogEditIndexRoute: typeof AuthenticatedCatalogEditIndexRoute
   AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
 }
 
@@ -1505,6 +1526,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsersIndexRoute: AuthenticatedUsersIndexRoute,
   AuthenticatedCatalogEditIdRoute: AuthenticatedCatalogEditIdRoute,
   AuthenticatedManufacturersEditIdRoute: AuthenticatedManufacturersEditIdRoute,
+  AuthenticatedCatalogEditIndexRoute: AuthenticatedCatalogEditIndexRoute,
   AuthenticatedPriceListAdvertisementsIndexRoute:
     AuthenticatedPriceListAdvertisementsIndexRoute,
 }

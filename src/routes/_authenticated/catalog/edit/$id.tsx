@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, redirect } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import AppLoading from '../../../../components/AppLoading'
 import { useCarQuery } from '../../../../query/car.query'
@@ -8,6 +8,13 @@ import AppBackBtn from '../../../../components/AppBackBtn'
 
 export const Route = createFileRoute('/_authenticated/catalog/edit/$id')({
   component: EditCarPage,
+  beforeLoad: ({ params }) => {
+    if (!params.id || params.id.trim() === '') {
+      throw redirect({
+        to: '/catalog',
+      })
+    }
+  },
 })
 
 function EditCarPage() {
@@ -21,7 +28,7 @@ function EditCarPage() {
 
     <Grid container spacing={3} >
       <Grid size={12}>
-        <AppBackBtn children={t('back', { ns: 'common' })} />
+        <AppBackBtn children={t('back', { ns: 'common' })} to="/catalog" />
       </Grid>
       <Grid
         size={12}

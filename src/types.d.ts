@@ -122,6 +122,14 @@ export type ManufacturerCodeUpsertDto = {
   code: string
 }
 
+export type ModelCode = {
+  id: string
+  innerCode: string
+  innerCarTypeCode: string
+  year: number
+  carTypeId: string;
+}
+
 export type TManufacturer = {
   id: string
   name: string
@@ -149,11 +157,9 @@ export type TModel = {
   priority: number
   name: string
   dbId?: string | null // вспомогательное поле для сортировки
-  code: string // код модели (внутренний)
+  codes?: ModelCode[] // массив кодов модели
   volume: number // объем двигателя
   modelCode: string // добавить в сущность
-
-
 
   manufacturerCode: string // код модели (МинТранспорта)
   series: TSerie | null
@@ -624,7 +630,7 @@ export type TCar = {
   carType: TCarType | null
   category: TCategory | null
   model: TModel | null
-  code: string | null
+  codeId: string | null // id кода модели
   details: string | null
   manufacturerYear: number | null
   extraPrice: number | null
