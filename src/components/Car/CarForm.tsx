@@ -70,7 +70,7 @@ export default function CarForm({ data }: Props) {
   const defaultValues = useMemo(() => ({
     carType: data?.carType || null,
     category: data?.category || null,
-    country: data?.country || null,
+    country: data?.country || (countries && countries.length > 0 ? countries[0] : null),
     manufacturer: (data?.model as any)?.series?.manufacturer || null,
     series: (data?.model as any)?.series || null,
     model: data?.model || null,
@@ -111,7 +111,7 @@ export default function CarForm({ data }: Props) {
       value: 0
     })) || [],
     additionalLines: data?.additionalLines || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data])
+  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data, countries])
 
 
   const schema = object()
@@ -169,8 +169,13 @@ export default function CarForm({ data }: Props) {
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
     if (!selectedModel?.codes) return []
-    if (!selectedCarType) return selectedModel.codes
-    return selectedModel.codes.filter(code => code.carTypeId === selectedCarType.id)
+    if (!selectedCarType) {
+      console.log('codeOptions (all codes):', selectedModel.codes)
+      return selectedModel.codes
+    }
+    const filtered = selectedModel.codes.filter(code => code.carTypeId === selectedCarType.id)
+    console.log('codeOptions (filtered by carType):', filtered, 'carTypeId:', selectedCarType.id)
+    return filtered
   }, [selectedModel, selectedCarType])
 
   // Сбрасываем код, если он не попадает в отфильтрованный список
@@ -255,7 +260,7 @@ export default function CarForm({ data }: Props) {
     <FormProvider {...methods}>
       <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
         <Grid container columns={12} columnSpacing={3} sx={{ width: '100%' }}>
-          <Grid size={10}>
+          <Grid size={9}>
             <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={() => {
               if (data?.id) {
                 navigate({ to: '/catalog/$id', params: { id: data?.id } })
@@ -266,7 +271,7 @@ export default function CarForm({ data }: Props) {
               {t('toDetails', { ns: 'newCar' })}
             </Button>
           </Grid>
-          <Grid size={2}>
+          <Grid size={3}>
 
             <AppControlledAutocomplete<TCountry>
               name='country'
@@ -311,6 +316,26 @@ export default function CarForm({ data }: Props) {
                 }}
               />
             </Grid>
+            <Grid size={6}>
+              <AppControlledAutocomplete<ModelCode>
+                name='code'
+                control={control}
+                options={codeOptions}
+                label={t('modelCode', { ns: 'newCar' })}
+                placeholder={t('modelCode', { ns: 'newCar' })}
+                disabled={!selectedModel}
+                getOptionLabel={(option) => `${option.innerCode} (${option.year}, ${option.innerCarTypeCode})`}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+                onUserChange={(code) => {
+                  if (code) {
+                    const matchingCarType = carTypes?.find(ct => ct.id === code.carTypeId)
+                    if (matchingCarType && (!selectedCarType || code.carTypeId !== selectedCarType.id)) {
+                      setValue('carType', matchingCarType)
+                    }
+                  }
+                }}
+              />
+            </Grid>
             <Grid size={3}>
               <AppControlledAutocomplete<TCategory>
                 name='category'
@@ -322,9 +347,6 @@ export default function CarForm({ data }: Props) {
                 getOptionLabel={(option) => option.name}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />
-            </Grid>
-            <Grid size={6}>
-
             </Grid>
             <Grid size={3}>
               <AppControlledAutocomplete<TManufacturer>
@@ -361,7 +383,7 @@ export default function CarForm({ data }: Props) {
                 }}
               />
             </Grid>
-            <Grid size={3}>
+            <Grid size={6}>
               <AppControlledAutocomplete<TModel>
                 name='model'
                 control={control}
@@ -374,26 +396,6 @@ export default function CarForm({ data }: Props) {
                 isOptionEqualToValue={(option, value) => option.id === value.id}
                 onUserChange={() => {
                   setValue('code', null)
-                }}
-              />
-            </Grid>
-            <Grid size={3}>
-              <AppControlledAutocomplete<ModelCode>
-                name='code'
-                control={control}
-                options={codeOptions}
-                label={t('modelCode', { ns: 'newCar' })}
-                placeholder={t('modelCode', { ns: 'newCar' })}
-                disabled={!selectedModel}
-                getOptionLabel={(option) => option.innerCode}
-                isOptionEqualToValue={(option, value) => option.id === value.id}
-                onUserChange={(code) => {
-                  if (code) {
-                    const matchingCarType = carTypes?.find(ct => ct.id === code.carTypeId)
-                    if (matchingCarType && (!selectedCarType || code.carTypeId !== selectedCarType.id)) {
-                      setValue('carType', matchingCarType)
-                    }
-                  }
                 }}
               />
             </Grid>
