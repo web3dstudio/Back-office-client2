@@ -14,6 +14,7 @@ import SortableModel from "./SortableModel";
 import React from "react";
 import { useModelDeleteMutation } from "../../query/models.query";
 import AppConfirmDialog from "../AppDialog/AppConfirmDialog";
+import { useEngineTypesQuery } from "../../query/engineTypes.query";
 
 
 type Props = {
@@ -29,6 +30,7 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 
   const { mutate: deleteModel } = useModelDeleteMutation()
+  const { data: engineTypes } = useEngineTypesQuery()
 
   const { control, formState } = useFormContext<{ serieses: { models: any[] }[] }>();
   const { fields: modelFields, move: moveModel, remove: removeModel, prepend: prependModel } = useFieldArray({
@@ -141,9 +143,15 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
                     <Button
                       variant="contained"
                       onClick={() => {
-                        prependModel({ name: '', code: '', modelCode: '', volume: 0, manufacturerCode: '', dbId: null });
+                        prependModel({
+                          name: '',
+                          volume: 0,
+                          engineType: engineTypes && engineTypes.length > 0 ? engineTypes[0] : null,
+                          manufacturerCode: '',
+                          dbId: null
+                        });
                       }}>
-                      {t('addModel', { ns: 'newManufacturer' })}
+                      {t('add', { ns: 'newManufacturer' })}
                     </Button>
                   </Grid>
                   <Grid size={12}>
@@ -160,10 +168,8 @@ function SortableSerie({ serie, onDelete, serieIndex, filterByCode }: Props) {
                           {modelFields.map((model, modelIndex) => {
                             const show =
                               !filterByCode ||
-                              (model.code || '').toLowerCase().includes(filterByCode.toLowerCase()) ||
                               (
                                 filterByCode &&
-                                (!model.code || model.code === '') &&
                                 (!model.dbId || model.dbId === null)
                               );
                             if (!show) return null;

@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, ModelCode } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TChassis, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -8,21 +8,23 @@ import { useMemo, useEffect } from "react"
 import { Box, Button, Grid, Typography } from "@mui/material"
 import { AppControlledAutocomplete } from "../AppControlledAutocomplete"
 import { useCarTypesQuery } from "../../query/carTypes.query"
+import { useCarUpdateMutation } from "../../query/car.query"
 import { useManufacturersWithSeriesAndModelsQuery } from "../../query/manufacturers.query"
 import AppControlledTextField from "../AppControlledTextField"
 import { useCategoriesQuery } from "../../query/category.query"
 import StyledPaper from "../StyledPaper"
 import { useExtrasQuery } from "../../query/extras.query"
-
 import { useIntegralExtrasQuery } from "../../query/integralExtras.query"
 import { useUpgradePackagesQuery } from "../../query/upgradePackages.query"
 import { useServicePackagesQuery } from "../../query/servicePackages.query"
-
 import AppExtrasMultiselect from "../AppExtrasMultiselect"
 import AppActionButton from "../AppActionButton"
 import { useCountriesQuery } from "../../query/countries.query"
 import { useNavigate } from "@tanstack/react-router"
 import AppControlledCheckbox from "../AppControlledCheckbox"
+import { useGearboxesQuery } from "../../query/gearboxes.query"
+import { useChassisQuery } from "../../query/chassis.query"
+import { useDriveTypesQuery } from "../../query/driveTypes.query"
 
 
 interface Props {
@@ -35,8 +37,20 @@ type TFormInput = {
   country: TCountry | null
   manufacturer: TManufacturer | null
   series: TSerie | null
-  model: TModel | null
-  code: ModelCode | null
+  model: TModel | TCarModel | null
+  code: TCarModelCode | null
+  gearbox: TGearbox | null
+  chassis: TChassis | null
+  driveType: TDriveType | null
+  horsepower: number | null
+  finishingPercentage: number | null
+  factor: number | null
+  acceleration: number | null
+  fuelConsumption: number | null
+  safetyRating: number | null
+  airPollution: number | null
+  yearSpecial: string | null
+  parallelImports: string | null
   details: string | null
   manufacturerYear: number | null
   extraPrice: number | null
@@ -56,6 +70,7 @@ type TFormInput = {
 export default function CarForm({ data }: Props) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const { mutate: updateCar } = useCarUpdateMutation()
 
   const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
   const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
@@ -65,6 +80,27 @@ export default function CarForm({ data }: Props) {
   const { data: upgradePackagesData, isLoading: _isUpgradePackagesLoading } = useUpgradePackagesQuery()
   const { data: servicePackagesData, isLoading: _isServicePackagesLoading } = useServicePackagesQuery()
   const { data: countries, isLoading: isCountriesLoading } = useCountriesQuery()
+  const { data: gearboxes, isLoading: isGearboxesLoading } = useGearboxesQuery()
+  const { data: chassisList, isLoading: isChassisLoading } = useChassisQuery()
+  const { data: driveTypes, isLoading: isDriveTypesLoading } = useDriveTypesQuery()
+
+  const resolvedChassis = useMemo(() => {
+    const raw = (data as any)?.chassis
+    if (!raw) return null
+    // backend may return chassis as id (string) or as object
+    if (typeof raw === 'string') return (chassisList || []).find(c => c.id === raw) || null
+    if (typeof raw === 'object' && typeof raw.id === 'string') return raw as TChassis
+    return null
+  }, [data, chassisList])
+
+  const resolvedDriveType = useMemo(() => {
+    const raw = (data as any)?.driveType
+    if (!raw) return null
+    // backend may return driveType as id (string) or as object
+    if (typeof raw === 'string') return (driveTypes || []).find(d => d.id === raw) || null
+    if (typeof raw === 'object' && typeof raw.id === 'string') return raw as TDriveType
+    return null
+  }, [data, driveTypes])
 
 
   const defaultValues = useMemo(() => ({
@@ -75,43 +111,72 @@ export default function CarForm({ data }: Props) {
     series: (data?.model as any)?.series || null,
     model: data?.model || null,
     code: data?.codeId && data?.model?.codes ? data.model.codes.find(c => c.id === data.codeId) || null : null,
+    gearbox: data?.gearbox || null,
+    chassis: resolvedChassis,
+    driveType: resolvedDriveType,
+    horsepower: data?.horsepower || null,
+    finishingPercentage: (data as any)?.finishingPercentage ?? null,
+    factor: (data as any)?.factor ?? null,
+    acceleration: (data as any)?.acceleration ?? null,
+    fuelConsumption: (data as any)?.fuelConsumption ?? null,
+    safetyRating: (data as any)?.safetyRating ?? null,
+    airPollution: (data as any)?.airPollution ?? null,
+    yearSpecial: (data as any)?.yearSpecial ?? (data as any)?.specialYear ?? null,
+    parallelImports: (data as any)?.parallelImports ?? null,
     details: data?.details || '',
     manufacturerYear: data?.manufacturerYear || null,
     extraPrice: data?.extraPrice || 0,
-    integralExtras: integralExtrasData?.map((item: TIntegralExtra) => ({
-      id: item.id,
-      checked: false,
-      fieldName: item.name,
-      fieldNameEn: item.nameEn,
-      selected: false,
-      value: 0
+    integralExtras: integralExtrasData?.map((item: TIntegralExtra) => {
+      const existingExtra = (data?.integralExtras as any)?.find((extra: any) => extra.integralExtraId === item.id)
+      return {
+        id: item.id,
+        checked: !!existingExtra,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn,
+        selected: !!existingExtra,
+        value: existingExtra ? existingExtra.value || 0 : 0
+      }
+    }) || [],
+    extras: extrasData?.map((item: TExtra) => {
+      const existingExtra = (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
+      return {
+        id: item.id,
+        checked: !!existingExtra,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn,
+        selected: !!existingExtra,
+        value: existingExtra ? existingExtra.value || 0 : 0
+      }
+    }) || [],
+    upgradePackages: upgradePackagesData?.map((item: TUpgradePackage) => {
+      const existingPackage = (data?.upgradePackages as any)?.find((pkg: any) => pkg.upgradePackageId === item.id)
+      return {
+        id: item.id,
+        checked: !!existingPackage,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn,
+        selected: !!existingPackage,
+        value: existingPackage ? existingPackage.value || 0 : 0
+      }
+    }) || [],
+    servicePackages: servicePackagesData?.map((item: TServicePackage) => {
+      const existingPackage = (data?.servicePackages as any)?.find((pkg: any) => pkg.servicePackageId === item.id)
+      return {
+        id: item.id,
+        checked: !!existingPackage,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn,
+        selected: !!existingPackage,
+        value: existingPackage ? existingPackage.value || 0 : 0
+      }
+    }) || [],
+    additionalLines: (data as any)?.carAdditionalLines?.map((line: any) => ({
+      name: line.name || '',
+      percentage: line.percentage || 0,
+      letterText: line.letterText || '',
+      letterNum: line.letterNum?.toString() || ''
     })) || [],
-    extras: extrasData?.map((item: TExtra) => ({
-      id: item.id,
-      checked: false,
-      fieldName: item.name,
-      fieldNameEn: item.nameEn,
-      selected: false,
-      value: 0
-    })) || [],
-    upgradePackages: upgradePackagesData?.map((item: TUpgradePackage) => ({
-      id: item.id,
-      checked: false,
-      fieldName: item.name,
-      fieldNameEn: item.nameEn,
-      selected: false,
-      value: 0
-    })) || [],
-    servicePackages: servicePackagesData?.map((item: TServicePackage) => ({
-      id: item.id,
-      checked: false,
-      fieldName: item.name,
-      fieldNameEn: item.nameEn,
-      selected: false,
-      value: 0
-    })) || [],
-    additionalLines: data?.additionalLines || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data, countries])
+  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data, countries, resolvedChassis, resolvedDriveType])
 
 
   const schema = object()
@@ -168,13 +233,20 @@ export default function CarForm({ data }: Props) {
 
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
-    if (!selectedModel?.codes) return []
-    if (!selectedCarType) {
-      console.log('codeOptions (all codes):', selectedModel.codes)
-      return selectedModel.codes
+    if (!selectedModel?.codes) {
+      console.log('codeOptions: no codes, selectedModel:', selectedModel)
+      return []
     }
-    const filtered = selectedModel.codes.filter(code => code.carTypeId === selectedCarType.id)
-    console.log('codeOptions (filtered by carType):', filtered, 'carTypeId:', selectedCarType.id)
+    const codes = selectedModel.codes as TCarModelCode[]
+    if (!selectedCarType) {
+      console.log('codeOptions (all codes):', codes)
+      return codes
+    }
+    const filtered = codes.filter((code: TCarModelCode) => {
+      // Для TCarModelCode используем carTypeId
+      return code.carTypeId === selectedCarType.id
+    })
+    console.log('codeOptions (filtered by carType):', filtered, 'carTypeId:', selectedCarType.id, 'all codes:', codes)
     return filtered
   }, [selectedModel, selectedCarType])
 
@@ -196,6 +268,7 @@ export default function CarForm({ data }: Props) {
       const series = (data.model as any).series
       setValue('manufacturer', manufacturer)
       setValue('series', series)
+      setValue('model', data.model)
 
       // Загружаем code если есть
       if (data.codeId && data.model.codes) {
@@ -207,7 +280,7 @@ export default function CarForm({ data }: Props) {
       return
     }
 
-    // Если данных нет, ищем в загруженных manufacturers
+    // Если данных нет, ищем в загруженных manufacturers (только для установки manufacturer и series)
     if (data?.model?.id && manufacturers) {
       for (const manufacturer of manufacturers) {
         for (const series of manufacturer.serieses || []) {
@@ -215,14 +288,7 @@ export default function CarForm({ data }: Props) {
           if (model) {
             setValue('manufacturer', manufacturer)
             setValue('series', series)
-
-            // Загружаем code если есть
-            if (data.codeId && model.codes) {
-              const code = model.codes.find(c => c.id === data.codeId)
-              if (code) {
-                setValue('code', code)
-              }
-            }
+            // Не устанавливаем code из manufacturers, т.к. там другой тип кодов
             break
           }
         }
@@ -240,25 +306,115 @@ export default function CarForm({ data }: Props) {
 
 
 
-  const onSubmit = (data: any) => {
+  const onSubmit = (formData: TFormInput) => {
+    if (!data?.id) {
+      console.log('No car ID, cannot update')
+      return
+    }
 
-    // console.log(data)
+    // Фильтруем выбранные extras и преобразуем в формат для API
+    const carIntegralExtras = formData.integralExtras?.filter((item: any) => item.selected).map((item: any) => ({
+      integralExtraId: item.id,
+      value: item.value || 0
+    })) || null;
 
-    // Фильтруем выбранные extras
-    const selectedIntegralExtras = data.integralExtras?.filter((item: any) => item.selected) || [];
-    const selectedExtras = data.extras?.filter((item: any) => item.selected) || [];
-    const selectedUpgradePackages = data.upgradePackages?.filter((item: any) => item.selected) || [];
-    const selectedServicePackages = data.servicePackages?.filter((item: any) => item.selected) || [];
+    const carExtras = formData.extras?.filter((item: any) => item.selected).map((item: any) => ({
+      extraId: item.id,
+      value: item.value || 0
+    })) || null;
 
-    console.log('Selected integral extras:', selectedIntegralExtras)
-    console.log('Selected extras:', selectedExtras)
-    console.log('Selected upgrade packages:', selectedUpgradePackages)
-    console.log('Selected service packages:', selectedServicePackages)
+    const carUpgradePackages = formData.upgradePackages?.filter((item: any) => item.selected).map((item: any) => ({
+      upgradePackageId: item.id,
+      value: item.value || 0
+    })) || null;
+
+    const carServicePackages = formData.servicePackages?.filter((item: any) => item.selected).map((item: any) => ({
+      servicePackageId: item.id,
+      value: item.value || 0
+    })) || null;
+
+    const carAdditionalLines = formData.additionalLines?.map((line: any) => ({
+      name: line.name,
+      percentage: line.percentage,
+      letterText: line.letterText,
+      letterNum: line.letterNum
+    })) || null;
+
+    const horsepowerNumber =
+      formData.horsepower === null || formData.horsepower === undefined || (formData as any).horsepower === ''
+        ? null
+        : Number((formData as any).horsepower)
+
+    const finishingPercentageNumber =
+      formData.finishingPercentage === null || formData.finishingPercentage === undefined || (formData as any).finishingPercentage === ''
+        ? null
+        : Number((formData as any).finishingPercentage)
+
+    const factorNumber =
+      formData.factor === null || formData.factor === undefined || (formData as any).factor === ''
+        ? null
+        : Number((formData as any).factor)
+
+    const accelerationNumber =
+      formData.acceleration === null || formData.acceleration === undefined || (formData as any).acceleration === ''
+        ? null
+        : Number((formData as any).acceleration)
+
+    const fuelConsumptionNumber =
+      formData.fuelConsumption === null || formData.fuelConsumption === undefined || (formData as any).fuelConsumption === ''
+        ? null
+        : Number((formData as any).fuelConsumption)
+
+    const safetyRatingNumber =
+      formData.safetyRating === null || formData.safetyRating === undefined || (formData as any).safetyRating === ''
+        ? null
+        : Number((formData as any).safetyRating)
+
+    const airPollutionNumber =
+      formData.airPollution === null || formData.airPollution === undefined || (formData as any).airPollution === ''
+        ? null
+        : Number((formData as any).airPollution)
+
+    const updateData: CarUpdateRequest = {
+      countryId: formData.country?.id || '',
+      carTypeId: formData.carType?.id || '',
+      categoryId: formData.category?.id || null,
+      modelId: (formData.model as TCarModel)?.id || '',
+      manufacturerYear: formData.manufacturerYear || 0,
+      driveType: formData.driveType?.id || null,
+      gearboxId: formData.gearbox?.id || null,
+      chassis: formData.chassis?.id || null,
+      manufacturerCodeId: null,
+      codeId: formData.code?.id || null,
+      horsepower: horsepowerNumber !== null && Number.isFinite(horsepowerNumber) ? horsepowerNumber : null,
+      fuelConsumption: fuelConsumptionNumber !== null && Number.isFinite(fuelConsumptionNumber) ? fuelConsumptionNumber : null,
+      acceleration: accelerationNumber !== null && Number.isFinite(accelerationNumber) ? accelerationNumber : null,
+      safetyRating: safetyRatingNumber !== null && Number.isFinite(safetyRatingNumber) ? safetyRatingNumber : null,
+      details: formData.details || null,
+      yearSpecial: formData.yearSpecial || null,
+      deletedDate: null,
+      visible: true,
+      newCarPrice: data.newCarPrice || null,
+      extraPrice: formData.extraPrice || null,
+      airPollution: airPollutionNumber !== null && Number.isFinite(airPollutionNumber) ? airPollutionNumber : null,
+      finishingPercentage: finishingPercentageNumber !== null && Number.isFinite(finishingPercentageNumber) ? finishingPercentageNumber : null,
+      parallelImports: formData.parallelImports || null,
+      factor: factorNumber !== null && Number.isFinite(factorNumber) ? factorNumber : null,
+      tos: null,
+      carIntegralExtras,
+      carExtras,
+      carUpgradePackages,
+      carServicePackages,
+      carAdditionalLines,
+      carPrices: data.carPrices || null
+    }
+
+    updateCar({ id: data.id, data: updateData })
   }
 
   return (<>
     <FormProvider {...methods}>
-      <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
+      <form onSubmit={handleSubmit(onSubmit as any)} style={{ width: '100%' }}>
         <Grid container columns={12} columnSpacing={3} sx={{ width: '100%' }}>
           <Grid size={9}>
             <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={() => {
@@ -317,7 +473,7 @@ export default function CarForm({ data }: Props) {
               />
             </Grid>
             <Grid size={6}>
-              <AppControlledAutocomplete<ModelCode>
+              <AppControlledAutocomplete<TCarModelCode>
                 name='code'
                 control={control}
                 options={codeOptions}
@@ -397,6 +553,117 @@ export default function CarForm({ data }: Props) {
                 onUserChange={() => {
                   setValue('code', null)
                 }}
+              />
+            </Grid>
+          </Grid>
+        </StyledPaper>
+        <StyledPaper sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: 3,
+          width: '100%',
+          display: 'flex',
+          gap: 2,
+          marginBottom: 3,
+        }}>
+          <Grid container columns={12} columnSpacing={3} sx={{ width: '100%' }}>
+            <Grid size={3}>
+              <AppControlledAutocomplete<TGearbox>
+                name='gearbox'
+                control={control}
+                options={gearboxes || []}
+                label={t('gearbox', { ns: 'newCar' })}
+                placeholder={t('gearbox', { ns: 'newCar' })}
+                loading={isGearboxesLoading}
+                getOptionLabel={(option) => i18n.language === 'he' ? option.name : (option.nameEn || option.name)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledAutocomplete<TDriveType>
+                name='driveType'
+                control={control}
+                options={driveTypes || []}
+                label={t('driveType', { ns: 'newCar' })}
+                placeholder={t('driveType', { ns: 'newCar' })}
+                loading={isDriveTypesLoading}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledAutocomplete<TChassis>
+                name='chassis'
+                control={control}
+                options={chassisList || []}
+                label={t('chassis', { ns: 'newCar' })}
+                placeholder={t('chassis', { ns: 'newCar' })}
+                loading={isChassisLoading}
+                getOptionLabel={(option) => option.name}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='horsepower'
+                control={control}
+                label={t('horsepower', { ns: 'newCar' })}
+                placeholder={t('horsepower', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='finishingPercentage'
+                control={control}
+                label={t('finishingPercentage', { ns: 'newCar' })}
+                placeholder={t('finishingPercentage', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='factor'
+                control={control}
+                label={t('factor', { ns: 'newCar' })}
+                placeholder={t('factor', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='acceleration'
+                control={control}
+                label={t('acceleration', { ns: 'newCar' })}
+                placeholder={t('acceleration', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='fuelConsumption'
+                control={control}
+                label={t('fuelConsumption', { ns: 'newCar' })}
+                placeholder={t('fuelConsumption', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='safetyRating'
+                control={control}
+                label={t('safetyRating', { ns: 'newCar' })}
+                placeholder={t('safetyRating', { ns: 'newCar' })}
+                type='number'
+              />
+            </Grid>
+            <Grid size={3}>
+              <AppControlledTextField
+                name='airPollution'
+                control={control}
+                label={t('airPollution', { ns: 'newCar' })}
+                placeholder={t('airPollution', { ns: 'newCar' })}
+                type='number'
               />
             </Grid>
           </Grid>
@@ -615,7 +882,7 @@ export default function CarForm({ data }: Props) {
 
             <Grid size={6}>
               <AppControlledTextField
-                name='specialYear'
+                name='yearSpecial'
                 control={control}
                 label={t('specialByYear', { ns: 'newCar' })}
                 placeholder={t('specialByYear', { ns: 'newCar' })}

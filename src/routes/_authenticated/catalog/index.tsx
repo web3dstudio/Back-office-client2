@@ -24,7 +24,7 @@ export const Route = createFileRoute('/_authenticated/catalog/')({
 })
 
 function CatalogPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
 
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
@@ -134,6 +134,11 @@ function CatalogPage() {
       accessorKey: 'gearbox',
       header: t('gearbox', { ns: 'carCatalog' }),
       enableSorting: true,
+      cell: ({ row }) => {
+        const gearbox = row.original.gearbox
+        if (!gearbox) return ''
+        return i18n.language === 'he' ? gearbox.name : (gearbox.nameEn || gearbox.name)
+      },
     },
     {
       id: 'actions',

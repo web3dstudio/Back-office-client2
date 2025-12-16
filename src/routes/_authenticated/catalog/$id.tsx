@@ -177,7 +177,7 @@ function ViewCarPage() {
             <Grid size={6}>
               <InfoBox
                 title={t('modelCode', { ns: 'newCar' })}
-                text={car?.model?.code || NO_DATA}
+                text={car?.model?.codes?.find(code => code.id === car?.codeId)?.innerCode || NO_DATA}
               />
             </Grid>
             <Grid size={6}>
@@ -195,7 +195,7 @@ function ViewCarPage() {
             <Grid size={6}>
               <InfoBox
                 title={t('gearbox', { ns: 'newCar' })}
-                text={car?.model?.gearbox?.name || NO_DATA}
+                text={car?.gearbox ? (i18n.language === 'he' ? car.gearbox.name : (car.gearbox.nameEn || car.gearbox.name)) : NO_DATA}
               />
             </Grid>
             <Grid size={12}>

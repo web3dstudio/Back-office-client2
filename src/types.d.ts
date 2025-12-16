@@ -157,13 +157,19 @@ export type TModel = {
   priority: number
   name: string
   dbId?: string | null // вспомогательное поле для сортировки
-  codes?: ModelCode[] // массив кодов модели
   volume: number // объем двигателя
-  modelCode: string // добавить в сущность
-
   manufacturerCode: string // код модели (МинТранспорта)
   series: TSerie | null
-  gearbox: TGearbox | null
+  engineType: TEngineType | null
+  codes: {
+    id: string
+    year: number
+    innerCode: string
+    innerCarTypeCode: string
+    carTypeName: string
+  }[] | null // массив кодов модели
+
+
 
   // modelType: string
   // yearOfManufacture: number
@@ -624,16 +630,35 @@ export type TCategory = {
   categoryID: string
 }
 
+export type TCarModelCode = {
+  id: string
+  year: number
+  innerCode: string
+  innerCarTypeCode: string
+  carTypeId: string
+}
+
+export type TCarModel = {
+  id: string
+  name: string
+  volume: number
+  series: TSerie | null
+  codes: TCarModelCode[] | null
+}
+
 export type TCar = {
   id: string
   country: TCountry | null
   carType: TCarType | null
   category: TCategory | null
-  model: TModel | null
+  model: TCarModel | null
   codeId: string | null // id кода модели
   details: string | null
   manufacturerYear: number | null
   extraPrice: number | null
+  gearbox: TGearbox | null
+  chassis: TChassis | null
+  horsepower: number | null
   integralExtras: TIntegralExtra[]
   extras: TExtra[]
   upgradePackages: TUpgradePackage[]
@@ -658,7 +683,7 @@ export type TCarsList = {
   fromYear: number
   toYear: number
   volume: number
-  gearbox: string | null
+  gearbox: TGearbox | null
   count: number
 }
 
@@ -686,6 +711,67 @@ export type TCarPrice = {
   year: number
   month: number
   calculateDate: number
+}
+
+export type CarIntegralExtra = {
+  integralExtraId: string
+  value: number
+}
+
+export type CarExtra = {
+  extraId: string
+  value: number
+}
+
+export type CarUpgradePackage = {
+  upgradePackageId: string
+  value: number
+}
+
+export type CarServicePackage = {
+  servicePackageId: string
+  value: number
+}
+
+export type CarAdditionalLine = {
+  name: string
+  percentage: number
+  letterText: string
+  letterNum: string
+}
+
+export type CarUpdateRequest = {
+  countryId: string
+  carTypeId: string
+  categoryId?: string | null
+  modelId: string
+  manufacturerYear: number
+  driveType?: string | null
+  gearboxId?: string | null
+  chassis?: string | null
+  manufacturerCodeId?: string | null
+  codeId?: string | null
+  horsepower?: number | null
+  fuelConsumption?: number | null
+  acceleration?: number | null
+  safetyRating?: number | null
+  details?: string | null
+  yearSpecial?: string | null
+  deletedDate?: string | null
+  visible: boolean
+  newCarPrice?: number | null
+  extraPrice?: number | null
+  airPollution?: number | null
+  finishingPercentage?: number | null
+  parallelImports?: string | null
+  factor?: number | null
+  tos?: string | null
+  carIntegralExtras?: CarIntegralExtra[] | null
+  carExtras?: CarExtra[] | null
+  carUpgradePackages?: CarUpgradePackage[] | null
+  carServicePackages?: CarServicePackage[] | null
+  carAdditionalLines?: CarAdditionalLine[] | null
+  carPrices?: TCarPrice[] | null
 }
 
 export type TPriceChange = {

@@ -1,7 +1,9 @@
-import { type UseQueryResult, useQuery } from "@tanstack/react-query"
+import { type UseQueryResult, type UseMutationResult, useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
-import type { TCar, TCarResponse, TCarYears } from "../types"
+import type { TCar, TCarResponse, TCarYears, CarUpdateRequest } from "../types"
 import type { GridSortModel } from "@mui/x-data-grid"
+import { useTranslation } from "react-i18next"
+import { toast } from "react-toastify"
 
 export function useCarsQuery(page: number, filters: Record<string, string>, sortModel?: GridSortModel): UseQueryResult<TCarResponse, Error> {
   return useQuery({
@@ -64,6 +66,27 @@ export function useCarQuery(id: string): UseQueryResult<TCar, Error> {
     staleTime: Infinity,
     retry: 3,
     enabled: !!id,
+  })
+}
+
+export function useCarUpdateMutation(): UseMutationResult<TCar, Error, { id: string; data: CarUpdateRequest }> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async ({ id, data }: { id: string; data: CarUpdateRequest }): Promise<TCar> => {
+      const response = await axiosAPI.put(`/cars/${id}`, data)
+      return response.data
+    },
+    onSuccess: (_data, variables) => {
+      queryClient.invalidateQueries({ queryKey: ['car', variables.id] })
+      queryClient.invalidateQueries({ queryKey: ['cars'] })
+      toast.success(t('car_updated_successfully') || 'Car updated successfully!')
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
   })
 }
 

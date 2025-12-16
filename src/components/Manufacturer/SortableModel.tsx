@@ -4,9 +4,13 @@ import { CSS } from "@dnd-kit/utilities";
 import { useFormContext } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import AppControlledTextField from "../AppControlledTextField";
+import { AppControlledAutocomplete } from "../AppControlledAutocomplete";
+// import AppControlledCheckboxesTags from "../AppControlledCheckboxesTags";
 import React, { useState } from "react";
 import AppActionButton from "../AppActionButton";
 import AppConfirmDialog from "../AppDialog/AppConfirmDialog";
+import { useEngineTypesQuery } from "../../query/engineTypes.query";
+import type { TEngineType } from "../../types";
 
 type Props = {
   modelIndex: number
@@ -21,6 +25,9 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
 
   const { control, formState } = useFormContext();
   const errors = formState.errors
+  const { data: engineTypes, isLoading: isEngineTypesLoading } = useEngineTypesQuery()
+
+  // const codes = watch(`serieses.${serieIndex}.models.${modelIndex}.codes`) || []
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: dndId })
 
@@ -46,25 +53,6 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
         <Grid size={2}>
           <AppControlledTextField
             required
-            name={`serieses.${serieIndex}.models.${modelIndex}.code`}
-            control={control}
-            errors={errors}
-            label={t('innerCode', { ns: 'newManufacturer' })}
-            placeholder={t('innerCode', { ns: 'newManufacturer' })}
-          />
-        </Grid>
-        <Grid size={2}>
-          <AppControlledTextField
-            name={`serieses.${serieIndex}.models.${modelIndex}.modelCode`}
-            control={control}
-            errors={errors}
-            label={t('modelCode', { ns: 'newManufacturer' })}
-            placeholder={t('modelCode', { ns: 'newManufacturer' })}
-          />
-        </Grid>
-        <Grid size={1}>
-          <AppControlledTextField
-            required
             name={`serieses.${serieIndex}.models.${modelIndex}.volume`}
             control={control}
             errors={errors}
@@ -72,6 +60,31 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
             placeholder={t('volume', { ns: 'newManufacturer' })}
           />
         </Grid>
+        <Grid size={2}>
+          <AppControlledAutocomplete<TEngineType>
+            name={`serieses.${serieIndex}.models.${modelIndex}.engineType`}
+            control={control}
+            options={engineTypes || []}
+            label={t('engineType', { ns: 'newManufacturer' })}
+            placeholder={t('engineType', { ns: 'newManufacturer' })}
+            loading={isEngineTypesLoading}
+            getOptionLabel={(option: TEngineType) => option.name}
+            isOptionEqualToValue={(option: TEngineType, value: TEngineType) => option.id === value.id}
+            errors={errors}
+          />
+        </Grid>
+        {/* <Grid size={4}>
+          <AppControlledCheckboxesTags<{ id: string; year: number; innerCode: string; innerCarTypeCode: string; carTypeName: string; carTypeNameEn: string | null }>
+            name={`serieses.${serieIndex}.models.${modelIndex}.codes`}
+            control={control}
+            options={codes}
+            label={t('modelCode', { ns: 'newManufacturer' })}
+            placeholder={t('modelCode', { ns: 'newManufacturer' })}
+            getOptionLabel={(option) => `${option.innerCode} (${option.year}, ${option.carTypeName})`}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            errors={errors}
+          />
+        </Grid> */}
         <Grid size={'auto'} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <AppActionButton
             type='delete'

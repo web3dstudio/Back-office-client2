@@ -63,9 +63,8 @@ function MenufacturerEditPage() {
         models: yup.array().of(
           yup.object().shape({
             name: yup.string().required(t('form-field.required')),
-            code: yup.string().required(t('form-field.required')),
-            modelCode: yup.string(),
             volume: yup.number().required(t('form-field.required')),
+            engineType: yup.object().nullable(),
           })
         ),
       })
@@ -88,9 +87,9 @@ function MenufacturerEditPage() {
         models: serie.models?.map(model => ({
           dbId: model.id,
           name: model.name,
-          code: model.code,
-          modelCode: model.modelCode ?? '',
           volume: model.volume ?? 0,
+          engineType: model.engineType ?? null,
+          codes: model.codes || null,
           manufacturerCode: manufacturer?.manufacturerCode ?? '',
           priority: model.priority ?? 0,
         })) ?? [],
@@ -135,9 +134,9 @@ function MenufacturerEditPage() {
             models: serie.models?.map(model => ({
               dbId: model.id,
               name: model.name,
-              code: model.code,
-              modelCode: model.modelCode ?? '',
               volume: model.volume ?? 0,
+              engineType: model.engineType ?? null,
+              codes: model.codes || null,
               // manufacturerCode: manufacturer?.manufacturerCode ?? '',
               priority: model.priority ?? 0,
             })) ?? [],
@@ -290,12 +289,8 @@ function MenufacturerEditPage() {
                   .map((field, originalIndex) => ({ field, originalIndex }))
                   .filter(({ field }) => {
                     if (!filterByCode) return true;
-                    const models = (field as TSerie).models ?? [];
-                    const hasMatchingModel = models.some(
-                      model => (model.code || '').toLowerCase().includes(filterByCode.toLowerCase())
-                    );
                     const isNewSerie = !(field as TSerie).dbId;
-                    return hasMatchingModel || isNewSerie;
+                    return isNewSerie;
                   })
                   .map(({ field, originalIndex }) => (
                     <SortableSerie
