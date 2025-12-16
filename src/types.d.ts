@@ -771,7 +771,13 @@ export type CarUpdateRequest = {
   carUpgradePackages?: CarUpgradePackage[] | null
   carServicePackages?: CarServicePackage[] | null
   carAdditionalLines?: CarAdditionalLine[] | null
-  carPrices?: TCarPrice[] | null
+  carPrices?: {
+    id?: string
+    totalPrice: number
+    year: number
+    month: number
+    calculateDate: number
+  }[] | null
 }
 
 export type TPriceChange = {

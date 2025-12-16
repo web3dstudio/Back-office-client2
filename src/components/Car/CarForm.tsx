@@ -4,7 +4,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
 import { FormProvider, useForm, useWatch, useFieldArray } from "react-hook-form"
 import { useTranslation } from "react-i18next"
-import { useMemo, useEffect } from "react"
+import { useMemo, useEffect, useRef, useState } from "react"
 import { Box, Button, Grid, Typography } from "@mui/material"
 import { AppControlledAutocomplete } from "../AppControlledAutocomplete"
 import { useCarTypesQuery } from "../../query/carTypes.query"
@@ -51,6 +51,11 @@ type TFormInput = {
   airPollution: number | null
   yearSpecial: string | null
   parallelImports: string | null
+  newCarPrice: number | null
+  visible: boolean
+  month: number | null
+  year: number | null
+  price: number | null
   details: string | null
   manufacturerYear: number | null
   extraPrice: number | null
@@ -123,6 +128,11 @@ export default function CarForm({ data }: Props) {
     airPollution: (data as any)?.airPollution ?? null,
     yearSpecial: (data as any)?.yearSpecial ?? (data as any)?.specialYear ?? null,
     parallelImports: (data as any)?.parallelImports ?? null,
+    newCarPrice: (data as any)?.newCarPrice ?? null,
+    visible: (data as any)?.visible ?? true,
+    month: null,
+    year: null,
+    price: null,
     details: data?.details || '',
     manufacturerYear: data?.manufacturerYear || null,
     extraPrice: data?.extraPrice || 0,
@@ -302,7 +312,86 @@ export default function CarForm({ data }: Props) {
     return Array.from({ length: 12 }, (_, i) => i + 1)
   }, [])
 
-  // Массив уникальных годов из цен
+  // Price by year: local map key `${year}-${month}-${countryId}`
+  const [carPricesMap, setCarPricesMap] = useState<Record<string, { id?: string; totalPrice: number; year: number; month: number; calculateDate: number }>>({})
+  const carPricesMapRef = useRef(carPricesMap)
+  useEffect(() => {
+    carPricesMapRef.current = carPricesMap
+  }, [carPricesMap])
+
+  const selectedMonth = useWatch({ control, name: 'month' })
+  const selectedYear = useWatch({ control, name: 'year' })
+  const selectedCountry = useWatch({ control, name: 'country' })
+  const priceField = useWatch({ control, name: 'price' })
+  const currentCountryId = selectedCountry?.id ?? (data as any)?.country?.id ?? ''
+  const currentPriceKey = selectedYear && selectedMonth ? `${selectedYear}-${selectedMonth}-${currentCountryId}` : null
+  const lastPriceKeyRef = useRef<string | null>(null)
+
+  // Init map from API carPrices on load
+  useEffect(() => {
+    if (!data?.id) return
+    const cid = (data as any)?.country?.id ?? ''
+    const prices = (data as any)?.carPrices || []
+    const next: Record<string, { id?: string; totalPrice: number; year: number; month: number; calculateDate: number }> = {}
+    for (const p of prices) {
+      if (!p || typeof p.year !== 'number' || typeof p.month !== 'number') continue
+      const key = `${p.year}-${p.month}-${cid}`
+      next[key] = {
+        id: p.id,
+        totalPrice: Number(p.totalPrice) || 0,
+        year: p.year,
+        month: p.month,
+        calculateDate: typeof p.calculateDate === 'number' ? p.calculateDate : Date.now(),
+      }
+    }
+    setCarPricesMap(next)
+  }, [data?.id, (data as any)?.country?.id])
+
+  // When user selects year/month, reflect stored price in input
+  useEffect(() => {
+    if (!selectedYear || !selectedMonth) {
+      setValue('price', null)
+      return
+    }
+    const key = `${selectedYear}-${selectedMonth}-${currentCountryId}`
+    const existing = carPricesMapRef.current[key]
+    setValue('price', existing ? existing.totalPrice : null)
+  }, [selectedYear, selectedMonth, currentCountryId, setValue])
+
+  // When user changes price input, update map
+  useEffect(() => {
+    if (!currentPriceKey) {
+      lastPriceKeyRef.current = null
+      return
+    }
+    // IMPORTANT: when user changes year/month, do not create/update price entry using the previous price value.
+    // Wait for an actual change in the price field for the currently selected key.
+    if (lastPriceKeyRef.current !== currentPriceKey) {
+      lastPriceKeyRef.current = currentPriceKey
+      return
+    }
+
+    const raw = priceField as any
+    const num = raw === '' || raw === null || raw === undefined ? 0 : Number(raw)
+    if (!Number.isFinite(num)) return
+    const key = currentPriceKey
+    setCarPricesMap(prev => {
+      const next = { ...prev }
+      if (num === 0) {
+        delete next[key]
+        return next
+      }
+      const existing = prev[key]
+      next[key] = {
+        id: existing?.id,
+        totalPrice: num,
+        year: selectedYear as number,
+        month: selectedMonth as number,
+        calculateDate: existing?.calculateDate ?? Date.now(),
+      }
+      return next
+    })
+  }, [priceField, currentPriceKey, selectedYear, selectedMonth])
 
 
 
@@ -375,6 +464,16 @@ export default function CarForm({ data }: Props) {
         ? null
         : Number((formData as any).airPollution)
 
+    const newCarPriceNumber =
+      (formData as any).newCarPrice === '' || formData.newCarPrice === null || formData.newCarPrice === undefined
+        ? null
+        : Number((formData as any).newCarPrice)
+
+    const carPricesToSend = Object.entries(carPricesMap)
+      .filter(([key]) => key.endsWith(`-${currentCountryId}`))
+      .map(([, p]) => p)
+      .filter(p => p.totalPrice !== 0)
+
     const updateData: CarUpdateRequest = {
       countryId: formData.country?.id || '',
       carTypeId: formData.carType?.id || '',
@@ -393,8 +492,8 @@ export default function CarForm({ data }: Props) {
       details: formData.details || null,
       yearSpecial: formData.yearSpecial || null,
       deletedDate: null,
-      visible: true,
-      newCarPrice: data.newCarPrice || null,
+      visible: !!formData.visible,
+      newCarPrice: newCarPriceNumber !== null && Number.isFinite(newCarPriceNumber) ? newCarPriceNumber : null,
       extraPrice: formData.extraPrice || null,
       airPollution: airPollutionNumber !== null && Number.isFinite(airPollutionNumber) ? airPollutionNumber : null,
       finishingPercentage: finishingPercentageNumber !== null && Number.isFinite(finishingPercentageNumber) ? finishingPercentageNumber : null,
@@ -406,7 +505,7 @@ export default function CarForm({ data }: Props) {
       carUpgradePackages,
       carServicePackages,
       carAdditionalLines,
-      carPrices: data.carPrices || null
+      carPrices: carPricesToSend.length ? carPricesToSend : null
     }
 
     updateCar({ id: data.id, data: updateData })
@@ -917,6 +1016,7 @@ export default function CarForm({ data }: Props) {
                 control={control}
                 label={t('newCarPrice', { ns: 'newCar' })}
                 placeholder={t('newCarPrice', { ns: 'newCar' })}
+                type='number'
               />
             </Grid>
 
@@ -951,6 +1051,7 @@ export default function CarForm({ data }: Props) {
                 control={control}
                 label={t('price', { ns: 'newCar' })}
                 placeholder={t('price', { ns: 'newCar' })}
+                type='number'
               />
             </Grid>
 
