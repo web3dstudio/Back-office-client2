@@ -14,6 +14,7 @@ import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import IntegralExtrasForm from '../../../components/IntegralExtras/IntegralExtrasForm'
 import AppError from '../../../components/AppError'
+import { useIconsQuery } from '../../../query/icons.query'
 
 
 export const Route = createFileRoute('/_authenticated/integral-extras/')({
@@ -28,11 +29,34 @@ function IntegralExtrasPage() {
 	const [sorting, setSorting] = useState<SortingState>([])
 
 	const { data: integralExtras, isLoading, isError } = useIntegralExtrasQuery()
+	const { data: icons } = useIconsQuery()
 	const { mutate: addMutation } = useIntegralExtrasAddMutation()
 	const { mutate: updateMutation } = useIntegralExtrasUpdateMutation()
 	const { mutate: deleteMutation } = useIntegralExtrasDeleteMutation()
 
 	const columns = useMemo<ColumnDef<TIntegralExtra>[]>(() => [
+		{
+			id: 'icon',
+			header: 'Icon',
+			enableSorting: false,
+			enableHiding: true,
+			size: 70,
+			cell: ({ row }) => {
+				const iconId = (row.original as any)?.iconId as string | null | undefined
+				const iconInline = (row.original as any)?.icon as string | null | undefined
+				const iconSrc =
+					iconInline ||
+					(iconId ? (icons || []).find(i => i.id === iconId)?.downloadUri : null) ||
+					null
+
+				if (!iconSrc) return null
+				return (
+					<Box sx={{ display: 'flex', justifyContent: 'center' }}>
+						<img src={iconSrc} alt="icon" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+					</Box>
+				)
+			},
+		},
 		{
 			accessorKey: 'name',
 			header: t('name', { ns: 'integralExtras' }),
@@ -75,7 +99,7 @@ function IntegralExtrasPage() {
 				</Box>
 			),
 		}
-	], [t])
+	], [t, icons])
 
 	const onSubmit = (data: TIntegralExtra) => {
 		if (selected) {

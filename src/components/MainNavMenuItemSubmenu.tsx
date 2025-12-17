@@ -78,51 +78,14 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
           {t('slidebar.countries', { ns: 'common' })}
         </MenuItem>
 
-
-        {/* <MenuItem
+        <MenuItem
           onClick={() => {
-            navigate({ to: '/car-types' })
+            navigate({ to: '/marks' })
             handleClose()
           }}
         >
-          {t('slidebar.vehicleTypes', { ns: 'common' })}
-        </MenuItem> */}
-
-        {/* <MenuItem
-          onClick={() => {
-            navigate({ to: '/categories' })
-            handleClose()
-          }}
-        >
-          {t('slidebar.categories', { ns: 'common' })}
-        </MenuItem> */}
-
-        {/* <MenuItem
-          onClick={() => {
-            navigate({ to: '/car-properties' })
-            handleClose()
-          }}
-        >
-          {t('slidebar.features', { ns: 'common' })}
-        </MenuItem> */}
-
-        {/* <MenuItem
-          onClick={() => {
-            navigate({ to: '/accessories' })
-            handleClose()
-          }}
-        >
-          {t('slidebar.additions', { ns: 'common' })}
-        </MenuItem> */}
-
-        {/* <MenuItem
-          onClick={() => {
-            navigate({ to: '/car-marks' })
-            handleClose()
-          }}
-        >
-          {t('slidebar.markings', { ns: 'common' })}
-        </MenuItem> */}
+          {t('marks', { ns: 'newCar' })}
+        </MenuItem>
 
         <MenuItem
           onClick={() => {

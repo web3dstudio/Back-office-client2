@@ -30,6 +30,7 @@ import { Route as AuthenticatedPriceListIndexRouteImport } from './routes/_authe
 import { Route as AuthenticatedOwnersIndexRouteImport } from './routes/_authenticated/owners/index'
 import { Route as AuthenticatedOpinionsIndexRouteImport } from './routes/_authenticated/opinions/index'
 import { Route as AuthenticatedMileageAdjustmentsIndexRouteImport } from './routes/_authenticated/mileage-adjustments/index'
+import { Route as AuthenticatedMarksIndexRouteImport } from './routes/_authenticated/marks/index'
 import { Route as AuthenticatedManufacturersIndexRouteImport } from './routes/_authenticated/manufacturers/index'
 import { Route as AuthenticatedIntegralExtrasIndexRouteImport } from './routes/_authenticated/integral-extras/index'
 import { Route as AuthenticatedImportersIndexRouteImport } from './routes/_authenticated/importers/index'
@@ -196,6 +197,11 @@ const AuthenticatedMileageAdjustmentsIndexRoute =
     path: '/mileage-adjustments/',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedMarksIndexRoute = AuthenticatedMarksIndexRouteImport.update({
+  id: '/marks/',
+  path: '/marks/',
+  getParentRoute: () => AuthenticatedRoute,
+} as any)
 const AuthenticatedManufacturersIndexRoute =
   AuthenticatedManufacturersIndexRouteImport.update({
     id: '/manufacturers/',
@@ -507,6 +513,7 @@ export interface FileRoutesByFullPath {
   '/importers': typeof AuthenticatedImportersIndexRoute
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/marks': typeof AuthenticatedMarksIndexRoute
   '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
   '/owners': typeof AuthenticatedOwnersIndexRoute
@@ -574,6 +581,7 @@ export interface FileRoutesByTo {
   '/importers': typeof AuthenticatedImportersIndexRoute
   '/integral-extras': typeof AuthenticatedIntegralExtrasIndexRoute
   '/manufacturers': typeof AuthenticatedManufacturersIndexRoute
+  '/marks': typeof AuthenticatedMarksIndexRoute
   '/mileage-adjustments': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/opinions': typeof AuthenticatedOpinionsIndexRoute
   '/owners': typeof AuthenticatedOwnersIndexRoute
@@ -645,6 +653,7 @@ export interface FileRoutesById {
   '/_authenticated/importers/': typeof AuthenticatedImportersIndexRoute
   '/_authenticated/integral-extras/': typeof AuthenticatedIntegralExtrasIndexRoute
   '/_authenticated/manufacturers/': typeof AuthenticatedManufacturersIndexRoute
+  '/_authenticated/marks/': typeof AuthenticatedMarksIndexRoute
   '/_authenticated/mileage-adjustments/': typeof AuthenticatedMileageAdjustmentsIndexRoute
   '/_authenticated/opinions/': typeof AuthenticatedOpinionsIndexRoute
   '/_authenticated/owners/': typeof AuthenticatedOwnersIndexRoute
@@ -715,6 +724,7 @@ export interface FileRouteTypes {
     | '/importers'
     | '/integral-extras'
     | '/manufacturers'
+    | '/marks'
     | '/mileage-adjustments'
     | '/opinions'
     | '/owners'
@@ -782,6 +792,7 @@ export interface FileRouteTypes {
     | '/importers'
     | '/integral-extras'
     | '/manufacturers'
+    | '/marks'
     | '/mileage-adjustments'
     | '/opinions'
     | '/owners'
@@ -852,6 +863,7 @@ export interface FileRouteTypes {
     | '/_authenticated/importers/'
     | '/_authenticated/integral-extras/'
     | '/_authenticated/manufacturers/'
+    | '/_authenticated/marks/'
     | '/_authenticated/mileage-adjustments/'
     | '/_authenticated/opinions/'
     | '/_authenticated/owners/'
@@ -1037,6 +1049,13 @@ declare module '@tanstack/react-router' {
       path: '/mileage-adjustments'
       fullPath: '/mileage-adjustments'
       preLoaderRoute: typeof AuthenticatedMileageAdjustmentsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/marks/': {
+      id: '/_authenticated/marks/'
+      path: '/marks'
+      fullPath: '/marks'
+      preLoaderRoute: typeof AuthenticatedMarksIndexRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/manufacturers/': {
@@ -1448,6 +1467,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedImportersIndexRoute: typeof AuthenticatedImportersIndexRoute
   AuthenticatedIntegralExtrasIndexRoute: typeof AuthenticatedIntegralExtrasIndexRoute
   AuthenticatedManufacturersIndexRoute: typeof AuthenticatedManufacturersIndexRoute
+  AuthenticatedMarksIndexRoute: typeof AuthenticatedMarksIndexRoute
   AuthenticatedMileageAdjustmentsIndexRoute: typeof AuthenticatedMileageAdjustmentsIndexRoute
   AuthenticatedOpinionsIndexRoute: typeof AuthenticatedOpinionsIndexRoute
   AuthenticatedOwnersIndexRoute: typeof AuthenticatedOwnersIndexRoute
@@ -1506,6 +1526,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedImportersIndexRoute: AuthenticatedImportersIndexRoute,
   AuthenticatedIntegralExtrasIndexRoute: AuthenticatedIntegralExtrasIndexRoute,
   AuthenticatedManufacturersIndexRoute: AuthenticatedManufacturersIndexRoute,
+  AuthenticatedMarksIndexRoute: AuthenticatedMarksIndexRoute,
   AuthenticatedMileageAdjustmentsIndexRoute:
     AuthenticatedMileageAdjustmentsIndexRoute,
   AuthenticatedOpinionsIndexRoute: AuthenticatedOpinionsIndexRoute,

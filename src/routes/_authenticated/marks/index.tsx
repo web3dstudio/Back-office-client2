@@ -1,45 +1,40 @@
 import { createFileRoute } from '@tanstack/react-router'
 import StyledPaper from '../../../components/StyledPaper'
-import {
-  useExtrasAddMutation,
-  useExtrasDeleteMutation,
-  useExtrasQuery,
-  useExtrasUpdateMutation
-} from '../../../query/extras.query'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import AppDataTable from '../../../components/AppDataTable'
-import type { TExtra } from '../../../types'
+import type { TMark } from '../../../types'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
-import { useState, useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { type SortingState } from '@tanstack/react-table'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppError from '../../../components/AppError'
-import ExtrasForm from '../../../components/Extras/IntegralExtrasForm'
 import { useIconsQuery } from '../../../query/icons.query'
+import { useMarksCreateMutation, useMarksDeleteMutation, useMarksQuery, useMarksUpdateMutation } from '../../../query/marks.query'
+import MarksForm from '../../../components/Marks/MarksForm'
+import type { TMarkCreate, TMarkUpdate } from '../../../query/marks.query'
 
-
-export const Route = createFileRoute('/_authenticated/extras/')({
-  component: IntegralExtrasPage,
+export const Route = createFileRoute('/_authenticated/marks/')({
+  component: MarksPage,
 })
 
-function IntegralExtrasPage() {
+function MarksPage() {
   const { t } = useTranslation()
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
-  const [selected, setSelected] = useState<TExtra | null>(null)
+  const [selected, setSelected] = useState<TMark | null>(null)
   const [sorting, setSorting] = useState<SortingState>([])
 
-  const { data: extras, isLoading, isError } = useExtrasQuery()
+  const { data: marks, isLoading, isError } = useMarksQuery()
   const { data: icons } = useIconsQuery()
-  const { mutate: addMutation } = useExtrasAddMutation()
-  const { mutate: updateMutation } = useExtrasUpdateMutation()
-  const { mutate: deleteMutation, isPending: isDeleting } = useExtrasDeleteMutation()
+  const { mutate: addMutation } = useMarksCreateMutation()
+  const { mutate: updateMutation } = useMarksUpdateMutation()
+  const { mutate: deleteMutation, isPending: isDeleting } = useMarksDeleteMutation()
 
-  const columns = useMemo<ColumnDef<TExtra>[]>(() => [
+  const columns = useMemo<ColumnDef<TMark>[]>(() => [
     {
       id: 'icon',
       header: 'Icon',
@@ -47,13 +42,8 @@ function IntegralExtrasPage() {
       enableHiding: true,
       size: 70,
       cell: ({ row }) => {
-        const iconId = (row.original as any)?.iconId as string | null | undefined
-        const iconInline = (row.original as any)?.icon as string | null | undefined
-        const iconSrc =
-          iconInline ||
-          (iconId ? (icons || []).find(i => i.id === iconId)?.downloadUri : null) ||
-          null
-
+        const iconId = row.original.iconId
+        const iconSrc = iconId ? (icons || []).find(i => i.id === iconId)?.downloadUri : null
         if (!iconSrc) return null
         return (
           <Box sx={{ display: 'flex', justifyContent: 'center' }}>
@@ -64,21 +54,9 @@ function IntegralExtrasPage() {
     },
     {
       accessorKey: 'name',
-      header: t('name', { ns: 'integralExtras' }),
+      header: t('name', { ns: 'carMarks' }),
       enableSorting: true,
       enableHiding: true,
-    },
-    {
-      accessorKey: 'nameEn',
-      header: t('nameEn', { ns: 'integralExtras' }),
-      enableSorting: true,
-      enableHiding: true,
-    },
-    {
-      accessorKey: 'defaultChangePercentage',
-      header: t('defaultChangePercentage', { ns: 'integralExtras' }),
-      enableSorting: true,
-      enableHiding: false,
     },
     {
       id: 'actions',
@@ -87,9 +65,7 @@ function IntegralExtrasPage() {
       enableHiding: false,
       enableResizing: false,
       size: 80,
-      meta: {
-        align: 'right'
-      },
+      meta: { align: 'right' },
       cell: ({ row }) => (
         <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
           <AppActionButton type='edit' onClick={() => {
@@ -102,77 +78,50 @@ function IntegralExtrasPage() {
           }} />
         </Box>
       ),
-    }
+    },
   ], [t, icons])
 
-  const onSubmit = (data: TExtra) => {
+  const onSubmit = (payload: TMarkCreate | TMarkUpdate) => {
     if (selected) {
-      updateMutation({ ...data, id: selected.id }, {
-        onSuccess: () => {
-          setOpenFormDialog(false)
-        }
-      })
+      updateMutation({ id: selected.id, data: payload }, { onSuccess: () => setOpenFormDialog(false) })
     } else {
-      addMutation(data, {
-        onSuccess: () => {
-          setOpenFormDialog(false)
-        }
-      })
+      addMutation(payload, { onSuccess: () => setOpenFormDialog(false) })
     }
   }
 
   const onDelete = () => {
-    if (selected) {
-      deleteMutation(selected?.id)
-    }
+    if (selected) deleteMutation(selected.id)
     setOpenConfirmDialog(false)
   }
 
-  if (isError && !isLoading) {
-    return <AppError />
-  }
+  if (isError && !isLoading) return <AppError />
 
   return (
-    <Grid container spacing={3} >
+    <Grid container spacing={3}>
       <Grid size={12}>
         <AppBackBtn children={t('back', { ns: 'common' })} />
       </Grid>
-      <Grid
-        size={12}
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-        }}
-      >
+
+      <Grid size={12} sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {t('title', { ns: 'extras' })}
+            {t('title', { ns: 'carMarks' })}
           </Typography>
         </Box>
         <Box>
           <Button variant='contained' onClick={() => {
             setSelected(null)
             setOpenFormDialog(true)
-          }
-
-          }>
+          }}>
             {t('modals.add', { ns: 'common' })}
           </Button>
         </Box>
       </Grid>
 
-      <StyledPaper
-        sx={{
-          overflow: 'hidden',
-          padding: 3,
-          display: 'flex',
-          gap: 2,
-        }}
-      >
+      <StyledPaper sx={{ overflow: 'hidden', padding: 3, display: 'flex', gap: 2 }}>
         <AppDataTable
-          tableName='extras'
-          data={extras ?? []}
+          tableName='marks'
+          data={marks ?? []}
           columns={columns}
           isLoading={isLoading}
           manualPagination={false}
@@ -195,7 +144,7 @@ function IntegralExtrasPage() {
         title={selected ? t('modals.edit', { ns: 'common' }) : t('modals.add', { ns: 'common' })}
         maxWidth='sm'
       >
-        <ExtrasForm
+        <MarksForm
           data={selected}
           isPending={false}
           onCancel={() => setOpenFormDialog(false)}
@@ -205,4 +154,5 @@ function IntegralExtrasPage() {
     </Grid>
   )
 }
+
 

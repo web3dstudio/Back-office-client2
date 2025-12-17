@@ -117,6 +117,13 @@ export type ManufacturerCode = {
   code: string | null
 }
 
+export type TMark = {
+  id: string
+  oldId: string | null
+  name: string
+  iconId: string | null
+}
+
 export type ManufacturerCodeUpsertDto = {
   id?: string
   code: string

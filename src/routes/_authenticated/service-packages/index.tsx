@@ -14,6 +14,7 @@ import AppDataTable from '../../../components/AppDataTable'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import ServicePackagesForm from '../../../components/ServicePackages/ServicePackagesForm'
+import { useIconsQuery } from '../../../query/icons.query'
 
 export const Route = createFileRoute('/_authenticated/service-packages/')({
   component: ServicePackagesPage,
@@ -27,6 +28,7 @@ function ServicePackagesPage() {
   const [selected, setSelected] = useState<TUpgradePackage | null>(null)
 
   const { data: servicePackages, isLoading, isError } = useServicePackagesQuery()
+  const { data: icons } = useIconsQuery()
   const { mutate: addMutation } = useServicePackagesAddMutation()
   const { mutate: updateMutation } = useServicePackagesUpdateMutation()
   const { mutate: deleteMutation } = useServicePackagesDeleteMutation()
@@ -35,6 +37,23 @@ function ServicePackagesPage() {
 
   const columns = useMemo<ColumnDef<TServicePackage>[]>(
     () => [
+      {
+        id: 'icon',
+        header: 'Icon',
+        enableSorting: false,
+        enableHiding: true,
+        size: 70,
+        cell: ({ row }) => {
+          const iconId = (row.original as any)?.iconId as string | null | undefined
+          const iconSrc = iconId ? (icons || []).find(i => i.id === iconId)?.downloadUri : null
+          if (!iconSrc) return null
+          return (
+            <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+              <img src={iconSrc} alt="icon" style={{ width: 28, height: 28, objectFit: 'contain' }} />
+            </Box>
+          )
+        },
+      },
       {
         accessorKey: 'name',
         header: t('name', { ns: 'integralExtras' }),
@@ -85,7 +104,7 @@ function ServicePackagesPage() {
         ),
       },
     ],
-    [t]
+    [t, icons]
   )
 
 
