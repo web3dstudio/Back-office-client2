@@ -129,6 +129,28 @@ export type ManufacturerCodeUpsertDto = {
   code: string
 }
 
+export type TManufacturerSeriesExtraItem = {
+  extraId: string
+  extraName: string
+  includeInPriceList: boolean
+  changePercentage: number
+  fromYear: number
+  toYear: number
+}
+
+export type TManufacturerSeriesExtras = {
+  seriesId: string
+  seriesName: string
+  extras: TManufacturerSeriesExtraItem[]
+}
+
+export type TManufacturerSeriesExtraSetting = {
+  manufacturerSeriesId: string
+  extraId: string
+  includeInPriceList: boolean
+  changePercentage: number
+}
+
 export type ModelCode = {
   id: string
   innerCode: string
@@ -147,6 +169,8 @@ export type TManufacturer = {
   coutry?: string
   serieses?: TSerie[]
   codes: ManufacturerCode[]
+  seriesExtras?: TManufacturerSeriesExtras[] | null
+  seriesExtraSettings?: TManufacturerSeriesExtraSetting[] | null
 }
 
 export type TSerie = {
@@ -723,21 +747,25 @@ export type TCarPrice = {
 export type CarIntegralExtra = {
   integralExtraId: string
   value: number
+  priceListItem: boolean
 }
 
 export type CarExtra = {
   extraId: string
   value: number
+  priceListItem: boolean
 }
 
 export type CarUpgradePackage = {
   upgradePackageId: string
   value: number
+  priceListItem: boolean
 }
 
 export type CarServicePackage = {
   servicePackageId: string
   value: number
+  priceListItem: boolean
 }
 
 export type CarAdditionalLine = {
@@ -777,6 +805,7 @@ export type CarUpdateRequest = {
   carExtras?: CarExtra[] | null
   carUpgradePackages?: CarUpgradePackage[] | null
   carServicePackages?: CarServicePackage[] | null
+  carMarks?: { markId: string }[] | null
   carAdditionalLines?: CarAdditionalLine[] | null
   carPrices?: {
     id?: string

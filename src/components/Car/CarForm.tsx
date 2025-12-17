@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TChassis, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TChassis, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -18,6 +18,7 @@ import { useIntegralExtrasQuery } from "../../query/integralExtras.query"
 import { useUpgradePackagesQuery } from "../../query/upgradePackages.query"
 import { useServicePackagesQuery } from "../../query/servicePackages.query"
 import AppExtrasMultiselect from "../AppExtrasMultiselect"
+import AppExtrasMultiselectSimple from "../AppExtrasMultiselectSimple"
 import AppActionButton from "../AppActionButton"
 import { useCountriesQuery } from "../../query/countries.query"
 import { useNavigate } from "@tanstack/react-router"
@@ -25,6 +26,7 @@ import AppControlledCheckbox from "../AppControlledCheckbox"
 import { useGearboxesQuery } from "../../query/gearboxes.query"
 import { useChassisQuery } from "../../query/chassis.query"
 import { useDriveTypesQuery } from "../../query/driveTypes.query"
+import { useMarksQuery } from "../../query/marks.query"
 
 
 interface Props {
@@ -63,6 +65,7 @@ type TFormInput = {
   extras: TExtra[]
   upgradePackages: TUpgradePackage[]
   servicePackages: TServicePackage[]
+  marks: TAppExtrasItemField[]
   additionalLines: {
     name: string;
     percentage: number;
@@ -84,6 +87,7 @@ export default function CarForm({ data }: Props) {
   const { data: extrasData, isLoading: _isExtrasLoading } = useExtrasQuery()
   const { data: upgradePackagesData, isLoading: _isUpgradePackagesLoading } = useUpgradePackagesQuery()
   const { data: servicePackagesData, isLoading: _isServicePackagesLoading } = useServicePackagesQuery()
+  const { data: marksData, isLoading: isMarksLoading } = useMarksQuery()
   const { data: countries, isLoading: isCountriesLoading } = useCountriesQuery()
   const { data: gearboxes, isLoading: isGearboxesLoading } = useGearboxesQuery()
   const { data: chassisList, isLoading: isChassisLoading } = useChassisQuery()
@@ -140,7 +144,7 @@ export default function CarForm({ data }: Props) {
       const existingExtra = (data?.integralExtras as any)?.find((extra: any) => extra.integralExtraId === item.id)
       return {
         id: item.id,
-        checked: !!existingExtra,
+        checked: !!existingExtra?.priceListItem,
         fieldName: item.name,
         fieldNameEn: item.nameEn,
         selected: !!existingExtra,
@@ -151,7 +155,7 @@ export default function CarForm({ data }: Props) {
       const existingExtra = (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
       return {
         id: item.id,
-        checked: !!existingExtra,
+        checked: !!existingExtra?.priceListItem,
         fieldName: item.name,
         fieldNameEn: item.nameEn,
         selected: !!existingExtra,
@@ -162,7 +166,7 @@ export default function CarForm({ data }: Props) {
       const existingPackage = (data?.upgradePackages as any)?.find((pkg: any) => pkg.upgradePackageId === item.id)
       return {
         id: item.id,
-        checked: !!existingPackage,
+        checked: !!existingPackage?.priceListItem,
         fieldName: item.name,
         fieldNameEn: item.nameEn,
         selected: !!existingPackage,
@@ -173,20 +177,37 @@ export default function CarForm({ data }: Props) {
       const existingPackage = (data?.servicePackages as any)?.find((pkg: any) => pkg.servicePackageId === item.id)
       return {
         id: item.id,
-        checked: !!existingPackage,
+        checked: !!existingPackage?.priceListItem,
         fieldName: item.name,
         fieldNameEn: item.nameEn,
         selected: !!existingPackage,
         value: existingPackage ? existingPackage.value || 0 : 0
       }
     }) || [],
+    marks: (marksData || []).map((mark: TMark) => {
+      const raw = (data as any)?.marks ?? (data as any)?.carMarks ?? []
+      const existingIds = Array.isArray(raw)
+        ? raw
+          .map((m: any) => (typeof m === 'string' ? m : (m?.markId ?? m?.id)))
+          .filter(Boolean)
+        : []
+      const isSelected = existingIds.includes(mark.id)
+      return {
+        id: mark.id,
+        fieldName: mark.name,
+        fieldNameEn: mark.name,
+        checked: isSelected,
+        selected: isSelected,
+        value: 0
+      }
+    }),
     additionalLines: (data as any)?.carAdditionalLines?.map((line: any) => ({
       name: line.name || '',
       percentage: line.percentage || 0,
       letterText: line.letterText || '',
       letterNum: line.letterNum?.toString() || ''
     })) || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, data, countries, resolvedChassis, resolvedDriveType])
+  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedChassis, resolvedDriveType])
 
 
   const schema = object()
@@ -207,7 +228,7 @@ export default function CarForm({ data }: Props) {
     if (integralExtrasData) {
       methods.reset(defaultValues);
     }
-  }, [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, methods, defaultValues]);
+  }, [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, methods, defaultValues]);
 
   const { handleSubmit, control, setValue } = methods
 
@@ -404,22 +425,30 @@ export default function CarForm({ data }: Props) {
     // Фильтруем выбранные extras и преобразуем в формат для API
     const carIntegralExtras = formData.integralExtras?.filter((item: any) => item.selected).map((item: any) => ({
       integralExtraId: item.id,
-      value: item.value || 0
+      value: item.value || 0,
+      priceListItem: !!item.checked,
     })) || null;
 
     const carExtras = formData.extras?.filter((item: any) => item.selected).map((item: any) => ({
       extraId: item.id,
-      value: item.value || 0
+      value: item.value || 0,
+      priceListItem: !!item.checked,
     })) || null;
 
     const carUpgradePackages = formData.upgradePackages?.filter((item: any) => item.selected).map((item: any) => ({
       upgradePackageId: item.id,
-      value: item.value || 0
+      value: item.value || 0,
+      priceListItem: !!item.checked,
     })) || null;
 
     const carServicePackages = formData.servicePackages?.filter((item: any) => item.selected).map((item: any) => ({
       servicePackageId: item.id,
-      value: item.value || 0
+      value: item.value || 0,
+      priceListItem: !!item.checked,
+    })) || null;
+
+    const carMarks = formData.marks?.filter((item: any) => item.selected).map((item: any) => ({
+      markId: item.id,
     })) || null;
 
     const carAdditionalLines = formData.additionalLines?.map((line: any) => ({
@@ -504,6 +533,7 @@ export default function CarForm({ data }: Props) {
       carExtras,
       carUpgradePackages,
       carServicePackages,
+      carMarks,
       carAdditionalLines,
       carPrices: carPricesToSend.length ? carPricesToSend : null
     }
@@ -906,6 +936,28 @@ export default function CarForm({ data }: Props) {
               <AppExtrasMultiselect
                 name='servicePackages'
               />
+            </Grid>
+          </Grid>
+        </StyledPaper>
+
+        <StyledPaper sx={{
+          borderRadius: '24px',
+          overflow: 'hidden',
+          padding: 3,
+          width: '100%',
+          display: 'flex',
+          gap: 2,
+          marginBottom: 3,
+        }}>
+          <Grid container columns={12} rowSpacing={2} columnSpacing={3} sx={{ width: '100%' }}>
+            <Grid size={12}>
+              <Typography variant="h6">
+                {t('marks', { ns: 'newCar' })}
+              </Typography>
+            </Grid>
+
+            <Grid size={12}>
+              <AppExtrasMultiselectSimple name="marks" loading={isMarksLoading} />
             </Grid>
           </Grid>
         </StyledPaper>

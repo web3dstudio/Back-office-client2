@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import StyledPaper from '../../../../components/StyledPaper'
 import ManufacturerEditForm from '../../../../components/Manufacturer/ManufacturerEditForm'
 import { yupResolver } from "@hookform/resolvers/yup"
-import { useForm, type SubmitHandler, FormProvider, useFieldArray } from 'react-hook-form'
+import { useForm, type SubmitHandler, FormProvider, useFieldArray, useWatch } from 'react-hook-form'
 import * as yup from 'yup'
 import { useEffect, useState, useRef } from 'react'
 import ManufacturerCodesDialog from '../../../../components/Manufacturer/ManufacturerCodesDialog'
@@ -29,6 +29,7 @@ import {
 import type { TModel, TSerie } from '../../../../types'
 import useManufacturerSeriesModelsMutation from '../../../../query/manufacturers.query'
 import { useSeriesDeleteMutation } from '../../../../query/series.query'
+import AppExtrasMultiselect from '../../../../components/AppExtrasMultiselect'
 
 export const Route = createFileRoute('/_authenticated/manufacturers/edit/$id')(
   {
@@ -78,6 +79,22 @@ function MenufacturerEditPage() {
       dbId: manufacturer?.id ?? '',
       name: manufacturer?.name ?? '',
       engName: manufacturer?.engName ?? '',
+      seriesExtras: ((manufacturer as any)?.seriesExtras || []).map((serie: any) => ({
+        seriesId: serie.seriesId,
+        seriesName: serie.seriesName,
+        extras: Array.isArray(serie.extras)
+          ? serie.extras.map((ex: any) => ({
+            id: ex.extraId,
+            fieldName: ex.extraName,
+            fieldNameEn: ex.extraName,
+            checked: !!ex.includeInPriceList,
+            selected: true,
+            value: ex.changePercentage ?? 0,
+            fromYear: ex.fromYear,
+            toYear: ex.toYear,
+          }))
+          : [],
+      })),
       // manufacturerCode: manufacturer?.manufacturerCode ?? '',
       serieses: manufacturer?.serieses?.map(serie => ({
         dbId: serie.id,
@@ -98,6 +115,7 @@ function MenufacturerEditPage() {
   });
 
   const { control, handleSubmit, reset } = methods;
+  const seriesExtrasFromForm = useWatch({ control, name: 'seriesExtras' }) || []
 
   const { fields, prepend, move, remove } = useFieldArray({
     control,
@@ -125,6 +143,22 @@ function MenufacturerEditPage() {
           dbId: manufacturer.id,
           name: manufacturer.name ?? '',
           engName: manufacturer.engName ?? '',
+          seriesExtras: ((manufacturer as any)?.seriesExtras || []).map((serie: any) => ({
+            seriesId: serie.seriesId,
+            seriesName: serie.seriesName,
+            extras: Array.isArray(serie.extras)
+              ? serie.extras.map((ex: any) => ({
+                id: ex.extraId,
+                fieldName: ex.extraName,
+                fieldNameEn: ex.extraName,
+                checked: !!ex.includeInPriceList,
+                selected: true,
+                value: ex.changePercentage ?? 0,
+                fromYear: ex.fromYear,
+                toYear: ex.toYear,
+              }))
+              : [],
+          })),
           // manufacturerCode: manufacturer.manufacturerCode ?? '',
           serieses: manufacturer.serieses?.map(serie => ({
             dbId: serie.id,
@@ -147,6 +181,17 @@ function MenufacturerEditPage() {
   }, [manufacturer, reset]);
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
+    const seriesExtraSettings = ((data as any)?.seriesExtras || []).flatMap((serie: any) => {
+      const seriesId = serie?.seriesId
+      const items = Array.isArray(serie?.extras) ? serie.extras : []
+      return items.map((it: any) => ({
+        manufacturerSeriesId: seriesId,
+        extraId: it.id,
+        includeInPriceList: !!it.checked,
+        changePercentage: Number(it.value) || 0,
+      }))
+    })
+
     const seriesesWithPriority = data.serieses.map((serie: TSerie, serieIdx: number) => ({
       ...serie,
       priority: serieIdx + 1,
@@ -158,7 +203,9 @@ function MenufacturerEditPage() {
         : [],
     }));
 
-    upsertManufacturer({ ...data, serieses: seriesesWithPriority }, {
+    // Do NOT send seriesExtras in payload; backend expects seriesExtraSettings instead
+    const { seriesExtras: _seriesExtras, ...dataToSend } = data as any
+    upsertManufacturer({ ...dataToSend, seriesExtraSettings, serieses: seriesesWithPriority }, {
       onSuccess: () => {
         refetch()
       }
@@ -247,6 +294,33 @@ function MenufacturerEditPage() {
                   onOpenCodesDialog={() => setOpenCodesDialog(true)}
                 />
               )}
+            </StyledPaper>
+
+            <StyledPaper
+              sx={{
+                overflow: 'hidden',
+                padding: 3,
+                width: '100%',
+                maxWidth: '100%',
+              }}
+            >
+              <Grid container spacing={3}>
+                <Grid size={12}>
+                  <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
+                    {t('extras', { ns: 'manufacturers' })}
+                  </Typography>
+                </Grid>
+                <Grid size={12}>
+                  {seriesExtrasFromForm.map((serie: any, idx: number) => (
+                    <Box key={serie.seriesId || idx} sx={{ mb: 2 }}>
+                      <Typography sx={{ mb: 1, fontWeight: 600 }}>
+                        {serie.seriesName}
+                      </Typography>
+                      <AppExtrasMultiselect name={`seriesExtras.${idx}.extras`} />
+                    </Box>
+                  ))}
+                </Grid>
+              </Grid>
             </StyledPaper>
 
             <Grid size={12}
