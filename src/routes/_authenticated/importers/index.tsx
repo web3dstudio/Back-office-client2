@@ -54,7 +54,7 @@ function ImportersPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'importers' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

@@ -66,7 +66,7 @@ function GearboxesPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'gearboxes' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

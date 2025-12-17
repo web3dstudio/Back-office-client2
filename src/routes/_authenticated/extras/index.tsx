@@ -42,7 +42,7 @@ function IntegralExtrasPage() {
   const columns = useMemo<ColumnDef<TExtra>[]>(() => [
     {
       id: 'icon',
-      header: 'Icon',
+      header: t('icon', { ns: 'extras' }),
       enableSorting: false,
       enableHiding: true,
       size: 70,
@@ -64,25 +64,25 @@ function IntegralExtrasPage() {
     },
     {
       accessorKey: 'name',
-      header: t('name', { ns: 'integralExtras' }),
+      header: t('name', { ns: 'extras' }),
       enableSorting: true,
       enableHiding: true,
     },
     {
       accessorKey: 'nameEn',
-      header: t('nameEn', { ns: 'integralExtras' }),
+      header: t('nameEn', { ns: 'extras' }),
       enableSorting: true,
       enableHiding: true,
     },
     {
       accessorKey: 'defaultChangePercentage',
-      header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+      header: t('defaultChangePercentage', { ns: 'extras' }),
       enableSorting: true,
       enableHiding: false,
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: t('actions', { ns: 'extras' }),
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,

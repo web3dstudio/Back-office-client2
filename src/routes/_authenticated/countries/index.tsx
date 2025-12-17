@@ -48,7 +48,7 @@ function Countries() {
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: t('actions', { ns: 'countries' }),
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,
@@ -114,7 +114,7 @@ function Countries() {
       >
         <Box>
           <Typography variant="h5" sx={{ fontWeight: 'bold' }}>
-            {t('title', { ns: 'carTypes' })}
+            {t('title', { ns: 'countries' })}
           </Typography>
         </Box>
         <Box>

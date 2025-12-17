@@ -39,7 +39,7 @@ function ServicePackagesPage() {
     () => [
       {
         id: 'icon',
-        header: 'Icon',
+        header: t('icon', { ns: 'servicePackages' }),
         enableSorting: false,
         enableHiding: true,
         size: 70,
@@ -56,7 +56,7 @@ function ServicePackagesPage() {
       },
       {
         accessorKey: 'name',
-        header: t('name', { ns: 'integralExtras' }),
+        header: t('name', { ns: 'servicePackages' }),
         enableSorting: true,
         enableHiding: true,
         size: 200,
@@ -65,7 +65,7 @@ function ServicePackagesPage() {
       },
       {
         accessorKey: 'nameEn',
-        header: t('nameEn', { ns: 'integralExtras' }),
+        header: t('nameEn', { ns: 'servicePackages' }),
         enableSorting: true,
         enableHiding: true,
         size: 200,
@@ -74,7 +74,7 @@ function ServicePackagesPage() {
       },
       {
         accessorKey: 'defaultChangePercentage',
-        header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+        header: t('defaultChangePercentage', { ns: 'servicePackages' }),
         enableSorting: true,
         enableHiding: false,
         size: 200,
@@ -83,7 +83,7 @@ function ServicePackagesPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'servicePackages' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

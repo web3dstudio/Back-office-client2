@@ -40,7 +40,7 @@ function UpgradePackagesPage() {
   const columns = useMemo<ColumnDef<TUpgradePackage>[]>(() => [
     {
       id: 'icon',
-      header: 'Icon',
+      header: t('icon', { ns: 'upgradePackages' }),
       enableSorting: false,
       enableHiding: true,
       size: 70,
@@ -57,25 +57,25 @@ function UpgradePackagesPage() {
     },
     {
       accessorKey: 'name',
-      header: t('name', { ns: 'integralExtras' }),
+      header: t('name', { ns: 'upgradePackages' }),
       enableSorting: true,
       enableHiding: true,
     },
     {
       accessorKey: 'nameEn',
-      header: t('nameEn', { ns: 'integralExtras' }),
+      header: t('nameEn', { ns: 'upgradePackages' }),
       enableSorting: true,
       enableHiding: true,
     },
     {
       accessorKey: 'defaultChangePercentage',
-      header: t('defaultChangePercentage', { ns: 'integralExtras' }),
+      header: t('defaultChangePercentage', { ns: 'upgradePackages' }),
       enableSorting: true,
       enableHiding: false,
     },
     {
       id: 'actions',
-      header: 'Actions',
+      header: t('actions', { ns: 'upgradePackages' }),
       enableSorting: false,
       enableHiding: false,
       enableResizing: false,

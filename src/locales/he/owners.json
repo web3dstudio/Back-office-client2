@@ -1,0 +1,13 @@
+{
+  "title": "בעלים",
+  "name": "שם",
+  "nameEn": "שם (אנגלית)",
+  "defaultChangePercentage": "אחוז שינוי ברירת מחדל",
+  "lessThanYearChangePercentage": "אחוז שינוי פחות משנה",
+  "ownerCountAdjustmentFactor": "מקדם התאמת מספר בעלים",
+  "mileageAdjustmentType": "סוג התאמת קילומטראז׳",
+  "mileageAdjustmentFactor": "מקדם התאמת קילומטראז׳",
+  "notSet": "לא מוגדר",
+  "actions": "פעולות"
+}
+

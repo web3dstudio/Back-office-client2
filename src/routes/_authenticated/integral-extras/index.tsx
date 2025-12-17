@@ -37,7 +37,7 @@ function IntegralExtrasPage() {
 	const columns = useMemo<ColumnDef<TIntegralExtra>[]>(() => [
 		{
 			id: 'icon',
-			header: 'Icon',
+			header: t('icon', { ns: 'integralExtras' }),
 			enableSorting: false,
 			enableHiding: true,
 			size: 70,
@@ -78,7 +78,7 @@ function IntegralExtrasPage() {
 		},
 		{
 			id: 'actions',
-			header: 'Actions',
+			header: t('actions', { ns: 'integralExtras' }),
 			enableSorting: false,
 			enableHiding: false,
 			enableResizing: false,

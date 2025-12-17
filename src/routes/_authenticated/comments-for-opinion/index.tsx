@@ -43,7 +43,7 @@ function CommentsForOpinionPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'commentsForOpinion' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

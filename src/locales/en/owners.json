@@ -1,0 +1,13 @@
+{
+  "title": "Owners",
+  "name": "Name",
+  "nameEn": "Name (English)",
+  "defaultChangePercentage": "Default change percentage",
+  "lessThanYearChangePercentage": "Less than a year change percentage",
+  "ownerCountAdjustmentFactor": "Owner count adjustment factor",
+  "mileageAdjustmentType": "Mileage adjustment type",
+  "mileageAdjustmentFactor": "Mileage adjustment factor",
+  "notSet": "not set",
+  "actions": "Actions"
+}
+

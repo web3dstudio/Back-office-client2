@@ -53,7 +53,7 @@ function AppraisersPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'appraisers' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

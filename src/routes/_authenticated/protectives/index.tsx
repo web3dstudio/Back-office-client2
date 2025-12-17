@@ -55,7 +55,7 @@ function ProtectivesPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'protectives' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

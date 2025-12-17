@@ -54,7 +54,7 @@ function UsageTypesPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'usageTypes' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

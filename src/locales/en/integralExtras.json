@@ -2,5 +2,7 @@
     "title": "Integral extras",
     "name": "Name",
     "nameEn": "Name (English)",
-    "defaultChangePercentage": "Default change percentage"
+    "defaultChangePercentage": "Default change percentage",
+    "icon": "Icon",
+    "actions": "Actions"
 }

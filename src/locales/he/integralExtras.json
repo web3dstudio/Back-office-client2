@@ -1,6 +1,8 @@
 {
-    "title": "Integral extras",
-    "name": "Name",
-    "nameEn": "Name (English)",
-    "defaultChangePercentage": "Default change percentage"
+    "title": "תוספות אינטגרליות",
+    "name": "שם",
+    "nameEn": "שם (אנגלית)",
+    "defaultChangePercentage": "אחוז שינוי ברירת מחדל",
+    "icon": "סמליל",
+    "actions": "פעולות"
 }

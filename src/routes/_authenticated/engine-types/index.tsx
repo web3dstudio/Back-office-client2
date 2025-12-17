@@ -92,7 +92,7 @@ function EngineTypesPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'engineTypes' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,

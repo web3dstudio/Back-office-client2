@@ -106,7 +106,7 @@ function OwnersPage() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'owners' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,
