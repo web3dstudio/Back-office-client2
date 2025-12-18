@@ -1,4 +1,8 @@
 {
-  "title": "סטטוסים"
+  "title": "סטטוסים",
+  "externalStatuses": "מצב חיצוני",
+  "internalStatuses": "מצב פנימי",
+  "name": "שם",
+  "nameEn": "שם (אנגלית)",
+  "actions": "פעולות"
 }
-

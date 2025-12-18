@@ -1,4 +1,8 @@
 {
-  "title": "Statuses"
+  "title": "Statuses",
+  "externalStatuses": "External status",
+  "internalStatuses": "Internal status",
+  "name": "Name",
+  "nameEn": "Name (English)",
+  "actions": "Actions"
 }
-

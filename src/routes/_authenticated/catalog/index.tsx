@@ -34,10 +34,10 @@ function CatalogPage() {
   const [carYearsData, setCarYearsData] = useState<Record<string, TCarYears[]>>({})
 
   // Queries for filters
-  const { data: carTypes } = useCarTypesQuery()
-  const { data: manufacturers } = useManufacturersWithSeriesAndModelsQuery()
-  const { data: categories } = useCategoriesQuery()
-  const { data: countries } = useCountriesQuery()
+  const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
+  const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
+  const { data: categories, isLoading: isCategoriesLoading } = useCategoriesQuery()
+  const { data: countries, isLoading: isCountriesLoading } = useCountriesQuery()
 
   // State for filters
   const [modelCode, setModelCode] = useState('')
@@ -248,6 +248,8 @@ function CatalogPage() {
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               label={t('carType', { ns: 'newCar' })}
+              loading={isCarTypesLoading}
+              disabled={isCarTypesLoading || !(carTypes && carTypes.length > 0)}
             />
           </Box>
           <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
@@ -258,6 +260,8 @@ function CatalogPage() {
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               label={t('manufacturer', { ns: 'carCatalog' })}
+              loading={isManufacturersLoading}
+              disabled={isManufacturersLoading || !(manufacturers && manufacturers.length > 0)}
             />
           </Box>
           <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
@@ -268,6 +272,8 @@ function CatalogPage() {
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               label={t('category', { ns: 'carCatalog' })}
+              loading={isCategoriesLoading}
+              disabled={isCategoriesLoading || !(categories && categories.length > 0)}
             />
           </Box>
           <Box sx={{ flex: '1 1 200px', minWidth: '200px' }}>
@@ -278,6 +284,8 @@ function CatalogPage() {
               getOptionLabel={(option) => option.name || ''}
               isOptionEqualToValue={(option, value) => option.id === value.id}
               label={t('countries', { ns: 'carCatalog' })}
+              loading={isCountriesLoading}
+              disabled={isCountriesLoading || !(countries && countries.length > 0)}
             />
           </Box>
           <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>

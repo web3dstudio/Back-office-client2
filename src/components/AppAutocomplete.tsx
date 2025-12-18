@@ -1,6 +1,7 @@
 import {
   Autocomplete,
   Box,
+  CircularProgress,
   TextField,
   FormControl,
   type SxProps,
@@ -86,6 +87,15 @@ export function AppAutocomplete<T>({
             helperText={helperText}
             size='small'
             variant='outlined'
+            InputProps={{
+              ...params.InputProps,
+              endAdornment: (
+                <>
+                  {loading ? <CircularProgress color="inherit" size={18} sx={{ mr: 1 }} /> : null}
+                  {params.InputProps.endAdornment}
+                </>
+              ),
+            }}
             sx={{
               '& .MuiOutlinedInput-root': {
                 '&.Mui-focused fieldset': {

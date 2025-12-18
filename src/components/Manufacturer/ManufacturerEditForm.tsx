@@ -17,7 +17,6 @@ function ManufacturerEditForm({ manufacturer, isPending, onOpenCodesDialog }: Pr
   const { t } = useTranslation()
   const { control, formState } = useFormContext()
   const errors = formState.errors
-  const isDirty = formState.isDirty
   const isValid = formState.isValid
   const router = useRouter()
 
@@ -99,7 +98,7 @@ function ManufacturerEditForm({ manufacturer, isPending, onOpenCodesDialog }: Pr
               type='submit'
               variant='contained'
               loading={isPending}
-              disabled={!isDirty || !isValid}
+              disabled={!isValid}
             >
               <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
                 {t('modals.save', { ns: 'common' })}

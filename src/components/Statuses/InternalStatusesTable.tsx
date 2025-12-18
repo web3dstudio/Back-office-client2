@@ -47,7 +47,7 @@ function InternalStatusesTable() {
       },
       {
         id: 'actions',
-        header: 'Actions',
+        header: t('actions', { ns: 'statuses' }),
         enableSorting: false,
         enableHiding: false,
         size: 80,
