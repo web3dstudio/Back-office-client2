@@ -1028,3 +1028,18 @@ export type TCodesSyncResponse = {
   totalApiRecords: number
   newRecordsAdded: number
 }
+
+export type TExpiringCustomer = {
+  id: string
+  firstName: string
+  lastName: string
+  company: string
+  mobileNumber: string
+  email: string
+  city: string
+  street: string
+  subscriptionValidity: string
+  dailyQueries: number | null
+  subscriptionExclusion: boolean
+  customerTypes: TCustomerType[]
+}

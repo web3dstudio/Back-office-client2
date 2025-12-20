@@ -1,38 +1,24 @@
-import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
+import { useQuery } from '@tanstack/react-query'
+import type { UseQueryResult } from '@tanstack/react-query'
+import axiosAPI from '../utils/axiosAPI'
+import type { TExpiringCustomer } from '../types'
 
-export interface IReportsStatisticsParams {
-    year?: number
-    month?: number
+export type TExpiringCustomersResponse = {
+    items: TExpiringCustomer[]
+    totalCount: number
+    page: number
+    pageSize: number
 }
 
-export interface IReportsStatisticsData {
-    // TODO: Add proper types based on API response
-    [key: string]: any
-}
-
-export function useReportsStatisticsQuery(
-    params: IReportsStatisticsParams = {}
-): UseQueryResult<IReportsStatisticsData, Error> {
-    const currentDate = new Date()
-    const year = params.year ?? currentDate.getFullYear()
-    const month = params.month ?? currentDate.getMonth() + 1
-
+export function useExpiringCustomersQuery(
+    page: number = 1,
+    pageSize: number = 20
+): UseQueryResult<TExpiringCustomersResponse, Error> {
     return useQuery({
-        queryKey: ['reports', 'statistics', year, month],
-        queryFn: async (): Promise<IReportsStatisticsData> => {
-            const queryParams = new URLSearchParams({
-                Year: String(year),
-                Month: String(month),
-            })
-
-            const response = await axiosAPI.get(`/reports/statistics?${queryParams.toString()}`)
+        queryKey: ['reports', 'customers', page, pageSize],
+        queryFn: async (): Promise<TExpiringCustomersResponse> => {
+            const response = await axiosAPI.get(`/reports/customers?page=${page}&pageSize=${pageSize}`)
             return response.data
         },
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-        refetchOnReconnect: false,
-        staleTime: Infinity,
-        retry: 3,
     })
 }
