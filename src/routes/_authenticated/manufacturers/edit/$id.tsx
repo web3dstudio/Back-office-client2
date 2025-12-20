@@ -56,7 +56,6 @@ function MenufacturerEditPage() {
   const schema = yup.object().shape({
     name: yup.string().required(t('form-field.required')),
     engName: yup.string().required(t('form-field.required')),
-    // manufacturerCode: yup.string().required(t('form-field.required')).max(5),
     serieses: yup.array().of(
       yup.object().shape({
         name: yup.string().required(t('form-field.required')),
@@ -66,6 +65,7 @@ function MenufacturerEditPage() {
             name: yup.string().required(t('form-field.required')),
             volume: yup.number().required(t('form-field.required')),
             engineType: yup.object().nullable(),
+            code: yup.string().required(t('form-field.required')),
           })
         ),
       })
@@ -95,7 +95,6 @@ function MenufacturerEditPage() {
           }))
           : [],
       })),
-      // manufacturerCode: manufacturer?.manufacturerCode ?? '',
       serieses: manufacturer?.serieses?.map(serie => ({
         dbId: serie.id,
         name: serie.name,
@@ -107,7 +106,7 @@ function MenufacturerEditPage() {
           volume: model.volume ?? 0,
           engineType: model.engineType ?? null,
           codes: model.codes || null,
-          manufacturerCode: manufacturer?.manufacturerCode ?? '',
+          code: model.code ?? '',
           priority: model.priority ?? 0,
         })) ?? [],
       })) ?? [],
@@ -159,7 +158,6 @@ function MenufacturerEditPage() {
               }))
               : [],
           })),
-          // manufacturerCode: manufacturer.manufacturerCode ?? '',
           serieses: manufacturer.serieses?.map(serie => ({
             dbId: serie.id,
             name: serie.name,
@@ -170,8 +168,9 @@ function MenufacturerEditPage() {
               name: model.name,
               volume: model.volume ?? 0,
               engineType: model.engineType ?? null,
+              code: model.code ?? '',
               codes: model.codes || null,
-              // manufacturerCode: manufacturer?.manufacturerCode ?? '',
+              manufacturerCode: model.manufacturerCode ?? '',
               priority: model.priority ?? 0,
             })) ?? [],
           })) ?? [],

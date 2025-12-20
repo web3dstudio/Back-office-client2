@@ -192,6 +192,7 @@ export type TModel = {
   manufacturerCode: string // код модели (МинТранспорта)
   series: TSerie | null
   engineType: TEngineType | null
+  code: string | null
   codes: {
     id: string
     year: number

@@ -73,6 +73,16 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
             errors={errors}
           />
         </Grid>
+        <Grid size={2}>
+          <AppControlledTextField
+            required
+            name={`serieses.${serieIndex}.models.${modelIndex}.code`}
+            control={control}
+            errors={errors}
+            label={t('modelCode', { ns: 'newManufacturer' })}
+            placeholder={t('modelCode', { ns: 'newManufacturer' })}
+          />
+        </Grid>
         {/* <Grid size={4}>
           <AppControlledCheckboxesTags<{ id: string; year: number; innerCode: string; innerCarTypeCode: string; carTypeName: string; carTypeNameEn: string | null }>
             name={`serieses.${serieIndex}.models.${modelIndex}.codes`}
