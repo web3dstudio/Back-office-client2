@@ -67,7 +67,14 @@ export function useMarksUpdateMutation(): UseMutationResult<TMark, Error, { id: 
       const response = await axiosAPI.put(`/marks/${id}`, data)
       return response.data
     },
-    onSuccess: (_data, variables) => {
+    onSuccess: (data, variables) => {
+      // Update cache immediately so UI reflects changes (e.g. icon removal) without waiting for refetch.
+      queryClient.setQueryData<TMark[]>(['marks'], (old) => {
+        if (!Array.isArray(old)) return old as any
+        return old.map((m) => (m.id === variables.id ? data : m))
+      })
+      queryClient.setQueryData<TMark>(['marks', variables.id], data)
+
       queryClient.invalidateQueries({ queryKey: ['marks'] })
       queryClient.invalidateQueries({ queryKey: ['marks', variables.id] })
       toast.success(t('mark_updated_successfully') || 'Mark updated successfully!')
