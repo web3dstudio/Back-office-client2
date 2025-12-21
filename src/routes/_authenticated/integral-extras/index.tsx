@@ -8,7 +8,7 @@ import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
 import { useState, useMemo } from 'react'
-import { type SortingState } from '@tanstack/react-table'
+import { type SortingState, type PaginationState } from '@tanstack/react-table'
 import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
@@ -27,6 +27,10 @@ function IntegralExtrasPage() {
 	const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
 	const [selected, setSelected] = useState<TIntegralExtra | null>(null)
 	const [sorting, setSorting] = useState<SortingState>([])
+	const [pagination, setPagination] = useState<PaginationState>({
+		pageIndex: 0,
+		pageSize: 20,
+	})
 
 	const { data: integralExtras, isLoading, isError } = useIntegralExtrasQuery()
 	const { data: icons } = useIconsQuery()
@@ -178,6 +182,9 @@ function IntegralExtrasPage() {
 					manualPagination={false}
 					sorting={sorting}
 					onSortingChange={setSorting}
+					pagination={pagination}
+					onPaginationChange={setPagination}
+					totalPages={Math.ceil((integralExtras?.length || 0) / pagination.pageSize) || 1}
 				/>
 			</StyledPaper>
 
