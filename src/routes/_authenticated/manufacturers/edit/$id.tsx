@@ -113,7 +113,7 @@ function MenufacturerEditPage() {
     },
   });
 
-  const { control, handleSubmit, reset } = methods;
+  const { control, handleSubmit, reset, trigger } = methods;
   const seriesExtrasFromForm = useWatch({ control, name: 'seriesExtras' }) || []
 
   const { fields, prepend, move, remove } = useFieldArray({
@@ -175,9 +175,11 @@ function MenufacturerEditPage() {
             })) ?? [],
           })) ?? [],
         });
+        // Ensure form validity is recalculated after resetting values from backend
+        void trigger()
       }
     }
-  }, [manufacturer, reset]);
+  }, [manufacturer, reset, trigger]);
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
     const seriesExtraSettings = ((data as any)?.seriesExtras || []).flatMap((serie: any) => {

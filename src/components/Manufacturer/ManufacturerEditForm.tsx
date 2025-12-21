@@ -98,7 +98,7 @@ function ManufacturerEditForm({ manufacturer, isPending, onOpenCodesDialog }: Pr
               type='submit'
               variant='contained'
               loading={isPending}
-              disabled={isPending}
+              disabled={isPending || !isValid}
             >
               <Typography sx={{ textWrap: 'nowrap', fontSize: '14px', fontWeight: 'bold' }}>
                 {t('modals.save', { ns: 'common' })}
