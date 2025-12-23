@@ -4,6 +4,25 @@ import type { TExtra } from "../types"
 import { useTranslation } from "react-i18next"
 import { toast } from 'react-toastify'
 
+export type TExtraSeriesRuleUpsert = {
+  id?: string
+  manufacturerSeriesId: string | null
+  appliesToAllSeries: boolean
+  fromYear: number | null
+  toYear: number | null
+}
+
+export type TExtraUpsert = {
+  id?: string
+  name: string
+  nameEn: string
+  defaultChangePercentage: number
+  sortIndex: number
+  iconId: string | null
+  manufacturerId: string | null
+  extraSeriesRules: TExtraSeriesRuleUpsert[]
+}
+
 export function useExtrasQuery(): UseQueryResult<TExtra[], Error> {
   return useQuery({
     queryKey: ['extras'],
@@ -19,12 +38,12 @@ export function useExtrasQuery(): UseQueryResult<TExtra[], Error> {
   })
 }
 
-export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TExtra, 'id'>> {
+export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TExtraUpsert, 'id'>> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (newExtra: Omit<TExtra, 'id'>): Promise<TExtra> => {
+    mutationFn: async (newExtra: Omit<TExtraUpsert, 'id'>): Promise<TExtra> => {
       const response = await axiosAPI.post('/extras', newExtra)
       return response.data
     },
@@ -39,12 +58,12 @@ export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TE
   })
 }
 
-export function useExtrasUpdateMutation(): UseMutationResult<TExtra, Error, TExtra> {
+export function useExtrasUpdateMutation(): UseMutationResult<TExtra, Error, TExtraUpsert & { id: string }> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
 
   return useMutation({
-    mutationFn: async (updatedExtra: TExtra): Promise<TExtra> => {
+    mutationFn: async (updatedExtra: TExtraUpsert & { id: string }): Promise<TExtra> => {
       const response = await axiosAPI.put(`/extras/${updatedExtra.id}`, updatedExtra)
       return response.data
     },
@@ -68,7 +87,11 @@ export function useExtrasDeleteMutation(): UseMutationResult<string, Error, stri
       await axiosAPI.delete(`/extras/${id}`)
       return id
     },
-    onSuccess: (_data) => {
+    onSuccess: (deletedId) => {
+      queryClient.setQueryData<TExtra[]>(['extras'], (old) => {
+        if (!old) return old
+        return old.filter((x) => x.id !== deletedId)
+      })
       queryClient.invalidateQueries({ queryKey: ['extras'] })
       toast.success(t('extra_deleted_successfully'))
     },

@@ -77,7 +77,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
 						name='name'
 						control={control}
 						errors={errors}
-						label={t('name', { ns: 'Extras' })}
+						label={t('name', { ns: 'extras' })}
 						placeholder={t('name', { ns: 'Extras' })}
 					/>
 				</Grid>
@@ -87,8 +87,8 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
 						name='nameEn'
 						control={control}
 						errors={errors}
-						label={t('nameEn', { ns: 'Extras' })}
-						placeholder={t('nameEn', { ns: 'Extras' })}
+						label={t('nameEn', { ns: 'extras' })}
+						placeholder={t('nameEn', { ns: 'extras' })}
 					/>
 				</Grid>
 				<Grid size={12}>
@@ -98,8 +98,8 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
 						name='defaultChangePercentage'
 						control={control}
 						errors={errors}
-						label={t('defaultChangePercentage', { ns: 'Extras' })}
-						placeholder={t('defaultChangePercentage', { ns: 'Extras' })}
+						label={t('defaultChangePercentage', { ns: 'extras' })}
+						placeholder={t('defaultChangePercentage', { ns: 'extras' })}
 						slotProps={{
 							input: {
 								// inputMode: 'numeric',

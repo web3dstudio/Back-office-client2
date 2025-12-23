@@ -1,9 +1,10 @@
 {
   "title": "Extras",
-  "icon": "Icon",
   "name": "Name",
   "nameEn": "Name (English)",
   "defaultChangePercentage": "Default change percentage",
-  "actions": "Actions"
+  "icon": "Icon",
+  "actions": "Actions",
+  "appliesToAllSeries": "Applies to all series",
+  "all": "All"
 }
-

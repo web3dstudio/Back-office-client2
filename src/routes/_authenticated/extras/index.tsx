@@ -9,6 +9,7 @@ import {
 import { Box, Button, Grid, Typography } from '@mui/material'
 import AppDataTable from '../../../components/AppDataTable'
 import type { TExtra } from '../../../types'
+import type { TExtraUpsert } from '../../../query/extras.query'
 import { type ColumnDef } from '@tanstack/react-table'
 import { useTranslation } from 'react-i18next'
 import AppActionButton from '../../../components/AppActionButton'
@@ -18,15 +19,16 @@ import AppConfirmDialog from '../../../components/AppDialog/AppConfirmDialog'
 import AppDialog from '../../../components/AppDialog/AppDialog'
 import AppBackBtn from '../../../components/AppBackBtn'
 import AppError from '../../../components/AppError'
-import ExtrasForm from '../../../components/Extras/IntegralExtrasForm'
+import ExtrasForm from '../../../components/Extras/ExtrasForm'
 import { useIconsQuery } from '../../../query/icons.query'
+import { useManufacturersWithSeriesAndModelsQuery } from '../../../query/manufacturers.query'
 
 
 export const Route = createFileRoute('/_authenticated/extras/')({
-  component: IntegralExtrasPage,
+  component: ExtrasPage,
 })
 
-function IntegralExtrasPage() {
+function ExtrasPage() {
   const { t } = useTranslation()
   const [openFormDialog, setOpenFormDialog] = useState(false)
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
@@ -38,6 +40,7 @@ function IntegralExtrasPage() {
   })
 
   const { data: extras, isLoading, isError } = useExtrasQuery()
+  const { data: manufacturers } = useManufacturersWithSeriesAndModelsQuery()
   const { data: icons } = useIconsQuery()
   const { mutate: addMutation } = useExtrasAddMutation()
   const { mutate: updateMutation } = useExtrasUpdateMutation()
@@ -79,6 +82,50 @@ function IntegralExtrasPage() {
       enableHiding: true,
     },
     {
+      id: 'manufacturer',
+      header: t('manufacturer', { ns: 'newCar' }),
+      enableSorting: false,
+      enableHiding: true,
+      cell: ({ row }) => {
+        const extra = row.original as any
+        const manufacturerId = extra?.manufacturerId || extra?.manufacturer?.id || null
+        const nameFromExtra = extra?.manufacturer?.name || null
+        if (nameFromExtra) return nameFromExtra
+        const m = manufacturerId ? (manufacturers || []).find(mm => mm.id === manufacturerId) : null
+        return m ? (m.name || m.engName || '') : ''
+      },
+    },
+    {
+      id: 'series',
+      header: t('series', { ns: 'newCar' }),
+      enableSorting: false,
+      enableHiding: true,
+      size: 240,
+      cell: ({ row }) => {
+        const extra = row.original as any
+        const manufacturerId = extra?.manufacturerId || extra?.manufacturer?.id || null
+        const m = manufacturerId ? (manufacturers || []).find(mm => mm.id === manufacturerId) : null
+        const serieses = Array.isArray(m?.serieses) ? m!.serieses : []
+        const rules = Array.isArray(extra?.extraSeriesRules) ? extra.extraSeriesRules : []
+
+        const seriesNames = rules
+          .filter((r: any) => !r?.appliesToAllSeries)
+          .map((r: any) => {
+            const seriesId = r?.manufacturerSeriesId
+            if (!seriesId) return null
+            const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
+            return serie?.name || null
+          })
+          .filter(Boolean)
+
+        const hasAll = rules.some((r: any) => !!r?.appliesToAllSeries)
+        const unique = Array.from(new Set(seriesNames))
+        if (hasAll) unique.push(t('all', { ns: 'extras' }))
+        unique.sort((a: any, b: any) => String(a).localeCompare(String(b)))
+        return unique.length ? unique.join(', ') : ''
+      },
+    },
+    {
       accessorKey: 'defaultChangePercentage',
       header: t('defaultChangePercentage', { ns: 'extras' }),
       enableSorting: true,
@@ -107,9 +154,9 @@ function IntegralExtrasPage() {
         </Box>
       ),
     }
-  ], [t, icons])
+  ], [t, icons, manufacturers])
 
-  const onSubmit = (data: TExtra) => {
+  const onSubmit = (data: TExtraUpsert) => {
     if (selected) {
       updateMutation({ ...data, id: selected.id }, {
         onSuccess: () => {
@@ -182,9 +229,56 @@ function IntegralExtrasPage() {
           manualPagination={false}
           sorting={sorting}
           onSortingChange={setSorting}
+          initialColumnVisibility={{
+            icon: false,
+            nameEn: false,
+          }}
           pagination={pagination}
           onPaginationChange={setPagination}
           totalPages={Math.ceil((extras?.length || 0) / pagination.pageSize) || 1}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const q = String(filterValue || '').toLowerCase()
+            if (!q) return true
+
+            const extra: any = row.original
+            const nameMatch = (extra?.name || '').toString().toLowerCase().includes(q)
+            const nameEnMatch = (extra?.nameEn || '').toString().toLowerCase().includes(q)
+            const percentMatch = (extra?.defaultChangePercentage ?? '').toString().toLowerCase().includes(q)
+
+            const manufacturerId = extra?.manufacturerId || extra?.manufacturer?.id || null
+            const nameFromExtra = extra?.manufacturer?.name || null
+            const resolvedManufacturer =
+              nameFromExtra ||
+              (manufacturerId ? (manufacturers || []).find(mm => mm.id === manufacturerId) : null)
+            const manufacturerText =
+              typeof resolvedManufacturer === 'string'
+                ? resolvedManufacturer
+                : resolvedManufacturer
+                  ? (resolvedManufacturer.name || resolvedManufacturer.engName || '')
+                  : ''
+            const manufacturerMatch = manufacturerText.toLowerCase().includes(q)
+
+            const m = manufacturerId ? (manufacturers || []).find(mm => mm.id === manufacturerId) : null
+            const serieses = Array.isArray(m?.serieses) ? m!.serieses : []
+            const rules = Array.isArray(extra?.extraSeriesRules) ? extra.extraSeriesRules : []
+            const seriesNames = rules
+              .filter((r: any) => !r?.appliesToAllSeries)
+              .map((r: any) => {
+                const seriesId = r?.manufacturerSeriesId
+                if (!seriesId) return null
+                const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
+                return serie?.name || null
+              })
+              .filter(Boolean)
+            const hasAll = rules.some((r: any) => !!r?.appliesToAllSeries)
+            const uniqueSeries = Array.from(new Set(seriesNames))
+            if (hasAll) uniqueSeries.push(t('all', { ns: 'extras' }))
+            uniqueSeries.sort((a: any, b: any) => String(a).localeCompare(String(b)))
+            const seriesText = uniqueSeries.join(', ')
+            const seriesMatch = seriesText.toLowerCase().includes(q)
+
+            return nameMatch || nameEnMatch || percentMatch || manufacturerMatch || seriesMatch
+          }}
         />
       </StyledPaper>
 
@@ -200,7 +294,7 @@ function IntegralExtrasPage() {
         open={openFormDialog}
         onClose={() => setOpenFormDialog(false)}
         title={selected ? t('modals.edit', { ns: 'common' }) : t('modals.add', { ns: 'common' })}
-        maxWidth='sm'
+        maxWidth='md'
       >
         <ExtrasForm
           data={selected}

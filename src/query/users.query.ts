@@ -234,3 +234,13 @@ export function useSetDefaultPageMutation(): UseMutationResult<void, Error, stri
     })
 }
 
+export function useUsersSyncOutMutation(): UseMutationResult<unknown, Error, void> {
+    return useMutation({
+        mutationFn: async (): Promise<unknown> => {
+            const response = await axiosAPI.post('/users/syncOut')
+            return response.data
+        },
+        retry: 1,
+    })
+}
+

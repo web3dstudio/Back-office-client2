@@ -1,9 +1,10 @@
 {
   "title": "תוספות",
-  "icon": "סמליל",
   "name": "שם",
   "nameEn": "שם (אנגלית)",
   "defaultChangePercentage": "אחוז שינוי ברירת מחדל",
-  "actions": "פעולות"
+  "icon": "סמליל",
+  "actions": "פעולות",
+  "appliesToAllSeries": "חל על כל הסדרות",
+  "all": "הכל"
 }
-

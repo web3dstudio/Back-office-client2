@@ -285,6 +285,16 @@ export type TAppExtrasItemField = {
   value: number;
 }
 
+export type TExtraSeriesRules = {
+  id: string
+  extraId: string
+  manufacturerSeriesId: string | null
+  appliesToAllSeries: boolean
+  fromYear: number | null
+  toYear: number | null
+  manufacturerId: string
+}
+
 export type TExtra = {
   id: string
   name: string
@@ -295,6 +305,9 @@ export type TExtra = {
   sortIndex?: number
   iconId?: string | null
   icon?: string | null
+  manufacturerId: string | null
+  manufacturer: { id: string, name: string } | null
+  extraSeriesRules: TExtraSeriesRules[] | null
 }
 
 export type TUpgradePackage = {

@@ -5,7 +5,7 @@ import { AccountCircleOutlined } from '@mui/icons-material'
 import { useNavigate, useRouterState } from '@tanstack/react-router'
 import { useTranslation } from 'react-i18next'
 import { useLogoutMutation } from '../query/user.query'
-import { useSetDefaultPageMutation } from '../query/users.query'
+import { useSetDefaultPageMutation, useUsersSyncOutMutation } from '../query/users.query'
 
 function ProfileMenu() {
   const navigate = useNavigate()
@@ -13,6 +13,7 @@ function ProfileMenu() {
   const router = useRouterState()
   const { mutate: logoutMutation } = useLogoutMutation()
   const { mutate: setDefaultPage } = useSetDefaultPageMutation()
+  const { mutate: syncOut, isPending: isSyncOutPending } = useUsersSyncOutMutation()
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
   const open = Boolean(anchorEl)
@@ -30,9 +31,10 @@ function ProfileMenu() {
     setDefaultPage(currentPath)
   }
 
-  // const syncNow = () => {
-  //   console.log('syncNow POST TO users/syncOut')
-  // }
+  const syncNow = () => {
+    handleClose()
+    syncOut()
+  }
 
   const logout = () => {
     logoutMutation()
@@ -73,9 +75,9 @@ function ProfileMenu() {
         <MenuItem onClick={setAsMainPage}>
           {t('header.setUsMainPage', { ns: 'common' })}
         </MenuItem>
-        {/* <MenuItem onClick={syncNow}>
+        <MenuItem onClick={syncNow} disabled={isSyncOutPending}>
           {t('header.syncNow', { ns: 'common' })}
-        </MenuItem> */}
+        </MenuItem>
         <MenuItem onClick={logout}>
           {t('header.logout', { ns: 'common' })}
         </MenuItem>
