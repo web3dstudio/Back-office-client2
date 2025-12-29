@@ -235,12 +235,17 @@ export function useSetDefaultPageMutation(): UseMutationResult<void, Error, stri
 }
 
 export function useUsersSyncOutMutation(): UseMutationResult<unknown, Error, void> {
+    const { t } = useTranslation('notifications')
     return useMutation({
         mutationFn: async (): Promise<unknown> => {
             const response = await axiosAPI.post('/users/syncOut')
             return response.data
         },
+        onSuccess: () => {
+            toast.success(t('sync_started') || 'Synchronization started')
+        },
         retry: 1,
     })
 }
+
 
