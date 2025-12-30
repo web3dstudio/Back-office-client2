@@ -34,6 +34,7 @@ type TFormInput = {
   year: number | null
   fromYear: number | null
   toYear: number | null
+  taxGroup: number | null
   modelDescription: string
   description: string
 }
@@ -84,6 +85,7 @@ function CodeForm({ code = null }: Props) {
       year: null,
       fromYear: null,
       toYear: null,
+      taxGroup: null,
       modelDescription: '',
       description: '',
     },
@@ -111,6 +113,7 @@ function CodeForm({ code = null }: Props) {
         year: code.year || null,
         fromYear: code.fromYear || code.year || null,
         toYear: code.toYear || code.year || null,
+        taxGroup: code.taxGroup ?? null,
         modelDescription: code.modelDescription || '',
         description: code.description || '',
       })
@@ -127,6 +130,7 @@ function CodeForm({ code = null }: Props) {
         year: null,
         fromYear: null,
         toYear: null,
+        taxGroup: null,
         modelDescription: '',
         description: '',
       })
@@ -211,6 +215,7 @@ function CodeForm({ code = null }: Props) {
       year: data.year || 0,
       fromYear: data.fromYear || 0,
       toYear: data.toYear || 0,
+      taxGroup: data.taxGroup ?? null,
       isAuto: data.isAuto,
       carTypeId: data.carType.id,
       modelDescription: data.modelDescription,
@@ -238,6 +243,8 @@ function CodeForm({ code = null }: Props) {
     { value: '0', label: '0' },
     { value: '1', label: '1' },
   ]
+
+  const taxGroupOptions = [1, 2, 3, 4, 5, 6, 7]
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
@@ -358,7 +365,7 @@ function CodeForm({ code = null }: Props) {
           />
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={3}>
           <AppControlledAutocomplete<number>
             name='year'
             control={control}
@@ -371,7 +378,7 @@ function CodeForm({ code = null }: Props) {
           />
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={3}>
           <AppControlledAutocomplete<number>
             name='fromYear'
             control={control}
@@ -384,13 +391,25 @@ function CodeForm({ code = null }: Props) {
           />
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={3}>
           <AppControlledAutocomplete<number>
             name='toYear'
             control={control}
             options={years}
             label={t('toYear', { ns: 'newCode' })}
             required
+            getOptionLabel={(option) => option.toString()}
+            isOptionEqualToValue={(option, value) => option === value}
+            errors={errors}
+          />
+        </Grid>
+
+        <Grid size={3}>
+          <AppControlledAutocomplete<number>
+            name='taxGroup'
+            control={control}
+            options={taxGroupOptions}
+            label={t('taxGroup', { ns: 'codes' })}
             getOptionLabel={(option) => option.toString()}
             isOptionEqualToValue={(option, value) => option === value}
             errors={errors}

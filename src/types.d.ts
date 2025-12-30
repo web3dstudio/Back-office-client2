@@ -988,6 +988,7 @@ export type TCode = {
   year: number
   fromYear: number
   toYear: number
+  taxGroup?: number | null
   modelDescription: string
   description: string
 }
@@ -1036,6 +1037,8 @@ export type TCodeFromApi = {
   systemManufacturerName?: string | null
   systemSerieName?: string | null
   systemModelName?: string | null
+  taxGroup?: number | null
+  taxGroupFromApi?: number | null
 }
 
 export type TCodesSyncResponse = {

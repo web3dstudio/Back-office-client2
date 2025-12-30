@@ -23,6 +23,8 @@
   "tozeretCd": "(משרד התחבורה) קוד יצרן",
   "degemCd": "קוד דגם (משרד התחבורה)",
   "sugDegem": "סוג דגם",
+  "taxGroupFromApi": "קוד רשוי",
+  "taxGroup": "קוד רשוי",
   "import": "יבוא ממשרד התחבורה",
   "importNewCode": "שיוך קוד דגם",
   "kinuyMishari": "דגם",

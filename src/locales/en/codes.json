@@ -23,6 +23,8 @@
   "tozeretCd": "Manufacturer Code (Ministry of Transportation)",
   "degemCd": "Model code (Ministry of Transportation)",
   "sugDegem": "Model Type",
+  "taxGroupFromApi": "Tax Group",
+  "taxGroup": "Tax Group",
   "import": "Import",
   "importNewCode": "Import new code",
   "kinuyMishari": "Model",

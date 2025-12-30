@@ -345,6 +345,12 @@ function SyncPage() {
       cell: ({ row }) => generateModelDescription(row.original),
     },
     {
+      accessorKey: 'taxGroupFromApi',
+      header: t('taxGroupFromApi', { ns: 'codes' }),
+      size: 120,
+      cell: ({ row }) => row.original.taxGroupFromApi ?? '',
+    },
+    {
       accessorKey: 'modelType',
       header: t('sugDegem', { ns: 'codes' }),
       size: 120,
@@ -395,6 +401,63 @@ function SyncPage() {
 
         return (
           <ModelSelect row={row.original} manufacturers={manufacturers || []} setRows={setRows} />
+        )
+      },
+    },
+    {
+      accessorKey: 'taxGroup',
+      header: t('taxGroup', { ns: 'codes' }),
+      size: 120,
+      cell: ({ row }) => {
+        const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
+        if (hasCodeId) {
+          return row.original.taxGroup ?? ''
+        }
+
+        const defaultValue = row.original.taxGroup ?? row.original.taxGroupFromApi
+        const value = defaultValue !== null && defaultValue !== undefined ? defaultValue.toString() : ''
+
+        return (
+          <FormControl size="small" fullWidth>
+            <Select
+              value={value}
+              onChange={(e) => {
+                const newValue = e.target.value ? Number(e.target.value) : null
+                setRows(prevRows =>
+                  prevRows.map(r =>
+                    r.id === row.original.id
+                      ? { ...r, taxGroup: newValue }
+                      : r
+                  )
+                )
+              }}
+              displayEmpty
+              variant="standard"
+              disableUnderline
+              size='small'
+              sx={{
+                border: 'none',
+                fontSize: '0.875rem',
+                '&:before': {
+                  display: 'none',
+                },
+                '&:after': {
+                  display: 'none',
+                },
+              }}
+            >
+              <MenuItem value="">
+                {''}
+              </MenuItem>
+              <MenuItem value={1}>1</MenuItem>
+              <MenuItem value={2}>2</MenuItem>
+              <MenuItem value={3}>3</MenuItem>
+              <MenuItem value={4}>4</MenuItem>
+              <MenuItem value={5}>5</MenuItem>
+              <MenuItem value={6}>6</MenuItem>
+              <MenuItem value={7}>7</MenuItem>
+            </Select>
+          </FormControl>
         )
       },
     },
@@ -733,8 +796,8 @@ function SyncPage() {
           columns={columns}
           isLoading={isLoading}
           columnGroups={[
-            { label: 'Imported', startIndex: 0, endIndex: 7, hasBackground: true },
-            { label: 'Levi Data', startIndex: 8, endIndex: 15, hasBackground: false }
+            { label: 'Imported', startIndex: 0, endIndex: 8, hasBackground: true },
+            { label: 'Levi Data', startIndex: 9, endIndex: 17, hasBackground: false }
           ]}
           getRowSx={(row) => {
             const isSynced = row.codeId && row.codeId !== '00000000-0000-0000-0000-000000000000'
