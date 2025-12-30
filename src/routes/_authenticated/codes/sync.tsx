@@ -65,40 +65,47 @@ const DebouncedTextField = ({ value, onChange, debounce = 500, ...props }: { val
 
 // Memoized Select Components to prevent re-renders
 const ManufacturerSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manufacturers: any[], setRows: React.Dispatch<React.SetStateAction<TCodeFromApi[]>> }) => {
-  const handleChange = useCallback((e: any) => {
-    const newValue = e.target.value as string
+  const selectedManufacturer = useMemo(
+    () => manufacturers?.find(m => m.id === row.manufacturerId) || null,
+    [manufacturers, row.manufacturerId]
+  )
+
+  const handleChange = useCallback((_: any, newValue: any | null) => {
+    const newId = newValue?.id ?? null
     setRows(prevRows =>
       prevRows.map(r =>
         r.id === row.id
-          ? { ...r, manufacturerId: newValue || null, seriesId: null, modelId: null }
+          ? { ...r, manufacturerId: newId, seriesId: null, modelId: null }
           : r
       )
     )
   }, [row.id, setRows])
 
   return (
-    <FormControl size="small" fullWidth>
-      <Select
-        value={row.manufacturerId || ''}
-        onChange={handleChange}
-        displayEmpty
-        variant="standard"
-        disableUnderline
-        size='small'
-        sx={{
-          border: 'none',
-          fontSize: '0.875rem',
-          '&:before': { display: 'none' },
-          '&:after': { display: 'none' },
-        }}
-      >
-        {manufacturers?.map((m) => (
-          <MenuItem key={m.id} value={m.id}>
-            {m.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      value={selectedManufacturer}
+      onChange={handleChange}
+      options={manufacturers || []}
+      getOptionLabel={(option: any) => option?.name ?? ''}
+      isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
+      disablePortal
+      disableClearable
+      fullWidth
+      size="small"
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="standard"
+          sx={{
+            '& .MuiInputBase-root': {
+              fontSize: '0.875rem',
+              '&:before': { display: 'none' },
+              '&:after': { display: 'none' },
+            },
+          }}
+        />
+      )}
+    />
   )
 }
 
@@ -106,41 +113,48 @@ const SeriesSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manu
   const manufacturer = useMemo(() => manufacturers?.find(m => m.id === row.manufacturerId), [manufacturers, row.manufacturerId])
   const serieses = manufacturer?.serieses || []
 
-  const handleChange = useCallback((e: any) => {
-    const newValue = e.target.value as string
+  const selectedSeries = useMemo(
+    () => serieses?.find((s: any) => s.id === row.seriesId) || null,
+    [serieses, row.seriesId]
+  )
+
+  const handleChange = useCallback((_: any, newValue: any | null) => {
+    const newId = newValue?.id ?? null
     setRows(prevRows =>
       prevRows.map(r =>
         r.id === row.id
-          ? { ...r, seriesId: newValue || null, modelId: null }
+          ? { ...r, seriesId: newId, modelId: null }
           : r
       )
     )
   }, [row.id, setRows])
 
   return (
-    <FormControl size="small" fullWidth>
-      <Select
-        value={row.seriesId || ''}
-        disabled={!row.manufacturerId}
-        onChange={handleChange}
-        displayEmpty
-        variant="standard"
-        disableUnderline
-        size='small'
-        sx={{
-          border: 'none',
-          fontSize: '0.875rem',
-          '&:before': { display: 'none' },
-          '&:after': { display: 'none' },
-        }}
-      >
-        {serieses.map((s: any) => (
-          <MenuItem key={s.id} value={s.id}>
-            {s.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      value={selectedSeries}
+      onChange={handleChange}
+      options={serieses || []}
+      getOptionLabel={(option: any) => option?.name ?? ''}
+      isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
+      disablePortal
+      disableClearable
+      disabled={!row.manufacturerId}
+      fullWidth
+      size="small"
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="standard"
+          sx={{
+            '& .MuiInputBase-root': {
+              fontSize: '0.875rem',
+              '&:before': { display: 'none' },
+              '&:after': { display: 'none' },
+            },
+          }}
+        />
+      )}
+    />
   )
 }
 
@@ -149,41 +163,48 @@ const ModelSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manuf
   const serie = useMemo(() => manufacturer?.serieses?.find((s: any) => s.id === row.seriesId), [manufacturer, row.seriesId])
   const models = serie?.models || []
 
-  const handleChange = useCallback((e: any) => {
-    const newValue = e.target.value as string
+  const selectedModel = useMemo(
+    () => models?.find((m: any) => m.id === row.modelId) || null,
+    [models, row.modelId]
+  )
+
+  const handleChange = useCallback((_: any, newValue: any | null) => {
+    const newId = newValue?.id ?? null
     setRows(prevRows =>
       prevRows.map(r =>
         r.id === row.id
-          ? { ...r, modelId: newValue || null }
+          ? { ...r, modelId: newId }
           : r
       )
     )
   }, [row.id, setRows])
 
   return (
-    <FormControl size="small" fullWidth>
-      <Select
-        value={row.modelId || ''}
-        disabled={!row.seriesId}
-        onChange={handleChange}
-        displayEmpty
-        variant="standard"
-        disableUnderline
-        size='small'
-        sx={{
-          border: 'none',
-          fontSize: '0.875rem',
-          '&:before': { display: 'none' },
-          '&:after': { display: 'none' },
-        }}
-      >
-        {models.map((m: any) => (
-          <MenuItem key={m.id} value={m.id}>
-            {m.name}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+    <Autocomplete
+      value={selectedModel}
+      onChange={handleChange}
+      options={models || []}
+      getOptionLabel={(option: any) => option?.name ?? ''}
+      isOptionEqualToValue={(option: any, value: any) => option.id === value.id}
+      disablePortal
+      disableClearable
+      disabled={!row.seriesId}
+      fullWidth
+      size="small"
+      renderInput={(params) => (
+        <TextField
+          {...params}
+          variant="standard"
+          sx={{
+            '& .MuiInputBase-root': {
+              fontSize: '0.875rem',
+              '&:before': { display: 'none' },
+              '&:after': { display: 'none' },
+            },
+          }}
+        />
+      )}
+    />
   )
 }
 
@@ -265,6 +286,7 @@ function SyncPage() {
       toYear: row.toYear || row.yearOfManufacture,
       modelDescription: row.modelDescription || generateModelDescription(row),
       description: row.description || '',
+      taxGroup: row.taxGroup ?? row.taxGroupFromApi,
     }
 
     addCodeMutation(payload, {
@@ -422,7 +444,7 @@ function SyncPage() {
             <Select
               value={value}
               onChange={(e) => {
-                const newValue = e.target.value ? Number(e.target.value) : null
+                const newValue = Number(e.target.value)
                 setRows(prevRows =>
                   prevRows.map(r =>
                     r.id === row.original.id
@@ -431,7 +453,6 @@ function SyncPage() {
                   )
                 )
               }}
-              displayEmpty
               variant="standard"
               disableUnderline
               size='small'
@@ -446,9 +467,6 @@ function SyncPage() {
                 },
               }}
             >
-              <MenuItem value="">
-                {''}
-              </MenuItem>
               <MenuItem value={1}>1</MenuItem>
               <MenuItem value={2}>2</MenuItem>
               <MenuItem value={3}>3</MenuItem>
