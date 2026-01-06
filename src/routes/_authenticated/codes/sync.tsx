@@ -9,7 +9,7 @@ import SyncTable from '../../../components/Codes/SyncTable'
 import { useCodesFromApiQuery, useCodesSyncQuery, useCodeAddMutation, useCodeDeleteMutation } from '../../../query/codesFromApi.query'
 import { useManufacturersWithSeriesAndModelsQuery } from '../../../query/manufacturers.query'
 import { useCarTypesQuery } from '../../../query/carTypes.query'
-import { useChassisQuery } from '../../../query/chassis.query'
+import { useBodyTypesQuery } from '../../../query/bodyTypes.query'
 import type { TCodeFromApi } from '../../../types'
 import type { TCodeCreate } from '../../../query/codes.query'
 
@@ -209,7 +209,7 @@ const ModelSelect = ({ row, manufacturers, setRows }: { row: TCodeFromApi, manuf
 }
 
 function SyncPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [years, setYears] = useState<YearOption[]>([])
   const [selectedYears, setSelectedYears] = useState<YearOption[]>([])
   const [rows, setRows] = useState<TCodeFromApi[]>([])
@@ -217,9 +217,9 @@ function SyncPage() {
   const { data: codesData, isLoading: codesIsLoading } = useCodesFromApiQuery()
   const { data: manufacturers, isLoading: manufacturersIsLoading } = useManufacturersWithSeriesAndModelsQuery()
   const { data: carTypes, isLoading: carTypesIsLoading } = useCarTypesQuery()
-  const { data: chassisList, isLoading: chassisIsLoading } = useChassisQuery()
+  const { data: bodyTypes, isLoading: bodyTypesIsLoading } = useBodyTypesQuery()
 
-  const isLoading = codesIsLoading || manufacturersIsLoading || carTypesIsLoading || chassisIsLoading
+  const isLoading = codesIsLoading || manufacturersIsLoading || carTypesIsLoading || bodyTypesIsLoading
 
   const selectedYearsNames = useMemo(() => selectedYears.map(y => y.name), [selectedYears])
   const { refetch: syncRefetch, isFetching: isSyncing } = useCodesSyncQuery(selectedYearsNames)
@@ -280,7 +280,8 @@ function SyncPage() {
       innerCode: row.innerCode!,
       innerSubCode: row.innerSubCode || '',
       isAuto: row.automaticTransmission ? '1' : '0',
-      chassis: row.chassis,
+      bodyTypeId: row.bodyTypeId!,
+      // bodyTypeId: row.BodyTypeFromApi,
       year: row.yearOfManufacture,
       fromYear: row.fromYear || row.yearOfManufacture,
       toYear: row.toYear || row.yearOfManufacture,
@@ -378,7 +379,7 @@ function SyncPage() {
       size: 120,
     },
     {
-      accessorKey: 'bodyType',
+      accessorKey: 'bodyTypeFromApi',
       header: t('bodyType', { ns: 'codes' }),
       size: 120,
     },
@@ -534,25 +535,32 @@ function SyncPage() {
       },
     },
     {
-      accessorKey: 'chassis',
-      header: t('chassis', { ns: 'codes' }),
+      accessorKey: 'bodyTypeId',
+      header: t('bodyType', { ns: 'codes' }),
       size: 150,
       cell: ({ row }) => {
         const hasCodeId = row.original.codeId && row.original.codeId !== '00000000-0000-0000-0000-000000000000'
         if (hasCodeId) {
-          const chassis = chassisList?.find(c => c.id === row.original.chassis)
-          return chassis?.name || ''
+          const bodyType = bodyTypes?.find(bodyTypeOption => bodyTypeOption.id === row.original.bodyTypeId)
+          if (!bodyType) return ''
+          return i18n.language === 'en' ? (bodyType.nameEn || bodyType.name) : bodyType.name
         }
+
+        const bodyTypeIdFromApi =
+          bodyTypes?.find(bodyTypeOption => bodyTypeOption.name === row.original.bodyTypeFromApi)?.id ?? ''
+
+        const selectValue = row.original.bodyTypeId ?? bodyTypeIdFromApi
+
         return (
           <FormControl size="small" fullWidth>
             <Select
-              value={row.original.chassis || ''}
+              value={selectValue}
               onChange={(e) => {
                 const newValue = e.target.value as string
                 setRows(prevRows =>
                   prevRows.map(r =>
                     r.id === row.original.id
-                      ? { ...r, chassis: newValue || null }
+                      ? { ...r, bodyTypeId: newValue || null }
                       : r
                   )
                 )
@@ -575,9 +583,9 @@ function SyncPage() {
               <MenuItem value="">
                 <em>None</em>
               </MenuItem>
-              {chassisList?.map((chassis) => (
-                <MenuItem key={chassis.id} value={chassis.id}>
-                  {chassis.name}
+              {bodyTypes?.map((bodyTypeOption) => (
+                <MenuItem key={bodyTypeOption.id} value={bodyTypeOption.id}>
+                  {i18n.language === 'en' ? (bodyTypeOption.nameEn || bodyTypeOption.name) : bodyTypeOption.name}
                 </MenuItem>
               ))}
             </Select>
@@ -753,7 +761,7 @@ function SyncPage() {
           )
       },
     },
-  ], [carTypes, chassisList, t, generateModelDescription, years, setRows])
+  ], [carTypes, bodyTypes, i18n.language, t, generateModelDescription, years, setRows])
 
   return (
     <Grid container spacing={3}>

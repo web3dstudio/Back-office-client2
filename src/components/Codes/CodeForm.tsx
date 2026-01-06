@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next"
-import type { TCode } from "../../types"
+import type { TBodyType, TCode } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -10,8 +10,8 @@ import { AppControlledAutocomplete } from "../AppControlledAutocomplete"
 import { useCarTypesQuery } from "../../query/carTypes.query"
 import { useManufacturersWithSeriesAndModelsQuery } from "../../query/manufacturers.query"
 import { useCodeCreateMutation, useCodeUpdateMutation } from "../../query/codes.query"
-import { useChassisQuery } from "../../query/chassis.query"
-import type { TCarType, TManufacturer, TSerie, TModel, TChassis } from "../../types"
+import { useBodyTypesQuery } from "../../query/bodyTypes.query"
+import type { TCarType, TManufacturer, TSerie, TModel } from "../../types"
 import { useMemo, useEffect } from "react"
 import { useWatch } from "react-hook-form"
 import AppControlledSelect from "../AppControlledSelect"
@@ -30,7 +30,7 @@ type TFormInput = {
   innerCode: string
   subCode: string
   isAuto: string
-  chassis: TChassis | null
+  bodyType: TBodyType | null
   year: number | null
   fromYear: number | null
   toYear: number | null
@@ -45,7 +45,7 @@ function CodeForm({ code = null }: Props) {
 
   const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
   const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
-  const { data: chassisList, isLoading: isChassisLoading } = useChassisQuery()
+  const { data: bodyTypes, isLoading: isBodyTypesLoading } = useBodyTypesQuery()
   const { mutate: createCode, isPending: isCreating } = useCodeCreateMutation()
   const { mutate: updateCode, isPending: isUpdating } = useCodeUpdateMutation()
 
@@ -61,7 +61,7 @@ function CodeForm({ code = null }: Props) {
       series: yup.object().required(t('form-field.required')),
       model: yup.object().required(t('form-field.required')),
       innerCode: yup.string().required(t('form-field.required')),
-      chassis: yup.object().required(t('form-field.required')),
+      bodyType: yup.object().required(t('form-field.required')),
       year: yup.number().required(t('form-field.required')),
       fromYear: yup.number().required(t('form-field.required')),
       toYear: yup.number().required(t('form-field.required')),
@@ -81,7 +81,7 @@ function CodeForm({ code = null }: Props) {
       innerCode: '',
       subCode: '',
       isAuto: '0',
-      chassis: null,
+      bodyType: null,
       year: null,
       fromYear: null,
       toYear: null,
@@ -98,6 +98,7 @@ function CodeForm({ code = null }: Props) {
   const year = useWatch({ control, name: 'year' })
   const fromYear = useWatch({ control, name: 'fromYear' })
 
+  // Edit mode: reset values from backend; bodyType is resolved from bodyTypes list
   useEffect(() => {
     if (code?.id) {
       reset({
@@ -109,7 +110,7 @@ function CodeForm({ code = null }: Props) {
         innerCode: code.innerCode || '',
         subCode: code.innerSubCode || '',
         isAuto: code.isAuto || '0',
-        chassis: null,
+        bodyType: code.bodyType || null,
         year: code.year || null,
         fromYear: code.fromYear || code.year || null,
         toYear: code.toYear || code.year || null,
@@ -117,7 +118,12 @@ function CodeForm({ code = null }: Props) {
         modelDescription: code.modelDescription || '',
         description: code.description || '',
       })
-    } else if (code === null) {
+    }
+  }, [code?.id, reset])
+
+  // Create mode: do not reset on async lookups; reset once when creating
+  useEffect(() => {
+    if (code === null) {
       reset({
         carType: null,
         innerCarTypeCode: '',
@@ -127,6 +133,7 @@ function CodeForm({ code = null }: Props) {
         innerCode: '',
         subCode: '',
         isAuto: '0',
+        bodyType: null,
         year: null,
         fromYear: null,
         toYear: null,
@@ -135,7 +142,7 @@ function CodeForm({ code = null }: Props) {
         description: '',
       })
     }
-  }, [code?.id, reset])
+  }, [code, reset])
 
   // Set manufacturer from manufacturers array
   useEffect(() => {
@@ -167,16 +174,6 @@ function CodeForm({ code = null }: Props) {
     }
   }, [code?.modelId, selectedSeries, setValue])
 
-  // Set chassis from chassis list by id
-  useEffect(() => {
-    if (code?.chassis && chassisList && chassisList.length > 0 && !isChassisLoading) {
-      const foundChassis = chassisList.find(c => c.id === code.chassis)
-      if (foundChassis) {
-        setValue('chassis', foundChassis, { shouldDirty: false })
-      }
-    }
-  }, [code?.chassis, chassisList, isChassisLoading, setValue])
-
   // При создании: если year изменен и fromYear пустой, установить fromYear из year
   useEffect(() => {
     if (!code && year && !fromYear) {
@@ -199,7 +196,7 @@ function CodeForm({ code = null }: Props) {
   }, [selectedSeries])
 
   const onSubmit = (data: TFormInput) => {
-    if (!data.carType || !data.manufacturer || !data.series || !data.model || !data.chassis) {
+    if (!data.carType || !data.manufacturer || !data.series || !data.model || !data.bodyType) {
       return
     }
 
@@ -211,7 +208,7 @@ function CodeForm({ code = null }: Props) {
       innerCode: data.innerCode,
       innerSubCode: data.subCode,
       innerCarTypeCode: data.innerCarTypeCode,
-      chassis: data.chassis.id,
+      bodyTypeId: data.bodyType.id,
       year: data.year || 0,
       fromYear: data.fromYear || 0,
       toYear: data.toYear || 0,
@@ -352,13 +349,13 @@ function CodeForm({ code = null }: Props) {
         </Grid>
 
         <Grid size={3}>
-          <AppControlledAutocomplete<TChassis>
-            name='chassis'
+          <AppControlledAutocomplete<TBodyType>
+            name='bodyType'
             control={control}
-            options={chassisList || []}
-            label={t('chassis', { ns: 'newCode' })}
+            options={bodyTypes || []}
+            label={t('bodyType', { ns: 'newCode' })}
             required
-            loading={isChassisLoading}
+            loading={isBodyTypesLoading}
             getOptionLabel={(option) => option.name}
             isOptionEqualToValue={(option, value) => option.id === value.id}
             errors={errors}

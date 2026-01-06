@@ -1,9 +1,9 @@
 {
   "slidebar": {
     "mainPage": "Main Page",
-    "vehicles": "Vehicles",
+    "vehicles": "Cars catalog",
     "manufacturers": "Manufacturers",
-    "vehicleTypes": "Vehicle Types",
+    "vehicleTypes": "Car Types",
     "categories": "Categories",
     "features": "Features",
     "additions": "Additions",
@@ -26,6 +26,7 @@
     "mileageAdjustments": "Mileage adjustments",
     "owners": "Owners",
     "engineTypes": "Engine types",
+    "bodyTypes": "Body types",
     "driveTypes": "Drive types",
     "gearboxes": "Gearboxes",
     "commentsForOpinion": "Comments for opinion",
@@ -50,7 +51,7 @@
     "priceList": "Price List",
     "options": "Options",
     "subscriptions": "Subscriptions",
-    "vehicleCatalog": "Vehicle Catalog",
+    "vehicleCatalog": "Cars catalog",
     "apartments": "Apartments",
     "settings": "Settings"
   },

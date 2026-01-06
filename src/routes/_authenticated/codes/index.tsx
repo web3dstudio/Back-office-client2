@@ -25,7 +25,7 @@ type CodesFilters = {
 }
 
 function CodesPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate({ from: '/codes' })
   const [filtersDraft, setFiltersDraft] = useState<CodesFilters>({
     modelCode: '',
@@ -129,15 +129,17 @@ function CodesPage() {
         maxSize: 200,
       },
       {
-        accessorKey: 'chassis',
-        header: t('chassis', { ns: 'codes' }),
+        accessorKey: 'bodyType',
+        header: t('bodyType', { ns: 'codes' }),
         enableSorting: true,
         enableHiding: true,
         size: 150,
         minSize: 120,
         maxSize: 200,
         cell: ({ row }) => {
-          return row.original.chassisName || ''
+          const bodyType = row.original.bodyType
+          if (!bodyType) return ''
+          return i18n.language === 'en' ? (bodyType.nameEn || bodyType.name) : bodyType.name
         },
       },
       {

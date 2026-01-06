@@ -1,9 +1,9 @@
 {
   "slidebar": {
     "mainPage": "עמוד ראשי",
-    "vehicles": "רכבים",
+    "vehicles": "קטלוג רכבים",
     "manufacturers": "יצרנים",
-    "vehicleTypes": "סוגי רכב",
+    "vehicleTypes": "סוגי רכבים",
     "categories": "קטגוריות",
     "features": "חבילות שדרוג",
     "additions": "תוספות",
@@ -26,6 +26,7 @@
     "mileageAdjustments": "התאמות קילומטראז׳",
     "owners": "בעלים",
     "engineTypes": "סוגי מנוע",
+    "bodyTypes": "מרכבים",
     "driveTypes": "סוגי הנעה",
     "gearboxes": "תיבות הילוכים",
     "commentsForOpinion": "הערות לחוות דעת",

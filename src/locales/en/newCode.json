@@ -21,5 +21,6 @@
   "chassis": "Chassis",
   "modelDescription": "Model Description",
   "innerCarTypeCode": "Inner Car Type Code",
+  "bodyType": "Body type",
   "editCode": "Edit Code"
 }

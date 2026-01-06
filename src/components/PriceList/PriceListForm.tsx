@@ -7,9 +7,10 @@ import { object } from 'yup'
 import { AppControlledAutocomplete } from "../AppControlledAutocomplete";
 import { usePriceListTypesQuery } from "../../query/priceListTypes.querty";
 import { useCarTypesQuery } from "../../query/carTypes.query";
+import { useEngineTypesQuery } from "../../query/engineTypes.query";
 import AppControlledCheckboxesTags from "../AppControlledCheckboxesTags";
 import { useNavigate } from "@tanstack/react-router";
-import type { TCarType, TPriceList, TPriceListType } from "../../types";
+import type { TCarType, TEngineType, TPriceList, TPriceListType } from "../../types";
 import { useEffect, useMemo, useState } from "react";
 import AppDialog from "../AppDialog/AppDialog";
 import AppControlledTextField from "../AppControlledTextField";
@@ -19,6 +20,7 @@ import usePriceListCreateMutation from "../../query/priceList.query";
 
 type TFormInput = {
   carTypes: TCarType[]
+  engineTypes: TEngineType[]
   comment: string
   month: number
   year: number
@@ -35,7 +37,7 @@ const months = Array.from({ length: 12 }, (_, i) => i + 1)
 
 
 export default function PriceListForm() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const navigate = useNavigate()
 
   const [titleDialogOpen, setTitleDialogOpen] = useState(false)
@@ -44,6 +46,7 @@ export default function PriceListForm() {
 
   const { data: priceListTypes, isLoading: isPriceListTypesLoading } = usePriceListTypesQuery()
   const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
+  const { data: engineTypes, isLoading: isEngineTypesLoading } = useEngineTypesQuery()
 
   const { mutate: createPriceList, isPending: isCreatePriceListLoading } = usePriceListCreateMutation()
 
@@ -64,6 +67,7 @@ export default function PriceListForm() {
       month: new Date().getMonth() + 1,
       priceListType: undefined,
       carTypes: [],
+      engineTypes: [],
       comment: 'סכום זה יש להכפיל במספר חודשי העלייה לכביש מעבר לינואר 17 בהתאמה ולהוסיף למחיר המכונית',
       upToYearOfManufacture: undefined,
       yearOfFirstRegistration: undefined,
@@ -95,6 +99,7 @@ export default function PriceListForm() {
   const onSubmit = (data: any) => {
     const priceList = {
       carTypeIds: data.carTypes.map((carType: TCarType) => carType.id),
+      engineTypeIds: (data.engineTypes || []).map((engineType: TEngineType) => engineType.id),
       comment: data.comment,
       month: data.month,
       year: data.year,
@@ -102,7 +107,7 @@ export default function PriceListForm() {
       yearOfFirstRegistration: data.yearOfFirstRegistration?.toString(),
       priceListType: data.priceListType.id,
     }
-    createPriceList(priceList as unknown as Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[] })
+    createPriceList(priceList as unknown as Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[]; engineTypeIds: string[] })
   }
 
   return (<>
@@ -164,6 +169,18 @@ export default function PriceListForm() {
           />
         </Grid>
 
+        <Grid size={2}>
+          <AppControlledCheckboxesTags
+            name='engineTypes'
+            loading={isEngineTypesLoading}
+            options={engineTypes || []}
+            getOptionLabel={(option) => (i18n.language?.startsWith('he') ? option.name : (option.nameEn || option.name))}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            control={control}
+            errors={errors}
+            label={t('title', { ns: 'engineTypes' })}
+          />
+        </Grid>
 
         <Grid size={'auto'}>
           <Button
@@ -191,30 +208,40 @@ export default function PriceListForm() {
           </Button>
         </Grid>
 
-        <Grid size={'auto'}>
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ textTransform: 'capitalize', mt: 2 }}
-            onClick={() => { }}
-            disabled={!formState.isValid}
+        <Grid size={12}>
+          <Grid
+            container
+            columnSpacing={2}
+            rowSpacing={0}
+            columns={12}
+            sx={{ width: '100%', justifyContent: i18n.language?.startsWith('he') ? 'flex-start' : 'flex-end' }}
           >
-            {t('preview', { ns: 'priceList' })}
-          </Button>
-        </Grid>
+            <Grid size={'auto'}>
+              <Button
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ textTransform: 'capitalize', mt: 2 }}
+                onClick={() => { }}
+                disabled={!formState.isValid}
+              >
+                {t('preview', { ns: 'priceList' })}
+              </Button>
+            </Grid>
 
-        <Grid size={'auto'}>
-          <Button
-            disabled={!formState.isValid}
-            loading={isCreatePriceListLoading}
-            type="submit"
-            variant="contained"
-            color="primary"
-            sx={{ textTransform: 'capitalize', mt: 2 }}
-          >
-            {t('crateNew', { ns: 'priceList' })}
-          </Button>
+            <Grid size={'auto'}>
+              <Button
+                disabled={!formState.isValid}
+                loading={isCreatePriceListLoading}
+                type="submit"
+                variant="contained"
+                color="primary"
+                sx={{ textTransform: 'capitalize', mt: 2 }}
+              >
+                {t('crateNew', { ns: 'priceList' })}
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
 
 

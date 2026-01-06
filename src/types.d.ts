@@ -98,6 +98,12 @@ export type TDriveType = {
   code: number
 }
 
+export type TBodyType = {
+  id: string
+  name: string
+  nameEn: string
+}
+
 export type TDriveTechnology = {
   id: string
   name: string
@@ -658,6 +664,7 @@ export type TPriceList = {
   yearOfFirstRegistration: number
   priceListType: number
   carTypes: TCarType[]
+  engineTypes: TEngineType[]
   id: string
 }
 
@@ -702,7 +709,7 @@ export type TCar = {
   manufacturerYear: number | null
   extraPrice: number | null
   gearbox: TGearbox | null
-  chassis: TChassis | null
+  bodyType: TBodyType | null | string
   horsepower: number | null
   integralExtras: TIntegralExtra[]
   extras: TExtra[]
@@ -716,6 +723,7 @@ export type TCar = {
   }[]
   newCarPrice: number | null
   carPrices: TCarPrice[]
+  driveType: TDriveType | null | string
 }
 
 export type TCarsList = {
@@ -797,7 +805,7 @@ export type CarUpdateRequest = {
   manufacturerYear: number
   driveType?: string | null
   gearboxId?: string | null
-  chassis?: string | null
+  bodyTypeId?: string | null
   manufacturerCodeId?: string | null
   codeId?: string | null
   horsepower?: number | null
@@ -967,11 +975,11 @@ export type TCodeList = {
   innerCode: string
   innerSubCode: string
   chassis: string | null
-  chassisName: string | null
   fromYear: number
   toYear: number
   description: string
   id: string
+  bodyType: TBodyType | null
 }
 
 export type TCode = {
@@ -984,7 +992,7 @@ export type TCode = {
   innerCode: string
   innerSubCode: string
   isAuto: string
-  chassis: string | null
+  bodyType: TBodyType | null
   year: number
   fromYear: number
   toYear: number
@@ -1017,7 +1025,7 @@ export type TCodeFromApi = {
   horsepower: number
   automaticTransmission: boolean
   engineCapacity: number
-  bodyType: string
+  bodyTypeFromApi: string
   fromYear: number | null
   toYear: number | null
   innerCarTypeCode: string | null
@@ -1030,6 +1038,7 @@ export type TCodeFromApi = {
   year?: string | null // Не было в объекте, но есть в `TCode`
   codeId: string
   carTypeId: string | null
+  bodyTypeId: string | null
   modelId: string | null
   chassis: string | null
   manufacturerId?: string | null

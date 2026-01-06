@@ -118,7 +118,25 @@ export default function useManufacturerSeriesModelsMutation(): UseMutationResult
   const { t } = useTranslation('notifications')
   return useMutation({
     mutationFn: async (manufacturer: TManufacturer): Promise<TManufacturer> => {
-      const response = await axiosAPI.post(`/manufacturers/upsert`, manufacturer)
+      const manufacturerPayload = {
+        ...manufacturer,
+        serieses: Array.isArray((manufacturer as any)?.serieses)
+          ? (manufacturer as any).serieses.map((serie: any) => ({
+            ...serie,
+            models: Array.isArray(serie?.models)
+              ? serie.models.map((model: any) => {
+                const { engineType, ...rest } = model
+                return {
+                  ...rest,
+                  engineTypeId: engineType?.id ?? null,
+                }
+              })
+              : serie?.models,
+          }))
+          : (manufacturer as any)?.serieses,
+      }
+
+      const response = await axiosAPI.post(`/manufacturers/upsert`, manufacturerPayload)
       return response.data
     },
     onSuccess: (_data) => {

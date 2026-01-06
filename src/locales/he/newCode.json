@@ -21,5 +21,6 @@
   "chassis": "מרכב",
   "modelDescription": "תיאור הדגם",
   "innerCarTypeCode": "קוד משרד התחבורה",
+  "bodyType": "מרכבים",
   "editCode": "עריכת קוד"
 }

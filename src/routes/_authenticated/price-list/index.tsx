@@ -42,7 +42,7 @@ const downloadFile = (file: Blob, name: string, download: boolean) => {
 }
 
 function PriceListPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TPriceList | null>(null)
   const [loadingPdfIds, setLoadingPdfIds] = useState<Set<string>>(new Set())
@@ -90,6 +90,24 @@ function PriceListPage() {
         minSize: 200,
         maxSize: 400,
         cell: ({ row }) => row.original.carTypes.map(type => type?.name).join(', '),
+      },
+      {
+        accessorKey: 'engineTypes',
+        header: t('title', { ns: 'engineTypes' }),
+        enableSorting: false,
+        enableHiding: true,
+        size: 300,
+        minSize: 200,
+        maxSize: 400,
+        cell: ({ row }) => {
+          const types = row.original.engineTypes || []
+          if (types.length === 0) {
+            return t('all', { ns: 'priceList' })
+          }
+          return types
+            .map(type => (i18n.language?.startsWith('he') ? type?.name : (type?.nameEn || type?.name)))
+            .join(', ')
+        },
       },
       {
         id: 'actions',

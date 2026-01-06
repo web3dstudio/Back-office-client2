@@ -35,11 +35,15 @@ export function usePriceListsQuery(page: number, filters: Record<string, string>
   })
 }
 
-export default function usePriceListCreateMutation(): UseMutationResult<TPriceList, Error, Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[] }> {
+export default function usePriceListCreateMutation(): UseMutationResult<
+  TPriceList,
+  Error,
+  Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[]; engineTypeIds: string[] }
+> {
   const queryClient = useQueryClient()
   const { t } = useTranslation('notifications')
   return useMutation({
-    mutationFn: async (data: Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[] }) => {
+    mutationFn: async (data: Omit<TPriceList, 'id' | 'date' | 'carTypes'> & { carTypeIds: string[]; engineTypeIds: string[] }) => {
       const response = await axiosAPI.post('/priceLists', data)
       return response.data
     },

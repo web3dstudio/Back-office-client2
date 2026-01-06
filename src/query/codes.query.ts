@@ -5,13 +5,12 @@ import type { GridSortModel } from "@mui/x-data-grid"
 import { useTranslation } from "react-i18next"
 import { toast } from "react-toastify"
 
-export type TCodeCreate = Omit<TCode, 'id' | 'carType'> & {
+export type TCodeCreate = Omit<TCode, 'id' | 'carType' | 'bodyType'> & {
   carTypeId: string
+  bodyTypeId: string
 }
 
-export type TCodeUpdate = Omit<TCodeCreate, 'chassis'> & {
-  chassis?: string | null
-}
+export type TCodeUpdate = TCodeCreate
 
 export function useCodesQuery(page: number, filters: Record<string, string>, sortModel?: GridSortModel): UseQueryResult<TCodesResponse, Error> {
   return useQuery({

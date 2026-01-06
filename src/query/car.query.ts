@@ -90,3 +90,23 @@ export function useCarUpdateMutation(): UseMutationResult<TCar, Error, { id: str
   })
 }
 
+export function useCarCreateMutation(): UseMutationResult<TCar, Error, CarUpdateRequest> {
+  const { t } = useTranslation('notifications')
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: CarUpdateRequest): Promise<TCar> => {
+      const response = await axiosAPI.post(`/cars`, data)
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['cars'] })
+      toast.success(t('car_created_successfully') || 'Car created successfully!')
+    },
+    onError: (error) => {
+      console.log('ERROR', error.message)
+      toast.error(t('error_occurred') || 'Error!')
+    },
+  })
+}
+

@@ -132,6 +132,15 @@ export default function MainNavMenuItemSubmenu({ label, click }: { label: string
           {t('slidebar.engineTypes', { ns: 'common' })}
         </MenuItem>
 
+        <MenuItem
+          onClick={() => {
+            navigate({ to: '/body-types' })
+            handleClose()
+          }}
+        >
+          {t('slidebar.bodyTypes', { ns: 'common' })}
+        </MenuItem>
+
 
         <MenuItem
           onClick={() => {

@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TChassis, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark, TBodyType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -8,7 +8,7 @@ import { useMemo, useEffect, useRef, useState } from "react"
 import { Box, Button, Grid, Typography } from "@mui/material"
 import { AppControlledAutocomplete } from "../AppControlledAutocomplete"
 import { useCarTypesQuery } from "../../query/carTypes.query"
-import { useCarUpdateMutation } from "../../query/car.query"
+import { useCarCreateMutation, useCarUpdateMutation } from "../../query/car.query"
 import { useManufacturersWithSeriesAndModelsQuery } from "../../query/manufacturers.query"
 import AppControlledTextField from "../AppControlledTextField"
 import { useCategoriesQuery } from "../../query/category.query"
@@ -24,9 +24,9 @@ import { useCountriesQuery } from "../../query/countries.query"
 import { useNavigate } from "@tanstack/react-router"
 import AppControlledCheckbox from "../AppControlledCheckbox"
 import { useGearboxesQuery } from "../../query/gearboxes.query"
-import { useChassisQuery } from "../../query/chassis.query"
 import { useDriveTypesQuery } from "../../query/driveTypes.query"
 import { useMarksQuery } from "../../query/marks.query"
+import { useBodyTypesQuery } from "../../query/bodyTypes.query"
 
 
 interface Props {
@@ -42,7 +42,7 @@ type TFormInput = {
   model: TModel | TCarModel | null
   code: TCarModelCode | null
   gearbox: TGearbox | null
-  chassis: TChassis | null
+  bodyType: TBodyType | null
   driveType: TDriveType | null
   horsepower: number | null
   finishingPercentage: number | null
@@ -79,6 +79,7 @@ export default function CarForm({ data }: Props) {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
   const { mutate: updateCar } = useCarUpdateMutation()
+  const { mutate: createCar } = useCarCreateMutation()
 
   const { data: carTypes, isLoading: isCarTypesLoading } = useCarTypesQuery()
   const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
@@ -90,17 +91,19 @@ export default function CarForm({ data }: Props) {
   const { data: marksData, isLoading: isMarksLoading } = useMarksQuery()
   const { data: countries, isLoading: isCountriesLoading } = useCountriesQuery()
   const { data: gearboxes, isLoading: isGearboxesLoading } = useGearboxesQuery()
-  const { data: chassisList, isLoading: isChassisLoading } = useChassisQuery()
   const { data: driveTypes, isLoading: isDriveTypesLoading } = useDriveTypesQuery()
+  const { data: bodyTypes, isLoading: isBodyTypesLoading } = useBodyTypesQuery()
 
-  const resolvedChassis = useMemo(() => {
-    const raw = (data as any)?.chassis
+  const resolvedBodyType = useMemo(() => {
+    const raw = (data as any)?.bodyType
     if (!raw) return null
-    // backend may return chassis as id (string) or as object
-    if (typeof raw === 'string') return (chassisList || []).find(c => c.id === raw) || null
-    if (typeof raw === 'object' && typeof raw.id === 'string') return raw as TChassis
+    // backend may return bodyType as id (string) or as object
+    if (typeof raw === 'string') return (bodyTypes || []).find(bt => bt.id === raw) || null
+    if (typeof raw === 'object' && typeof raw.id === 'string') {
+      return (bodyTypes || []).find(bt => bt.id === raw.id) || (raw as TBodyType)
+    }
     return null
-  }, [data, chassisList])
+  }, [data, bodyTypes])
 
   const resolvedDriveType = useMemo(() => {
     const raw = (data as any)?.driveType
@@ -121,7 +124,7 @@ export default function CarForm({ data }: Props) {
     model: data?.model || null,
     code: data?.codeId && data?.model?.codes ? data.model.codes.find(c => c.id === data.codeId) || null : null,
     gearbox: data?.gearbox || null,
-    chassis: resolvedChassis,
+    bodyType: resolvedBodyType,
     driveType: resolvedDriveType,
     horsepower: data?.horsepower || null,
     finishingPercentage: (data as any)?.finishingPercentage ?? null,
@@ -207,7 +210,7 @@ export default function CarForm({ data }: Props) {
       letterText: line.letterText || '',
       letterNum: line.letterNum?.toString() || ''
     })) || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedChassis, resolvedDriveType])
+  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedBodyType, resolvedDriveType])
 
 
   const schema = object()
@@ -265,19 +268,15 @@ export default function CarForm({ data }: Props) {
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
     if (!selectedModel?.codes) {
-      console.log('codeOptions: no codes, selectedModel:', selectedModel)
       return []
     }
     const codes = selectedModel.codes as TCarModelCode[]
     if (!selectedCarType) {
-      console.log('codeOptions (all codes):', codes)
       return codes
     }
     const filtered = codes.filter((code: TCarModelCode) => {
-      // Для TCarModelCode используем carTypeId
       return code.carTypeId === selectedCarType.id
     })
-    console.log('codeOptions (filtered by carType):', filtered, 'carTypeId:', selectedCarType.id, 'all codes:', codes)
     return filtered
   }, [selectedModel, selectedCarType])
 
@@ -511,7 +510,7 @@ export default function CarForm({ data }: Props) {
       manufacturerYear: formData.manufacturerYear || 0,
       driveType: formData.driveType?.id || null,
       gearboxId: formData.gearbox?.id || null,
-      chassis: formData.chassis?.id || null,
+      bodyTypeId: formData.bodyType?.id || null,
       manufacturerCodeId: null,
       codeId: formData.code?.id || null,
       horsepower: horsepowerNumber !== null && Number.isFinite(horsepowerNumber) ? horsepowerNumber : null,
@@ -538,7 +537,11 @@ export default function CarForm({ data }: Props) {
       carPrices: carPricesToSend.length ? carPricesToSend : null
     }
 
-    updateCar({ id: data.id, data: updateData })
+    if (data?.id) {
+      updateCar({ id: data.id, data: updateData })
+    } else {
+      createCar(updateData)
+    }
   }
 
   return (<>
@@ -546,15 +549,18 @@ export default function CarForm({ data }: Props) {
       <form onSubmit={handleSubmit(onSubmit as any)} style={{ width: '100%' }}>
         <Grid container columns={12} columnSpacing={3} sx={{ width: '100%' }}>
           <Grid size={9}>
-            <Button variant="contained" color="primary" sx={{ mt: 2 }} onClick={() => {
-              if (data?.id) {
-                navigate({ to: '/catalog/$id', params: { id: data?.id } })
-              } else {
-                navigate({ to: '/catalog/new-car' })
-              }
-            }}>
-              {t('toDetails', { ns: 'newCar' })}
-            </Button>
+            {data?.id ? (
+              <Button
+                variant="contained"
+                color="primary"
+                sx={{ mt: 2 }}
+                onClick={() => {
+                  navigate({ to: '/catalog/$id', params: { id: data.id } })
+                }}
+              >
+                {t('toDetails', { ns: 'newCar' })}
+              </Button>
+            ) : null}
           </Grid>
           <Grid size={3}>
 
@@ -721,14 +727,14 @@ export default function CarForm({ data }: Props) {
               />
             </Grid>
             <Grid size={3}>
-              <AppControlledAutocomplete<TChassis>
-                name='chassis'
+              <AppControlledAutocomplete<TBodyType>
+                name='bodyType'
                 control={control}
-                options={chassisList || []}
-                label={t('chassis', { ns: 'newCar' })}
-                placeholder={t('chassis', { ns: 'newCar' })}
-                loading={isChassisLoading}
-                getOptionLabel={(option) => option.name}
+                options={bodyTypes || []}
+                label={t('bodyType', { ns: 'newCar' })}
+                placeholder={t('bodyType', { ns: 'newCar' })}
+                loading={isBodyTypesLoading}
+                getOptionLabel={(option) => i18n.language === 'he' ? option.name : (option.nameEn || option.name)}
                 isOptionEqualToValue={(option, value) => option.id === value.id}
               />
             </Grid>

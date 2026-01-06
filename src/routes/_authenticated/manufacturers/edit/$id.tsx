@@ -30,6 +30,7 @@ import type { TModel, TSerie } from '../../../../types'
 import useManufacturerSeriesModelsMutation from '../../../../query/manufacturers.query'
 import { useSeriesDeleteMutation } from '../../../../query/series.query'
 import AppExtrasMultiselect from '../../../../components/AppExtrasMultiselect'
+import { useEngineTypesQuery } from '../../../../query/engineTypes.query'
 
 export const Route = createFileRoute('/_authenticated/manufacturers/edit/$id')(
   {
@@ -49,6 +50,7 @@ function MenufacturerEditPage() {
   const [openCodesDialog, setOpenCodesDialog] = useState(false)
 
   const { data: manufacturer, isLoading, isError, refetch } = useManufacturerQuery(id)
+  const { data: engineTypes } = useEngineTypesQuery()
 
   const { mutate: upsertManufacturer, isPending: isUpsertPending } = useManufacturerSeriesModelsMutation()
   const { mutate: deleteSeries } = useSeriesDeleteMutation()
@@ -104,7 +106,7 @@ function MenufacturerEditPage() {
           dbId: model.id,
           name: model.name,
           volume: model.volume ?? 0,
-          engineType: model.engineType ?? null,
+          engineType: model.engineType ?? engineTypes?.find(et => et.id === (model as any)?.engineTypeId) ?? null,
           codes: model.codes || null,
           code: model.code ?? '',
           priority: model.priority ?? 0,
@@ -167,7 +169,7 @@ function MenufacturerEditPage() {
               dbId: model.id,
               name: model.name,
               volume: model.volume ?? 0,
-              engineType: model.engineType ?? null,
+              engineType: model.engineType ?? engineTypes?.find(et => et.id === (model as any)?.engineTypeId) ?? null,
               code: model.code ?? '',
               codes: model.codes || null,
               manufacturerCode: model.manufacturerCode ?? '',
@@ -179,7 +181,7 @@ function MenufacturerEditPage() {
         void trigger()
       }
     }
-  }, [manufacturer, reset, trigger]);
+  }, [manufacturer, engineTypes, reset, trigger]);
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
     const seriesExtraSettings = ((data as any)?.seriesExtras || []).flatMap((serie: any) => {
