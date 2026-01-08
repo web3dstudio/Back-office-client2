@@ -110,6 +110,21 @@ function PriceListPage() {
         },
       },
       {
+        id: 'years',
+        header: t('years', { ns: 'priceList' }),
+        enableSorting: false,
+        enableHiding: true,
+        size: 140,
+        minSize: 120,
+        maxSize: 180,
+        cell: ({ row }) => {
+          const from = row.original.yearOfFirstRegistration
+          const to = row.original.upToYearOfManufacture
+          if (from === null || from === undefined || to === null || to === undefined) return ''
+          return `${from} - ${to}`
+        },
+      },
+      {
         id: 'actions',
         header: 'Actions',
         enableSorting: false,

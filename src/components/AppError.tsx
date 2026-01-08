@@ -31,7 +31,7 @@ function AppError({ error, reset, fullPage }: AppErrorProps) {
           : { p: 2 }),
       }}
     >
-      <Box sx={{ maxWidth: 640, width: '100%' }}>
+      <Box sx={{ width: '100%' }}>
         <Alert
           severity="error"
           action={

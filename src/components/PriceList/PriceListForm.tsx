@@ -25,13 +25,13 @@ type TFormInput = {
   month: number
   year: number
   priceListType: TPriceListType
-  upToYearOfManufacture: number
-  yearOfFirstRegistration: string
+  upToYearOfManufacture: number | undefined
+  yearOfFirstRegistration: number | undefined
 }
 
 const currentYear = new Date().getFullYear()
 const futureYears = Array.from({ length: 10 }, (_, i) => currentYear + i)
-const pastYears = Array.from({ length: 21 }, (_, i) => currentYear - i)
+const pastYears = Array.from({ length: currentYear - 2005 + 1 }, (_, i) => currentYear - i)
 const months = Array.from({ length: 12 }, (_, i) => i + 1)
 
 
@@ -55,6 +55,31 @@ export default function PriceListForm() {
       year: yup.number().required(t('form-field.required')),
       month: yup.number().required(t('form-field.required')),
       carTypes: yup.array().min(1, t('form-field.required')),
+      yearOfFirstRegistration: yup
+        .number()
+        .nullable()
+        .min(2005, t('form-field.required'))
+        .transform((value, originalValue) => {
+          if (originalValue === '' || originalValue === null || originalValue === undefined) return null
+          const n = Number(originalValue)
+          return Number.isNaN(n) ? null : n
+        }),
+      upToYearOfManufacture: yup
+        .number()
+        .nullable()
+        .min(2005, t('form-field.required'))
+        .transform((value, originalValue) => {
+          if (originalValue === '' || originalValue === null || originalValue === undefined) return null
+          const n = Number(originalValue)
+          return Number.isNaN(n) ? null : n
+        })
+        .when('yearOfFirstRegistration', (y, s) => {
+          if (y === null || y === undefined) return s
+          return s.min(
+            y as number,
+            `${t('upToYearOfManufacture', { ns: 'priceList' })} >= ${t('yearOfFirstRegistration', { ns: 'priceList' })}`
+          )
+        }),
     })
     .required()
 
@@ -69,14 +94,28 @@ export default function PriceListForm() {
       carTypes: [],
       engineTypes: [],
       comment: 'סכום זה יש להכפיל במספר חודשי העלייה לכביש מעבר לינואר 17 בהתאמה ולהוסיף למחיר המכונית',
-      upToYearOfManufacture: undefined,
-      yearOfFirstRegistration: undefined,
+      upToYearOfManufacture: currentYear,
+      yearOfFirstRegistration: 2005,
     },
   })
   const { handleSubmit, control, formState, setValue, watch } = methods
   const errors = formState.errors
 
   const priceListType = watch('priceListType')
+  const yearOfFirstRegistration = watch('yearOfFirstRegistration')
+  const upToYearOfManufacture = watch('upToYearOfManufacture')
+
+  const yearOfFirstRegistrationNumber =
+    typeof yearOfFirstRegistration === 'number'
+      ? yearOfFirstRegistration
+      : yearOfFirstRegistration
+        ? Number(yearOfFirstRegistration)
+        : null
+
+  const upToYearOfManufactureOptions = useMemo(() => {
+    if (!yearOfFirstRegistrationNumber || Number.isNaN(yearOfFirstRegistrationNumber)) return pastYears
+    return pastYears.filter(y => y >= yearOfFirstRegistrationNumber)
+  }, [yearOfFirstRegistrationNumber])
 
   const carTypesFiltered = useMemo(() => {
     return carTypes?.filter(carType => carType.priceListType === priceListType?.id) || []
@@ -85,6 +124,17 @@ export default function PriceListForm() {
   useEffect(() => {
     setValue('carTypes', [], { shouldValidate: false, shouldDirty: false })
   }, [priceListType, setValue])
+
+  useEffect(() => {
+    if (!yearOfFirstRegistrationNumber || Number.isNaN(yearOfFirstRegistrationNumber)) return
+    const upTo =
+      typeof upToYearOfManufacture === 'number'
+        ? upToYearOfManufacture
+        : null
+    if (upTo !== null && !Number.isNaN(upTo) && upTo < yearOfFirstRegistrationNumber) {
+      setValue('upToYearOfManufacture', undefined, { shouldValidate: true, shouldDirty: true })
+    }
+  }, [yearOfFirstRegistrationNumber, upToYearOfManufacture, setValue])
 
 
 
@@ -256,17 +306,6 @@ export default function PriceListForm() {
         <Grid container spacing={2} columns={12} sx={{ width: '100%', mt: 2 }}>
           <Grid size={6}>
             <AppControlledAutocomplete
-              name='upToYearOfManufacture'
-              options={pastYears}
-              getOptionLabel={(option) => option.toString()}
-              isOptionEqualToValue={(option, value) => option === value}
-              control={control}
-              errors={errors}
-              label={t('upToYearOfManufacture', { ns: 'priceList' })}
-            />
-          </Grid>
-          <Grid size={6}>
-            <AppControlledAutocomplete
               name='yearOfFirstRegistration'
               options={pastYears}
               getOptionLabel={(option) => option.toString()}
@@ -274,6 +313,17 @@ export default function PriceListForm() {
               control={control}
               errors={errors}
               label={t('yearOfFirstRegistration', { ns: 'priceList' })}
+            />
+          </Grid>
+          <Grid size={6}>
+            <AppControlledAutocomplete
+              name='upToYearOfManufacture'
+              options={upToYearOfManufactureOptions}
+              getOptionLabel={(option) => option.toString()}
+              isOptionEqualToValue={(option, value) => option === value}
+              control={control}
+              errors={errors}
+              label={t('upToYearOfManufacture', { ns: 'priceList' })}
             />
           </Grid>
         </Grid>

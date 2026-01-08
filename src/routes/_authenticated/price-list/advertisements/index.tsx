@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, Navigate } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
   '/_authenticated/price-list/advertisements/',
@@ -7,7 +7,7 @@ export const Route = createFileRoute(
 })
 
 function AdvertisementsPage() {
-  return <div>Hello "/_authenticated/price-list/advertisements/"!</div>
+  return <Navigate to="/price-list/advertisements/layouts" replace />
 }
 
 

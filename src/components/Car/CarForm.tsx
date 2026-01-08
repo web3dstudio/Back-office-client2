@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark, TBodyType } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark, TBodyType, TEngineType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -27,6 +27,7 @@ import { useGearboxesQuery } from "../../query/gearboxes.query"
 import { useDriveTypesQuery } from "../../query/driveTypes.query"
 import { useMarksQuery } from "../../query/marks.query"
 import { useBodyTypesQuery } from "../../query/bodyTypes.query"
+import { useEngineTypesQuery } from "../../query/engineTypes.query"
 
 
 interface Props {
@@ -41,6 +42,8 @@ type TFormInput = {
   series: TSerie | null
   model: TModel | TCarModel | null
   code: TCarModelCode | null
+  volume: number | null
+  engineType: TEngineType | null
   gearbox: TGearbox | null
   bodyType: TBodyType | null
   driveType: TDriveType | null
@@ -93,6 +96,16 @@ export default function CarForm({ data }: Props) {
   const { data: gearboxes, isLoading: isGearboxesLoading } = useGearboxesQuery()
   const { data: driveTypes, isLoading: isDriveTypesLoading } = useDriveTypesQuery()
   const { data: bodyTypes, isLoading: isBodyTypesLoading } = useBodyTypesQuery()
+  const { data: engineTypes, isLoading: isEngineTypesLoading } = useEngineTypesQuery()
+
+  const resolvedEngineType = useMemo(() => {
+    const raw = (data as any)?.model?.engineType
+    if (!raw) return null
+    if (typeof raw === 'object' && typeof raw.id === 'string') {
+      return (engineTypes || []).find(et => et.id === raw.id) || (raw as TEngineType)
+    }
+    return null
+  }, [data, engineTypes])
 
   const resolvedBodyType = useMemo(() => {
     const raw = (data as any)?.bodyType
@@ -123,6 +136,8 @@ export default function CarForm({ data }: Props) {
     series: (data?.model as any)?.series || null,
     model: data?.model || null,
     code: data?.codeId && data?.model?.codes ? data.model.codes.find(c => c.id === data.codeId) || null : null,
+    volume: (data?.model as any)?.volume ?? null,
+    engineType: resolvedEngineType,
     gearbox: data?.gearbox || null,
     bodyType: resolvedBodyType,
     driveType: resolvedDriveType,
@@ -246,6 +261,16 @@ export default function CarForm({ data }: Props) {
   const selectedSeries = useWatch({ control, name: 'series' })
   const selectedModel = useWatch({ control, name: 'model' })
   const selectedCarType = useWatch({ control, name: 'carType' })
+
+  useEffect(() => {
+    setValue('volume', (selectedModel as any)?.volume ?? (data as any)?.model?.volume ?? null)
+    const rawEngineType = (selectedModel as any)?.engineType ?? (data as any)?.model?.engineType ?? null
+    const resolved =
+      rawEngineType && typeof rawEngineType === 'object' && typeof rawEngineType.id === 'string'
+        ? (engineTypes || []).find(et => et.id === rawEngineType.id) || rawEngineType
+        : null
+    setValue('engineType', resolved)
+  }, [selectedModel, data, setValue, engineTypes])
 
   // Массив годов от текущего до 1960
   const currentYear = new Date().getFullYear();
@@ -688,6 +713,29 @@ export default function CarForm({ data }: Props) {
                 onUserChange={() => {
                   setValue('code', null)
                 }}
+              />
+            </Grid>
+            <Grid size={6}>
+              <AppControlledTextField
+                name='volume'
+                control={control}
+                label={t('volume', { ns: 'newCar' })}
+                placeholder={t('volume', { ns: 'newCar' })}
+                type='number'
+                disabled
+              />
+            </Grid>
+            <Grid size={6}>
+              <AppControlledAutocomplete<TEngineType>
+                name='engineType'
+                control={control}
+                options={engineTypes || []}
+                label={t('engineType', { ns: 'newCar' })}
+                placeholder={t('engineType', { ns: 'newCar' })}
+                loading={isEngineTypesLoading}
+                disabled
+                getOptionLabel={(option) => i18n.language === 'he' ? option.name : (option.nameEn || option.name)}
+                isOptionEqualToValue={(option, value) => option.id === value.id}
               />
             </Grid>
           </Grid>

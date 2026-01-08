@@ -694,6 +694,7 @@ export type TCarModel = {
   id: string
   name: string
   volume: number
+  engineType: TEngineType | null
   series: TSerie | null
   codes: TCarModelCode[] | null
 }
@@ -1068,4 +1069,26 @@ export type TExpiringCustomer = {
   dailyQueries: number | null
   subscriptionExclusion: boolean
   customerTypes: TCustomerType[]
+}
+
+
+export enum EPriceListAdvertisementLayoutType {
+  Unassigned = 0,
+  Horizontal = 1, // 145 на 30 мм
+  VerticalLeft = 2,
+  VerticalRight = 3,
+}
+
+export type TPriceListLayout = {
+  id: string
+  name: string
+  layoutType: EPriceListAdvertisementLayoutType
+  originalFileName: string
+  convertedPdfFileName: string
+  previewFileName: string
+  colorModel: string
+  isActive: boolean
+  createdDate: string
+  deletedDate: string | null
+  sync: number
 }
