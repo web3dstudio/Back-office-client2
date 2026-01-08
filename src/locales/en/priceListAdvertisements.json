@@ -1,4 +1,15 @@
 {
   "title": "Price List Advertisements",
-  "layouts": "Layouts"
+  "layouts": "Layouts",
+  "preview": "Preview",
+  "name": "Name",
+  "colorModel": "Color",
+  "layoutType": "Layout type",
+  "created": "Created",
+  "active": "Active",
+  "actions": "Actions",
+  "layoutType_unassigned": "Unassigned",
+  "layoutType_horizontal": "Horizontal",
+  "layoutType_verticalLeft": "Vertical Left",
+  "layoutType_verticalRight": "Vertical Right"
 }

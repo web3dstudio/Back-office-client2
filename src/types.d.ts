@@ -1083,10 +1083,11 @@ export type TPriceListLayout = {
   id: string
   name: string
   layoutType: EPriceListAdvertisementLayoutType
+  orientation: 'Horizontal' | 'Vertical'
   originalFileName: string
   convertedPdfFileName: string
   previewFileName: string
-  colorModel: string
+  colorModel: 'CMYK' | 'sRGB' | 'RGB' | 'Gray' | 'Unknown' | null
   isActive: boolean
   createdDate: string
   deletedDate: string | null

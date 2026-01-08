@@ -6,6 +6,8 @@
   "advertisement_added_successfully": "הפרסומת נוספה בהצלחה",
   "advertisement_updated_successfully": "הפרסומת עודכנה בהצלחה",
   "advertisement_deleted_successfully": "הפרסומת נמחקה בהצלחה",
+  "pricelist_layouts_uploaded_successfully": "המקאטים הועלו בהצלחה",
+  "pricelist_layout_deleted_successfully": "המקאט נמחק בהצלחה",
   "sync_started": "סנכרון התחיל",
   "error_occurred": "אירעה שגיאה"
 }

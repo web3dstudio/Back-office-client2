@@ -1,4 +1,15 @@
 {
   "title": "פרסומות במחירון",
-  "layouts": "מקאטים"
+  "layouts": "מקאטים",
+  "preview": "תצוגה מקדימה",
+  "name": "שם",
+  "colorModel": "מודל צבע",
+  "layoutType": "סוג макאט",
+  "created": "נוצר",
+  "active": "פעיל",
+  "actions": "פעולות",
+  "layoutType_unassigned": "לא משויך",
+  "layoutType_horizontal": "אופקי",
+  "layoutType_verticalLeft": "אנכי שמאל",
+  "layoutType_verticalRight": "אנכי ימין"
 }

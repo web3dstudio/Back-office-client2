@@ -6,6 +6,8 @@
   "advertisement_added_successfully": "Advertisement added successfully",
   "advertisement_updated_successfully": "Advertisement updated successfully",
   "advertisement_deleted_successfully": "Advertisement deleted successfully",
+  "pricelist_layouts_uploaded_successfully": "Layouts uploaded successfully",
+  "pricelist_layout_deleted_successfully": "Layout deleted successfully",
   "sync_started": "Synchronization started",
   "error_occurred": "An error occurred"
 }
