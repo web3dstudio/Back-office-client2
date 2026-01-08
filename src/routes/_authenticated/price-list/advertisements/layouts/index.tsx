@@ -82,15 +82,23 @@ function AdvertisementsLayoutsPage() {
         size: 380,
         cell: ({ row }) => {
           if (!row.original.previewFileName) return ''
+          const isVertical = row.original.orientation === 'Vertical'
+          const previewHeight = isVertical ? 200 : 70
           return (
             <Box
               onClick={() => handleOpenPreview(row.original)}
-              sx={{ cursor: 'pointer', width: 320, height: 70, display: 'flex', alignItems: 'center' }}
+              sx={{ cursor: 'pointer', width: 320, height: previewHeight, display: 'flex', alignItems: 'center' }}
             >
               <img
                 src={row.original.previewFileName || ''}
                 alt="preview"
-                style={{ display: 'block', width: 380, height: 70, objectFit: 'contain', opacity: row.original.isActive ? 1 : 0.4 }}
+                style={{
+                  display: 'block',
+                  width: 400,
+                  height: previewHeight,
+                  objectFit: 'contain',
+                  opacity: row.original.isActive ? 1 : 0.4,
+                }}
               />
             </Box>
           )
@@ -413,7 +421,12 @@ function AdvertisementsLayoutsPage() {
           setPreviewLayout(null)
         }}
         title={previewLayout?.name || 'Preview'}
-        maxWidth="lg"
+        maxWidth="xl"
+        sx={{
+          '& .MuiDialog-paper': {
+            maxWidth: '95vw',
+          },
+        }}
       >
         {previewLayout?.previewFileName ? (
           <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', py: 2 }}>
@@ -425,7 +438,13 @@ function AdvertisementsLayoutsPage() {
               <img
                 src={previewLayout.previewFileName}
                 alt="preview"
-                style={{ maxWidth: '100%', height: 'auto', display: 'block' }}
+                style={{
+                  display: 'block',
+                  width: previewLayout.orientation === 'Vertical' ? 'auto' : '100%',
+                  height: previewLayout.orientation === 'Vertical' ? '85vh' : 'auto',
+                  maxWidth: '100%',
+                  maxHeight: previewLayout.orientation === 'Vertical' ? '85vh' : '60vh',
+                }}
               />
             </Box>
           </Box>
