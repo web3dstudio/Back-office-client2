@@ -7,7 +7,7 @@ const tabRoutes: Array<
   | { key: string; path: string; translationKey: string; label?: never }
   | { key: string; path: string; label: string; translationKey?: never }
 > = [
-    { key: 'test', path: '/price-list/advertisements/test', label: 'test' },
+    { key: 'schedule', path: '/price-list/advertisements/schedule', translationKey: 'schedule' },
     { key: 'layouts', path: '/price-list/advertisements/layouts', translationKey: 'layouts' },
   ]
 
@@ -15,7 +15,7 @@ export default function PriceListAdvertisementsTabs() {
   const { t } = useTranslation('priceListAdvertisements')
   const navigate = useNavigate()
   const location = useLocation()
-  const [currentTab, setCurrentTab] = useState<string>('layouts')
+  const [currentTab, setCurrentTab] = useState<string>('schedule')
 
   useEffect(() => {
     const currentRoute = tabRoutes.find(route => location.pathname.includes(route.path))

@@ -7,7 +7,7 @@ export const Route = createFileRoute(
 })
 
 function AdvertisementsPage() {
-  return <Navigate to="/price-list/advertisements/layouts" replace />
+  return <Navigate to="/price-list/advertisements/schedule" replace />
 }
 
 

@@ -1093,3 +1093,21 @@ export type TPriceListLayout = {
   deletedDate: string | null
   sync: number
 }
+
+
+export type TPricelistLayoutSchedule = {
+  id: string
+  layoutId: string
+  layout?: {
+    id: string
+    name: string
+    previewFileName: string
+  }
+  fromDate: string // ISO Date String
+  toDate: string | null   // ISO Date String
+  fromPage: number
+  toPage: number   // 999 = до конца
+  priority: number // 1 = Высокий, 9 = Низкий
+  isActive: boolean
+  createdDate: string
+}

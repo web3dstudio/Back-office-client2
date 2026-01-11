@@ -59,7 +59,7 @@ export default function PriceListForm() {
         .number()
         .nullable()
         .min(2005, t('form-field.required'))
-        .transform((value, originalValue) => {
+        .transform((_value, originalValue) => {
           if (originalValue === '' || originalValue === null || originalValue === undefined) return null
           const n = Number(originalValue)
           return Number.isNaN(n) ? null : n
@@ -68,15 +68,16 @@ export default function PriceListForm() {
         .number()
         .nullable()
         .min(2005, t('form-field.required'))
-        .transform((value, originalValue) => {
+        .transform((_value, originalValue) => {
           if (originalValue === '' || originalValue === null || originalValue === undefined) return null
           const n = Number(originalValue)
           return Number.isNaN(n) ? null : n
         })
         .when('yearOfFirstRegistration', (y, s) => {
-          if (y === null || y === undefined) return s
+          const year = Array.isArray(y) ? y[0] : y
+          if (typeof year !== 'number') return s
           return s.min(
-            y as number,
+            year,
             `${t('upToYearOfManufacture', { ns: 'priceList' })} >= ${t('yearOfFirstRegistration', { ns: 'priceList' })}`
           )
         }),

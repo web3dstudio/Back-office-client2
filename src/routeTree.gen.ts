@@ -80,7 +80,7 @@ import { Route as AuthenticatedPriceListAdvertisementsIndexRouteImport } from '.
 import { Route as AuthenticatedCatalogEditIndexRouteImport } from './routes/_authenticated/catalog/edit/index'
 import { Route as AuthenticatedManufacturersEditIdRouteImport } from './routes/_authenticated/manufacturers/edit/$id'
 import { Route as AuthenticatedCatalogEditIdRouteImport } from './routes/_authenticated/catalog/edit/$id'
-import { Route as AuthenticatedPriceListAdvertisementsTestIndexRouteImport } from './routes/_authenticated/price-list/advertisements/test/index'
+import { Route as AuthenticatedPriceListAdvertisementsScheduleIndexRouteImport } from './routes/_authenticated/price-list/advertisements/schedule/index'
 import { Route as AuthenticatedPriceListAdvertisementsLayoutsIndexRouteImport } from './routes/_authenticated/price-list/advertisements/layouts/index'
 
 const PublicRoute = PublicRouteImport.update({
@@ -492,10 +492,10 @@ const AuthenticatedCatalogEditIdRoute =
     path: '/catalog/edit/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedPriceListAdvertisementsTestIndexRoute =
-  AuthenticatedPriceListAdvertisementsTestIndexRouteImport.update({
-    id: '/test/',
-    path: '/test/',
+const AuthenticatedPriceListAdvertisementsScheduleIndexRoute =
+  AuthenticatedPriceListAdvertisementsScheduleIndexRouteImport.update({
+    id: '/schedule/',
+    path: '/schedule/',
     getParentRoute: () => AuthenticatedPriceListAdvertisementsRoute,
   } as any)
 const AuthenticatedPriceListAdvertisementsLayoutsIndexRoute =
@@ -576,7 +576,7 @@ export interface FileRoutesByFullPath {
   '/reports/statistics': typeof AuthenticatedReportsStatisticsIndexRoute
   '/reports/subscription': typeof AuthenticatedReportsSubscriptionIndexRoute
   '/price-list/advertisements/layouts': typeof AuthenticatedPriceListAdvertisementsLayoutsIndexRoute
-  '/price-list/advertisements/test': typeof AuthenticatedPriceListAdvertisementsTestIndexRoute
+  '/price-list/advertisements/schedule': typeof AuthenticatedPriceListAdvertisementsScheduleIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof AuthenticatedIndexRoute
@@ -647,7 +647,7 @@ export interface FileRoutesByTo {
   '/reports/statistics': typeof AuthenticatedReportsStatisticsIndexRoute
   '/reports/subscription': typeof AuthenticatedReportsSubscriptionIndexRoute
   '/price-list/advertisements/layouts': typeof AuthenticatedPriceListAdvertisementsLayoutsIndexRoute
-  '/price-list/advertisements/test': typeof AuthenticatedPriceListAdvertisementsTestIndexRoute
+  '/price-list/advertisements/schedule': typeof AuthenticatedPriceListAdvertisementsScheduleIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -723,7 +723,7 @@ export interface FileRoutesById {
   '/_authenticated/reports/statistics/': typeof AuthenticatedReportsStatisticsIndexRoute
   '/_authenticated/reports/subscription/': typeof AuthenticatedReportsSubscriptionIndexRoute
   '/_authenticated/price-list/advertisements/layouts/': typeof AuthenticatedPriceListAdvertisementsLayoutsIndexRoute
-  '/_authenticated/price-list/advertisements/test/': typeof AuthenticatedPriceListAdvertisementsTestIndexRoute
+  '/_authenticated/price-list/advertisements/schedule/': typeof AuthenticatedPriceListAdvertisementsScheduleIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -798,7 +798,7 @@ export interface FileRouteTypes {
     | '/reports/statistics'
     | '/reports/subscription'
     | '/price-list/advertisements/layouts'
-    | '/price-list/advertisements/test'
+    | '/price-list/advertisements/schedule'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -869,7 +869,7 @@ export interface FileRouteTypes {
     | '/reports/statistics'
     | '/reports/subscription'
     | '/price-list/advertisements/layouts'
-    | '/price-list/advertisements/test'
+    | '/price-list/advertisements/schedule'
   id:
     | '__root__'
     | '/_authenticated'
@@ -944,7 +944,7 @@ export interface FileRouteTypes {
     | '/_authenticated/reports/statistics/'
     | '/_authenticated/reports/subscription/'
     | '/_authenticated/price-list/advertisements/layouts/'
-    | '/_authenticated/price-list/advertisements/test/'
+    | '/_authenticated/price-list/advertisements/schedule/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -1451,11 +1451,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCatalogEditIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/price-list/advertisements/test/': {
-      id: '/_authenticated/price-list/advertisements/test/'
-      path: '/test'
-      fullPath: '/price-list/advertisements/test'
-      preLoaderRoute: typeof AuthenticatedPriceListAdvertisementsTestIndexRouteImport
+    '/_authenticated/price-list/advertisements/schedule/': {
+      id: '/_authenticated/price-list/advertisements/schedule/'
+      path: '/schedule'
+      fullPath: '/price-list/advertisements/schedule'
+      preLoaderRoute: typeof AuthenticatedPriceListAdvertisementsScheduleIndexRouteImport
       parentRoute: typeof AuthenticatedPriceListAdvertisementsRoute
     }
     '/_authenticated/price-list/advertisements/layouts/': {
@@ -1512,7 +1512,7 @@ const AuthenticatedReportsRouteWithChildren =
 interface AuthenticatedPriceListAdvertisementsRouteChildren {
   AuthenticatedPriceListAdvertisementsIndexRoute: typeof AuthenticatedPriceListAdvertisementsIndexRoute
   AuthenticatedPriceListAdvertisementsLayoutsIndexRoute: typeof AuthenticatedPriceListAdvertisementsLayoutsIndexRoute
-  AuthenticatedPriceListAdvertisementsTestIndexRoute: typeof AuthenticatedPriceListAdvertisementsTestIndexRoute
+  AuthenticatedPriceListAdvertisementsScheduleIndexRoute: typeof AuthenticatedPriceListAdvertisementsScheduleIndexRoute
 }
 
 const AuthenticatedPriceListAdvertisementsRouteChildren: AuthenticatedPriceListAdvertisementsRouteChildren =
@@ -1521,8 +1521,8 @@ const AuthenticatedPriceListAdvertisementsRouteChildren: AuthenticatedPriceListA
       AuthenticatedPriceListAdvertisementsIndexRoute,
     AuthenticatedPriceListAdvertisementsLayoutsIndexRoute:
       AuthenticatedPriceListAdvertisementsLayoutsIndexRoute,
-    AuthenticatedPriceListAdvertisementsTestIndexRoute:
-      AuthenticatedPriceListAdvertisementsTestIndexRoute,
+    AuthenticatedPriceListAdvertisementsScheduleIndexRoute:
+      AuthenticatedPriceListAdvertisementsScheduleIndexRoute,
   }
 
 const AuthenticatedPriceListAdvertisementsRouteWithChildren =
