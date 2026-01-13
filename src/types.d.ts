@@ -1094,6 +1094,15 @@ export type TPriceListLayout = {
   sync: number
 }
 
+export type TPricelistLayoutUploadResult = {
+  fileName: string
+  success: boolean
+  error: string | null
+  layout: TPriceListLayout | null
+}
+
+export type TPricelistLayoutUploadResponse = TPricelistLayoutUploadResult[]
+
 
 export type TPricelistLayoutSchedule = {
   id: string
@@ -1102,12 +1111,14 @@ export type TPricelistLayoutSchedule = {
     id: string
     name: string
     previewFileName: string
+    layoutType: EPriceListAdvertisementLayoutType
   }
   fromDate: string // ISO Date String
   toDate: string | null   // ISO Date String
   fromPage: number
   toPage: number   // 999 = до конца
   priority: number // 1 = Высокий, 9 = Низкий
+  repeatCount: number
   isActive: boolean
   createdDate: string
 }

@@ -2,7 +2,7 @@ import LightMode from '@mui/icons-material/LightMode'
 import DarkMode from '@mui/icons-material/DarkMode'
 import { IconButton, useTheme } from '@mui/material'
 import { useContext } from 'react'
-import { ColorModeContext } from '../utils/MUIWrapper'
+import { ColorModeContext } from '../utils/ColorModeContext'
 
 function ChangeLightDarkMode() {
   const theme = useTheme()

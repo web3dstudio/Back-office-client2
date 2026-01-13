@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { createContext, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
   type PaletteMode,
@@ -15,13 +15,7 @@ import createCache from '@emotion/cache'
 import { CssBaseline } from '@mui/material'
 import { useLocalStorage } from '../hooks/useLocalStorage'
 import i18next from '../i18next'
-
-export const ColorModeContext = createContext({
-  toggleColorMode: () => { },
-  changeDirection: (dir: Direction) => {
-    console.log(dir)
-  },
-})
+import { ColorModeContext } from './ColorModeContext'
 
 // Create rtl cache
 const cacheRtl = createCache({

@@ -7,8 +7,8 @@ import {
   usePriceListLayoutSchedulesQuery,
   usePriceListLayoutScheduleUpdateMutation,
 } from '../../../../../query/priceListLayoutSchedules.query'
-import { Box, Button, Grid, Switch } from '@mui/material'
-import { useMemo, useState } from 'react'
+import { Box, Button, DialogActions, Grid, Switch } from '@mui/material'
+import { useCallback, useMemo, useState } from 'react'
 import AppDialog from '../../../../../components/AppDialog/AppDialog'
 import { useTranslation } from 'react-i18next'
 import PriceListLayoutScheduleForm from '../../../../../components/PriceListAdvertisements/PriceListLayoutScheduleForm'
@@ -20,6 +20,7 @@ import AppActionButton from '../../../../../components/AppActionButton'
 import AppConfirmDialog from '../../../../../components/AppDialog/AppConfirmDialog'
 import { useDateTimeFormat } from '../../../../../hooks/useDateTimeFormat'
 import { useMonthYearFormat } from '../../../../../hooks/useMonthYearFormat'
+import AllInclusiveIcon from '@mui/icons-material/AllInclusive'
 
 export const Route = createFileRoute('/_authenticated/price-list/advertisements/schedule/')({
   component: AdvertisementsSchedulePage,
@@ -40,11 +41,18 @@ function AdvertisementsSchedulePage() {
   const [selectedSchedule, setSelectedSchedule] = useState<TPricelistLayoutSchedule | null>(null)
   const [openDeleteDialog, setOpenDeleteDialog] = useState(false)
   const [scheduleToDelete, setScheduleToDelete] = useState<TPricelistLayoutSchedule | null>(null)
+  const [openPreviewDialog, setOpenPreviewDialog] = useState(false)
+  const [previewSchedule, setPreviewSchedule] = useState<TPricelistLayoutSchedule | null>(null)
   const [sorting, setSorting] = useState<SortingState>([])
   const [pagination, setPagination] = useState<PaginationState>({ pageIndex: 0, pageSize: 20 })
 
   const data = schedules ?? []
   const totalPages = Math.max(1, Math.ceil(data.length / pagination.pageSize))
+
+  const handleOpenPreview = useCallback((scheduleRow: TPricelistLayoutSchedule) => {
+    setPreviewSchedule(scheduleRow)
+    setOpenPreviewDialog(true)
+  }, [])
 
   const columns = useMemo<ColumnDef<TPricelistLayoutSchedule>[]>(
     () => [
@@ -58,8 +66,26 @@ function AdvertisementsSchedulePage() {
           const previewFileName = row.original.layout?.previewFileName || ''
 
           if (!previewFileName) return ''
+          const rowId = row.original.id
+          const isPreviewing = openPreviewDialog && previewSchedule?.id === rowId
           return (
-            <Box sx={{ width: 220, height: 50, display: 'flex', alignItems: 'center' }}>
+            <Box
+              onClick={
+                isPreviewing
+                  ? undefined
+                  : (e) => {
+                    e.stopPropagation()
+                    handleOpenPreview(row.original)
+                  }
+              }
+              sx={{
+                cursor: isPreviewing ? 'not-allowed' : 'pointer',
+                width: 220,
+                height: 50,
+                display: 'flex',
+                alignItems: 'center',
+              }}
+            >
               <img
                 src={previewFileName}
                 alt="preview"
@@ -70,10 +96,17 @@ function AdvertisementsSchedulePage() {
         },
       },
       { accessorKey: 'fromDate', header: t('fromDate', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 140, cell: ({ row }) => monthYearFormat(row.original.fromDate) },
-      { accessorKey: 'toDate', header: t('toDate', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 140, cell: ({ row }) => monthYearFormat(row.original.toDate) },
+      {
+        accessorKey: 'toDate',
+        header: t('toDate', { ns: 'priceListAdvertisements' }),
+        enableSorting: true,
+        size: 140,
+        cell: ({ row }) => (row.original.toDate ? monthYearFormat(row.original.toDate) : <AllInclusiveIcon fontSize="small" />),
+      },
       { accessorKey: 'fromPage', header: t('fromPage', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 100 },
       { accessorKey: 'toPage', header: t('toPage', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 100 },
       { accessorKey: 'priority', header: t('priority', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 100 },
+      { accessorKey: 'repeatCount', header: t('repeatCount', { ns: 'priceListAdvertisements' }), enableSorting: true, size: 120 },
       {
         accessorKey: 'isActive',
         header: t('active', { ns: 'priceListAdvertisements' }),
@@ -126,7 +159,7 @@ function AdvertisementsSchedulePage() {
         ),
       },
     ],
-    [dateTimeFormat, t]
+    [dateTimeFormat, t, monthYearFormat, updateSchedule, handleOpenPreview, openPreviewDialog, previewSchedule]
   )
 
   if (isLoadingSchedules) return <AppLoading />
@@ -228,6 +261,55 @@ function AdvertisementsSchedulePage() {
             )
           }}
         />
+      </AppDialog>
+
+      <AppDialog
+        open={openPreviewDialog}
+        onClose={() => {
+          setOpenPreviewDialog(false)
+          setPreviewSchedule(null)
+        }}
+        title={previewSchedule?.layout?.name || 'Preview'}
+        maxWidth="xl"
+        sx={{
+          '& .MuiDialog-paper': {
+            maxWidth: '95vw',
+          },
+        }}
+      >
+        {previewSchedule?.layout?.previewFileName ? (
+          <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', py: 2 }}>
+            <Box
+              sx={{
+                boxShadow: '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06)',
+              }}
+            >
+              <img
+                src={previewSchedule.layout.previewFileName}
+                alt="preview"
+                style={{
+                  display: 'block',
+                  maxWidth: '100%',
+                  maxHeight: '85vh',
+                  objectFit: 'contain',
+                }}
+              />
+            </Box>
+          </Box>
+        ) : (
+          <></>
+        )}
+        <DialogActions>
+          <Button
+            variant="outlined"
+            onClick={() => {
+              setOpenPreviewDialog(false)
+              setPreviewSchedule(null)
+            }}
+          >
+            {t('modals.cancel', { ns: 'common' })}
+          </Button>
+        </DialogActions>
       </AppDialog>
 
       <AppConfirmDialog

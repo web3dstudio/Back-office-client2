@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { useContext, useState } from 'react'
-import { ColorModeContext } from '../utils/MUIWrapper'
+import { ColorModeContext } from '../utils/ColorModeContext'
 import {
   Box,
   type Direction,

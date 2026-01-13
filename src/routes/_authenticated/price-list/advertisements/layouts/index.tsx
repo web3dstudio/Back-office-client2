@@ -82,12 +82,22 @@ function AdvertisementsLayoutsPage() {
         size: 380,
         cell: ({ row }) => {
           if (!row.original.previewFileName) return ''
+          const rowId = row.original.id
+          const isDownloading = loadingDownloadIds.has(rowId)
+          const isPreviewing = openPreviewDialog && previewLayout?.id === rowId
           const isVertical = row.original.orientation === 'Vertical'
           const previewHeight = isVertical ? 200 : 70
           return (
             <Box
-              onClick={() => handleOpenPreview(row.original)}
-              sx={{ cursor: 'pointer', width: 320, height: previewHeight, display: 'flex', alignItems: 'center' }}
+              onClick={isDownloading || isPreviewing ? undefined : () => handleOpenPreview(row.original)}
+              sx={{
+                cursor: isDownloading || isPreviewing ? 'not-allowed' : 'pointer',
+                width: 320,
+                height: previewHeight,
+                display: 'flex',
+                alignItems: 'center',
+                opacity: isDownloading ? 0.6 : 1,
+              }}
             >
               <img
                 src={row.original.previewFileName || ''}
@@ -268,22 +278,24 @@ function AdvertisementsLayoutsPage() {
         meta: { align: 'right' },
         cell: ({ row }) => {
           const rowId = row.original.id
-          const isLoading = loadingDownloadIds.has(rowId)
+          const isDownloading = loadingDownloadIds.has(rowId)
+          const isPreviewing = openPreviewDialog && previewLayout?.id === rowId
           return (
             <Box sx={{ display: 'flex', gap: 1, justifyContent: 'end' }}>
               <AppActionButton
                 type="download"
                 onClick={() => void handleDownload(row.original)}
-                loading={isLoading}
-                disabled={isLoading || !row.original.originalFileName}
+                loading={isDownloading}
+                disabled={isDownloading || isPreviewing || !row.original.originalFileName}
               />
               <AppActionButton
                 type="view"
                 onClick={() => handleOpenPreview(row.original)}
-                disabled={!row.original.previewFileName}
+                disabled={isDownloading || isPreviewing || !row.original.previewFileName}
               />
               <AppActionButton
                 type="delete"
+                disabled={isDownloading || isPreviewing}
                 onClick={() => {
                   setSelected(row.original)
                   setOpenConfirmDialog(true)
@@ -294,7 +306,7 @@ function AdvertisementsLayoutsPage() {
         },
       },
     ],
-    [dateTimeFormat, loadingDownloadIds, handleOpenPreview]
+    [dateTimeFormat, loadingDownloadIds, handleOpenPreview, openPreviewDialog, previewLayout]
   )
 
   return (

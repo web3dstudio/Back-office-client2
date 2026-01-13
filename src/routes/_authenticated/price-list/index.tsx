@@ -45,7 +45,8 @@ function PriceListPage() {
   const { t, i18n } = useTranslation()
   const [openConfirmDialog, setOpenConfirmDialog] = useState(false)
   const [selected, setSelected] = useState<TPriceList | null>(null)
-  const [loadingPdfIds, setLoadingPdfIds] = useState<Set<string>>(new Set())
+  const [loadingViewPdfIds, setLoadingViewPdfIds] = useState<Set<string>>(new Set())
+  const [loadingDownloadPdfIds, setLoadingDownloadPdfIds] = useState<Set<string>>(new Set())
   const dateTimeFormat = useDateTimeFormat()
 
   const [pagination, setPagination] = useState<PaginationState>({
@@ -135,10 +136,11 @@ function PriceListPage() {
         meta: { align: 'right' },
         cell: ({ row }) => {
           const rowId = row.original.id
-          const isLoading = loadingPdfIds.has(rowId)
+          const isViewing = loadingViewPdfIds.has(rowId)
+          const isDownloading = loadingDownloadPdfIds.has(rowId)
 
           const handleView = async () => {
-            setLoadingPdfIds(prev => new Set(prev).add(rowId))
+            setLoadingViewPdfIds(prev => new Set(prev).add(rowId))
             try {
               const blob = await fetchPriceListPdf(rowId)
               const fileName = `price-list-${rowId}.pdf`
@@ -148,7 +150,7 @@ function PriceListPage() {
               console.error('Error fetching PDF:', error)
               toast.error(t('error_occurred', { ns: 'notifications' }) || 'Error occurred')
             } finally {
-              setLoadingPdfIds(prev => {
+              setLoadingViewPdfIds(prev => {
                 const next = new Set(prev)
                 next.delete(rowId)
                 return next
@@ -157,7 +159,7 @@ function PriceListPage() {
           }
 
           const handleDownload = async () => {
-            setLoadingPdfIds(prev => new Set(prev).add(rowId))
+            setLoadingDownloadPdfIds(prev => new Set(prev).add(rowId))
             try {
               const blob = await fetchPriceListPdf(rowId)
               const fileName = `price-list-${rowId}.pdf`
@@ -167,7 +169,7 @@ function PriceListPage() {
               console.error('Error downloading PDF:', error)
               toast.error(t('error_occurred', { ns: 'notifications' }) || 'Error occurred')
             } finally {
-              setLoadingPdfIds(prev => {
+              setLoadingDownloadPdfIds(prev => {
                 const next = new Set(prev)
                 next.delete(rowId)
                 return next
@@ -180,17 +182,18 @@ function PriceListPage() {
               <AppActionButton
                 type='view'
                 onClick={handleView}
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isViewing}
+                disabled={isViewing || isDownloading}
               />
               <AppActionButton
                 type='download'
                 onClick={handleDownload}
-                loading={isLoading}
-                disabled={isLoading}
+                loading={isDownloading}
+                disabled={isViewing || isDownloading}
               />
               <AppActionButton
                 type='delete'
+                disabled={isViewing || isDownloading}
                 onClick={() => {
                   setSelected(() => row.original)
                   setOpenConfirmDialog(true)
@@ -201,7 +204,7 @@ function PriceListPage() {
         },
       },
     ],
-    [t, dateTimeFormat, priceListTypes, loadingPdfIds]
+    [t, dateTimeFormat, priceListTypes, loadingViewPdfIds, loadingDownloadPdfIds]
   )
 
   const handleDeletePriceList = () => {

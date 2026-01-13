@@ -38,9 +38,23 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
           // both are YYYY-MM-DD, lex compare works
           return String(toDate) >= String(fromDate)
         }),
-      fromPage: yup.number().min(1).required(t('form-field.required', { ns: 'common' })),
-      toPage: yup.number().min(1).required(t('form-field.required', { ns: 'common' })),
+      fromPage: yup.number().min(14).required(t('form-field.required', { ns: 'common' })),
+      toPage: yup
+        .number()
+        .min(14)
+        .required(t('form-field.required', { ns: 'common' }))
+        .test('toPage-not-less-than-fromPage', 'To page must be >= From page', function (toPage) {
+          const fromPage = this.parent?.fromPage
+          if (typeof toPage !== 'number' || typeof fromPage !== 'number') return true
+          return toPage >= fromPage
+        }),
       priority: yup.number().min(1).required(t('form-field.required', { ns: 'common' })),
+      repeatCount: yup
+        .number()
+        .integer()
+        .min(1)
+        .max(100)
+        .required(t('form-field.required', { ns: 'common' })),
       isActive: yup.boolean().required(),
       id: yup.string().optional(),
     })
@@ -55,9 +69,10 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
       layoutId: schedule?.layoutId || '',
       fromDate: schedule?.fromDate || dayjs().startOf('month').format('YYYY-MM-DD'),
       toDate: schedule?.toDate || '',
-      fromPage: schedule?.fromPage ?? 1,
+      fromPage: Math.max(schedule?.fromPage ?? 14, 14),
       toPage: schedule?.toPage ?? 999,
       priority: schedule?.priority ?? 1,
+      repeatCount: schedule?.repeatCount ?? 1,
       isActive: schedule?.isActive ?? true,
     },
   })
@@ -125,7 +140,7 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                 name="fromDate"
                 control={control}
                 errors={formState.errors}
-                label="From date"
+                label={t('fromDate', { ns: 'priceListAdvertisements' })}
                 required
               />
             </Grid>
@@ -134,7 +149,7 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                 name="toDate"
                 control={control}
                 errors={formState.errors}
-                label="To date"
+                label={t('toDate', { ns: 'priceListAdvertisements' })}
               />
             </Grid>
 
@@ -144,9 +159,10 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                 name="fromPage"
                 control={control}
                 errors={formState.errors}
-                label="From page"
-                placeholder="From page"
+                label={t('fromPage', { ns: 'priceListAdvertisements' })}
+                placeholder={t('fromPage', { ns: 'priceListAdvertisements' })}
                 type="number"
+                slotProps={{ htmlInput: { min: 14 } }}
               />
             </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
@@ -155,9 +171,10 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                 name="toPage"
                 control={control}
                 errors={formState.errors}
-                label="To page"
-                placeholder="To page"
+                label={t('toPage', { ns: 'priceListAdvertisements' })}
+                placeholder={t('toPage', { ns: 'priceListAdvertisements' })}
                 type="number"
+                slotProps={{ htmlInput: { min: Math.max(14, Number(formValues.fromPage) || 14) } }}
               />
             </Grid>
 
@@ -166,7 +183,7 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                 name="priority"
                 control={control}
                 errors={formState.errors}
-                label="Priority"
+                label={t('priority', { ns: 'priceListAdvertisements' })}
                 required
                 options={[
                   { value: 1, label: '1 - High' },
@@ -179,6 +196,18 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
                   { value: 8, label: '8' },
                   { value: 9, label: '9 - Low' },
                 ]}
+              />
+            </Grid>
+
+            <Grid size={{ xs: 12, md: 6 }}>
+              <AppControlledTextField
+                required
+                name="repeatCount"
+                control={control}
+                errors={formState.errors}
+                label={t('repeatCount', { ns: 'priceListAdvertisements' })}
+                placeholder={t('repeatCount', { ns: 'priceListAdvertisements' })}
+                type="number"
               />
             </Grid>
 
@@ -208,39 +237,45 @@ export default function PriceListLayoutScheduleForm({ schedule, isPending, onCan
               p: 1,
             }}
           >
-            {activeLayouts.map((layout) => {
-              const checked = layout.id === formValues.layoutId
-              return (
-                <Box
-                  key={layout.id}
-                  onClick={() => {
-                    setValue('layoutId', layout.id, { shouldDirty: true, shouldValidate: true })
-                  }}
-                  sx={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 1,
-                    p: 1,
-                    borderRadius: 1,
-                    cursor: 'pointer',
-                    backgroundColor: checked ? 'rgba(0,0,0,0.04)' : 'transparent',
-                    '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
-                  }}
-                >
-                  <Radio checked={checked} />
-                  {!!layout.previewFileName && (
-                    <Box
-                      component="img"
-                      src={layout.previewFileName}
-                      alt="preview"
-                      loading="lazy"
-                      sx={{ width: 160, height: 48, objectFit: 'contain', flex: '0 0 auto' }}
-                    />
-                  )}
-                  <Box sx={{ flex: '1 1 auto' }}>{layout.name}</Box>
-                </Box>
-              )
-            })}
+            {activeLayouts.length === 0 ? (
+              <Typography sx={{ color: 'text.secondary', p: 1 }}>
+                {t('noActiveLayouts', { ns: 'priceListAdvertisements' })}
+              </Typography>
+            ) : (
+              activeLayouts.map((layout) => {
+                const checked = layout.id === formValues.layoutId
+                return (
+                  <Box
+                    key={layout.id}
+                    onClick={() => {
+                      setValue('layoutId', layout.id, { shouldDirty: true, shouldValidate: true })
+                    }}
+                    sx={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: 1,
+                      p: 1,
+                      borderRadius: 1,
+                      cursor: 'pointer',
+                      backgroundColor: checked ? 'rgba(0,0,0,0.04)' : 'transparent',
+                      '&:hover': { backgroundColor: 'rgba(0,0,0,0.04)' },
+                    }}
+                  >
+                    <Radio checked={checked} />
+                    {!!layout.previewFileName && (
+                      <Box
+                        component="img"
+                        src={layout.previewFileName}
+                        alt="preview"
+                        loading="lazy"
+                        sx={{ width: 160, height: 48, objectFit: 'contain', flex: '0 0 auto' }}
+                      />
+                    )}
+                    <Box sx={{ flex: '1 1 auto' }}>{layout.name}</Box>
+                  </Box>
+                )
+              })
+            )}
           </Box>
         </Grid>
 
