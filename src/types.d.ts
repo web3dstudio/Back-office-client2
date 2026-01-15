@@ -1122,3 +1122,34 @@ export type TPricelistLayoutSchedule = {
   isActive: boolean
   createdDate: string
 }
+
+// Reports
+export type TLeadingQuery = {
+  id: string
+  car: string
+  number: number
+  manufacturerYear: number
+}
+
+export type TReportDailyVisits = {
+  date: string
+  number: number
+}
+
+
+export type TReportsStatisticsChannel = {
+  total: number
+  percent: number
+  newSessions: number
+  newUsers: number
+  abandonmentPercent: number
+  pages: number
+  averageTime: number // seconds
+}
+
+export type TReportsStatistics = {
+  organic: TReportsStatisticsChannel
+  direct: TReportsStatisticsChannel
+  reference: TReportsStatisticsChannel
+  dailyVisits: TReportDailyVisits[]
+}

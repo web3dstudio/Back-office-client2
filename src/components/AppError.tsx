@@ -26,14 +26,18 @@ function AppError({ error, reset, fullPage }: AppErrorProps) {
     <Box
       sx={{
         width: '100%',
+        maxWidth: '100vw',
+        boxSizing: 'border-box',
+        overflowX: 'hidden',
         ...(isFullPage
           ? { minHeight: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center', p: 3 }
           : { p: 2 }),
       }}
     >
-      <Box sx={{ width: '100%' }}>
+      <Box sx={{ width: '100%', maxWidth: '100%', boxSizing: 'border-box' }}>
         <Alert
           severity="error"
+          sx={{ maxWidth: '100%', boxSizing: 'border-box' }}
           action={
             reset
               ? (
@@ -48,7 +52,15 @@ function AppError({ error, reset, fullPage }: AppErrorProps) {
             Something went wrong{status ? ` (HTTP ${status})` : ''}
           </Typography>
           {detail && (
-            <Typography variant="body2" sx={{ mt: 0.5, whiteSpace: 'pre-wrap' }}>
+            <Typography
+              variant="body2"
+              sx={{
+                mt: 0.5,
+                whiteSpace: 'pre-wrap',
+                overflowWrap: 'anywhere',
+                wordBreak: 'break-word',
+              }}
+            >
               {detail}
             </Typography>
           )}

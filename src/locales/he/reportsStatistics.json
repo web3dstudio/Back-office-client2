@@ -10,11 +10,19 @@
   "organic": "אורגנית (מנועי חיפוש)",
   "direct": "ישירה",
   "reference": "הפנייה",
-  "reviewSessions": "סקירת סשנים",
+  "reviewSessions": "ביקורים יומיים",
   "newSessions": "סשנים חדשים",
   "newUsers": "משתמשים חדשים",
   "abandonRate": "אחוז נטישה",
   "pagesSessions": "עמודים / סשנים",
   "sessionAvg": "ממוצע סשן",
-  "day": "יום"
+  "day": "יום",
+  "topQueriesTitle": "השאילתות הנפוצות ביותר",
+  "leadingQueriesCar": "רכב",
+  "leadingQueriesYear": "שנה",
+  "leadingQueriesCount": "כמות",
+  "filterMonth": "חודש",
+  "filterYear": "שנה",
+  "filterFromDate": "מתאריך",
+  "filterToDate": "עד תאריך"
 }

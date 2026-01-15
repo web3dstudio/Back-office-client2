@@ -2,45 +2,38 @@ import { LineChart } from '@mui/x-charts/LineChart'
 import { useTranslation } from 'react-i18next'
 import { useDateTimeFormat } from '../hooks/useDateTimeFormat'
 import { Typography } from '@mui/material'
+import type { TReportDailyVisits } from '../types'
 
-type TItem = {
-  date: string
-  number: number
+type Props = {
+  dataset: TReportDailyVisits[]
 }
 
-type ReportsStatLineChartProps = {
-  reportsStatitistics: TItem[] | undefined
-}
-
-function ReportsStatLineChart({
-  reportsStatitistics,
-}: ReportsStatLineChartProps) {
-  const { t } = useTranslation('reportsStatistics')
+function ReportsStatLineChart({ dataset }: Props) {
+  const { t } = useTranslation()
 
   const dateTimeFormat = useDateTimeFormat()
 
   return (
     <>
-      <Typography variant='h6' sx={{ textTransform: 'capitalize' }}>{t('reviewSessions')}</Typography>
+      <Typography variant='h6'>{t('reviewSessions', { ns: 'reportsStatistics' })}</Typography>
       <LineChart
-        dataset={reportsStatitistics}
+        dataset={dataset}
         xAxis={[
           {
             dataKey: 'date',
-            label: t('day'),
+            label: t('day', { ns: 'reportsStatistics' }),
             labelStyle: {
               transform: 'translateY(10px)',
               fontWeight: 'bold',
             },
             scaleType: 'point',
             valueFormatter: (value: string) => {
-              return dateTimeFormat(value)
+              return dateTimeFormat(value, false, '2-digit')
             },
           },
         ]}
         yAxis={[
           {
-            // label: t('sessions'),
             labelStyle: {
               fontWeight: 'bold',
             },

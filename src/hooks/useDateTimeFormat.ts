@@ -4,11 +4,15 @@ import { useTranslation } from "react-i18next";
 export function useDateTimeFormat() {
   const { t } = useTranslation();
 
-  return function dateTimeFormat(date: string, includeTime: boolean = false) {
+  return function dateTimeFormat(
+    date: string,
+    includeTime: boolean = false,
+    yearFormat: "numeric" | "2-digit" = "numeric"
+  ) {
     if (date) {
       const dateObj = { intlDateTime: "{{val, datetime}}" };
       const formatParams: any = {
-        year: "numeric",
+        year: yearFormat,
         month: "numeric",
         day: "numeric",
       };
