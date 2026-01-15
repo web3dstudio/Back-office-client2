@@ -1,12 +1,12 @@
 {
-  "byDate": "by date",
+  "byDate": "By date",
   "until": "until",
-  "month": "a month",
-  "sleep": "sleep",
-  "selectUser": "select a user",
+  "month": "Month",
+  "sleep": "Sleep",
+  "selectUser": "Select a user",
   "reviewQueries": "Review queries",
   "queries": "Queries",
-  "date": "date",
-  "day": "a day",
-  "selectCompany": "select a company"
+  "date": "Date",
+  "day": "Day",
+  "selectCompany": "Select a company"
 }

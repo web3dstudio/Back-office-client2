@@ -6,16 +6,17 @@ import type { TReportDailyVisits } from '../types'
 
 type Props = {
   dataset: TReportDailyVisits[]
+  title: string
 }
 
-function ReportsStatLineChart({ dataset }: Props) {
+function ReportsStatLineChart({ dataset, title }: Props) {
   const { t } = useTranslation()
 
   const dateTimeFormat = useDateTimeFormat()
 
   return (
     <>
-      <Typography variant='h6'>{t('reviewSessions', { ns: 'reportsStatistics' })}</Typography>
+      <Typography variant='h6'>{title}</Typography>
       <LineChart
         dataset={dataset}
         xAxis={[

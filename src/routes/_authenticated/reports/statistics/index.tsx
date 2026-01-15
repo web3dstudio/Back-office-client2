@@ -143,7 +143,10 @@ function StatisticsPage() {
         ) : isError ? (
           <AppError error={error} />
         ) : (
-          <ReportsStatLineChart dataset={monthlyTraffic?.dailyVisits ?? []} />
+          <ReportsStatLineChart
+            title={t('reviewSessions', { ns: 'reportsStatistics' })}
+            dataset={monthlyTraffic?.dailyVisits ?? []}
+          />
         )}
       </StyledPaper>
 

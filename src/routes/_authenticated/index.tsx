@@ -8,6 +8,7 @@ import { useLeadingQuery } from '../../query/statistics/reportLeadingQuery.query
 import { useReportDailyVisitsQuery } from '../../query/statistics/reportDailyVisits.query'
 import AppLeadingQueries from '../../components/AppLeadingQueries'
 import AppError from '../../components/AppError'
+import { useTranslation } from 'react-i18next'
 
 export const Route = createFileRoute('/_authenticated/')({
   component: mainPage,
@@ -15,6 +16,7 @@ export const Route = createFileRoute('/_authenticated/')({
 
 
 function mainPage() {
+  const { t } = useTranslation()
   const { isLoading, isError } = useHomePageQuery()
   useLeadingQuery()
   const {
@@ -38,7 +40,10 @@ function mainPage() {
         ) : isErrorDailyVisits ? (
           <AppError error={dailyVisitsError} />
         ) : (
-          <ReportsStatLineChart dataset={dailyVisits ?? []} />
+          <ReportsStatLineChart
+            title={t('reviewSessions', { ns: 'reportsStatistics' })}
+            dataset={dailyVisits ?? []}
+          />
         )}
       </StyledPaper>
       <StyledPaper sx={{ mt: 3 }}>

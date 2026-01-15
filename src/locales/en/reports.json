@@ -1,13 +1,13 @@
 {
   "title": "Reports",
-  "statistics": "statistics",
-  "user-queries": "search queries",
-  "top-queries": "top queries",
-  "new-models": "new models",
-  "deducted-models": "deducted models",
-  "catalog-items": "catalog items report",
-  "differences": "model differences",
-  "figure": "a low figure outweighs a high one",
-  "subscription": "renewal subscription report",
-  "carByYears": "car by year"
+  "statistics": "Statistics",
+  "user-queries": "Search queries",
+  "top-queries": "Top queries",
+  "new-models": "New models",
+  "deducted-models": "Deducted models",
+  "catalog-items": "Catalog items report",
+  "differences": "Model differences",
+  "figure": "A low figure outweighs a high one",
+  "subscription": "Renewal subscription report",
+  "carByYears": "Car by year"
 }

@@ -1153,3 +1153,19 @@ export type TReportsStatistics = {
   reference: TReportsStatisticsChannel
   dailyVisits: TReportDailyVisits[]
 }
+
+export type TReportsSearchQuery = {
+  date: string
+  number: number
+}
+
+export type TIdName = {
+  id: string
+  name: string
+}
+
+export type TCustomerWithUsers = {
+  id: string
+  name: string
+  customerUsers: TIdName[]
+}
