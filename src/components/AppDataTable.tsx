@@ -331,7 +331,8 @@ export default function AppDataTable<T>({
                       sx={{
                         width: cell.column.getSize(),
                         minWidth: 'unset !important',
-                        maxWidth: 'unset !important'
+                        maxWidth: 'unset !important',
+                        textAlign: (cell.column.columnDef.meta as any)?.align || 'left',
                       }}
                     >
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}

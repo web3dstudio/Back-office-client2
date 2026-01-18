@@ -43,6 +43,8 @@ export default function AppMonthlyTrafficChart({ dataset }: Props) {
                   outerRadius: 120,
                   paddingAngle: 1,
                   cornerRadius: 8,
+                  arcLabel: (item) => `${item.value}%`,
+                  arcLabelMinAngle: 10,
                 },
               ]}
               slotProps={{ legend: { sx: { display: 'none' } } }}
