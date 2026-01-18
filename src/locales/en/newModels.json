@@ -11,5 +11,7 @@
   "Manually": "Manually",
   "Automatically": "Automatically",
   "Robotic": "Robotic",
-  "fin": "model finishing"
+  "fin": "Finishing",
+  "createdDate": "Created",
+  "deletedDate": "Deleted"
 }

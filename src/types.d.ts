@@ -1169,3 +1169,29 @@ export type TCustomerWithUsers = {
   name: string
   customerUsers: TIdName[]
 }
+
+export type TReportsNewModel = {
+  id: string;
+  manufacturerName: string;
+  modelName: string;
+  modelFinishing: string;
+  volume: number;
+  createdDate: string;
+}
+
+export type TReportsNewModels = {
+  data: TReportsNewModel[];
+} & TPagination
+
+export type TReportsDeductedModel = {
+  id: string;
+  manufacturerName: string;
+  modelName: string;
+  modelFinishing: string;
+  volume: number;
+  deletedDate: string;
+}
+
+export type TReportsDeductedModels = {
+  data: TReportsDeductedModel[];
+} & TPagination

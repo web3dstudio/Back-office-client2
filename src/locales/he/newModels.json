@@ -11,5 +11,7 @@
   "Manually": "ידני",
   "Automatically": "אוטומטי",
   "Robotic": "רובוטי",
-  "fin": "תת דגם"
+  "fin": "תת דגם",
+  "createdDate": "נוצר",
+  "deletedDate": "נמחק"
 }
