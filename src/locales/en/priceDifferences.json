@@ -1,10 +1,12 @@
 {
-  "ManufacturerName": "ManufacturerName",
+  "ManufacturerName": "Manufacturer",
   "ModelName": "Model Name",
   "ManufacturerYear": "Manufacturer Year",
+  "manufacturerYear": "Manufacturer Year",
   "Year": "Year",
   "Month": "Month",
   "Price": "Price",
+  "BasePrice": "Base Price",
   "Difference": "Difference",
   "modelCode": "Model Code",
   "search": "Search"

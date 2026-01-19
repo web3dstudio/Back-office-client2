@@ -27,6 +27,7 @@ interface AppDataTableProps<T> {
   globalFilterFn?: (row: any, columnId: string, filterValue: string) => boolean
   hidePagination?: boolean
   sx?: SxProps<Theme>
+  getRowSx?: (row: T, index: number) => SxProps<Theme>
 }
 
 export default function AppDataTable<T>({
@@ -46,6 +47,7 @@ export default function AppDataTable<T>({
   globalFilterFn,
   hidePagination = false,
   sx,
+  getRowSx,
 }: AppDataTableProps<T>) {
 
 
@@ -322,7 +324,8 @@ export default function AppDataTable<T>({
                   backgroundColor: index % 2 === 0 ? 'transparent' : '#f5f5f5',
                   '&:hover': {
                     backgroundColor: '#e3f2fd'
-                  }
+                  },
+                  ...(getRowSx ? getRowSx(row.original, index) : {}),
                 }}>
                   {row.getVisibleCells().map(cell => (
                     <TableCell

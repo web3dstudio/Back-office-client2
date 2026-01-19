@@ -1195,3 +1195,48 @@ export type TReportsDeductedModel = {
 export type TReportsDeductedModels = {
   data: TReportsDeductedModel[];
 } & TPagination
+
+export type TReportCatalogItems = {
+  carsCount: number;
+  manufacturersCount: number;
+  seriesCount: number;
+  modelsCount: number;
+}
+
+export type TReportPriceDifference = {
+  id: string;
+  manufacturerName: string;
+  modelName: string;
+  modelCode: string;
+  manufacturerYear: number;
+  year: number;
+  month: number;
+  price: number | null;
+  difference: number;
+  countryId: string;
+}
+
+export type TReportPriceDifferencePrice = {
+  id: string;
+  year: number;
+  month: number;
+  price: number;
+  difference: number;
+  countryId: string;
+}
+
+export type TReportPriceDifferenceCar = {
+  carId: string;
+  manufacturerYear: number;
+  basePrice: number;
+  basePriceYear: number;
+  prices: TReportPriceDifferencePrice[];
+}
+
+export type TReportPriceDifferenceResponse = {
+  modelId: string;
+  manufacturerName: string;
+  modelName: string;
+  modelCode: string;
+  cars: TReportPriceDifferenceCar[];
+}
