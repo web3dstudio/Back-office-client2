@@ -1240,3 +1240,15 @@ export type TReportPriceDifferenceResponse = {
   modelCode: string;
   cars: TReportPriceDifferenceCar[];
 }
+
+export type TLowYearExceedsHigh = {
+  id: string;
+  manufacturerName: string;
+  modelName: string;
+  lowYear: number;
+  lowPrice: number;
+  highYear: number;
+  highPrice: number;
+  difference: number;
+  countryId: string;
+}

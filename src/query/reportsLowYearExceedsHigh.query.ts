@@ -1,15 +1,11 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
 import axiosAPI from "../utils/axiosAPI"
+import type { TLowYearExceedsHigh } from "../types"
 
-export interface IReportsLowYearExceedsHighData {
-    // TODO: Add proper types based on API response
-    [key: string]: any
-}
-
-export function useReportsLowYearExceedsHighQuery(): UseQueryResult<IReportsLowYearExceedsHighData, Error> {
+export function useReportsLowYearExceedsHighQuery(): UseQueryResult<TLowYearExceedsHigh[], Error> {
     return useQuery({
         queryKey: ['reports', 'lowYearExceedsHigh'],
-        queryFn: async (): Promise<IReportsLowYearExceedsHighData> => {
+        queryFn: async (): Promise<TLowYearExceedsHigh[]> => {
             const response = await axiosAPI.get('/reports/lowYearExceedsHigh')
             return response.data
         },
