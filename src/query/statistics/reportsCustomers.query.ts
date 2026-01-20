@@ -1,6 +1,6 @@
 import { type UseMutationResult, type UseQueryResult, useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TCustomer, TPagination } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TCustomer, TPagination } from "../../types"
 import { toast } from "react-toastify"
 import { useTranslation } from "react-i18next"
 

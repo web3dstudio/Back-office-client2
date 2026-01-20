@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Box } from '@mui/material'
-import { useReportsLowYearExceedsHighQuery } from '../../../../query/reportsLowYearExceedsHigh.query'
+import { useReportsLowYearExceedsHighQuery } from '../../../../query/statistics/reportsLowYearExceedsHigh.query'
 import AppLoading from '../../../../components/AppLoading'
 import AppError from '../../../../components/AppError'
 import StyledPaper from '../../../../components/StyledPaper'

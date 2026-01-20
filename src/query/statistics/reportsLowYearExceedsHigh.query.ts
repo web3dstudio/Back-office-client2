@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TLowYearExceedsHigh } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TLowYearExceedsHigh } from "../../types"
 
 export function useReportsLowYearExceedsHighQuery(): UseQueryResult<TLowYearExceedsHigh[], Error> {
     return useQuery({

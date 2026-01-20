@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TReportPriceDifferenceResponse } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TReportPriceDifferenceResponse } from "../../types"
 
 export interface IReportsPriceDifferencesParams {
     countryId: string

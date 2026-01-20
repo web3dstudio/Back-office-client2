@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import type { UseQueryResult } from '@tanstack/react-query'
-import axiosAPI from '../utils/axiosAPI'
-import type { TExpiringCustomer } from '../types'
+import axiosAPI from '../../utils/axiosAPI'
+import type { TExpiringCustomer } from '../../types'
 
 export type TExpiringCustomersResponse = {
     items: TExpiringCustomer[]

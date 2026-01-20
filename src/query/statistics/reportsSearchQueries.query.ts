@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TReportsSearchQuery } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TReportsSearchQuery } from "../../types"
 
 export interface IReportsSearchQueriesParams {
     customerId?: string

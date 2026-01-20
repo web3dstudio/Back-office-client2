@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, TableContainer } from '@mui/material'
 import { useTranslation } from 'react-i18next'
-import { useReportsCatalogItemsQuery } from '../../../../query/reportsCatalogItems.query'
+import { useReportsCatalogItemsQuery } from '../../../../query/statistics/reportsCatalogItems.query'
 import AppLoading from '../../../../components/AppLoading'
 import AppError from '../../../../components/AppError'
 import StyledPaper from '../../../../components/StyledPaper'

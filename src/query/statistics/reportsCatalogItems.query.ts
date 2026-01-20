@@ -1,6 +1,6 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TReportCatalogItems } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TReportCatalogItems } from "../../types"
 
 export function useReportsCatalogItemsQuery(): UseQueryResult<TReportCatalogItems, Error> {
     return useQuery({

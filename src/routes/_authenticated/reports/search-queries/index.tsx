@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Box, Typography } from '@mui/material'
-import { useReportsSearchQueriesQuery } from '../../../../query/reportsSearchQueries.query'
+import { useReportsSearchQueriesQuery } from '../../../../query/statistics/reportsSearchQueries.query'
 import { useEffect, useMemo, useState } from 'react'
 import AppLoading from '../../../../components/AppLoading'
 import AppError from '../../../../components/AppError'

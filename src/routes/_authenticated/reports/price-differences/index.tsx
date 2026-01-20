@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { Box, Button, Grid, TableRow, TableCell, useTheme, alpha } from '@mui/material'
 import { ArrowDownward, ArrowUpward, Remove } from '@mui/icons-material'
-import { useReportsPriceDifferencesQuery } from '../../../../query/reportsPriceDifferences.query'
+import { useReportsPriceDifferencesQuery } from '../../../../query/statistics/reportsPriceDifferences.query'
 import { useState, useMemo, useEffect } from 'react'
 import AppLoading from '../../../../components/AppLoading'
 import AppError from '../../../../components/AppError'

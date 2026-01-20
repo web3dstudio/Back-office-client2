@@ -1252,3 +1252,8 @@ export type TLowYearExceedsHigh = {
   difference: number;
   countryId: string;
 }
+
+export type TCarsByYears = {
+  year: number;
+  items: number;
+}

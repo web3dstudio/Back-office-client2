@@ -1,17 +1,17 @@
 import { type UseQueryResult, useQuery } from "@tanstack/react-query"
-import axiosAPI from "../utils/axiosAPI"
-import type { TReportsDeductedModels } from "../types"
+import axiosAPI from "../../utils/axiosAPI"
+import type { TReportsNewModels } from "../../types"
 
-export interface IReportsDeductedModelsParams {
+export interface IReportsNewModelsParams {
     year?: number
     month?: number
     page?: number
     pageSize?: number
 }
 
-export function useReportsDeductedModelsQuery(
-    params: IReportsDeductedModelsParams = {}
-): UseQueryResult<TReportsDeductedModels, Error> {
+export function useReportsNewModelsQuery(
+    params: IReportsNewModelsParams = {}
+): UseQueryResult<TReportsNewModels, Error> {
     const currentDate = new Date()
     const year = params.year ?? currentDate.getFullYear()
     const month = params.month ?? currentDate.getMonth() + 1
@@ -19,8 +19,8 @@ export function useReportsDeductedModelsQuery(
     const pageSize = params.pageSize ?? 20
 
     return useQuery({
-        queryKey: ['reports', 'deductedModels', year, month, page, pageSize],
-        queryFn: async (): Promise<TReportsDeductedModels> => {
+        queryKey: ['reports', 'newModels', year, month, page, pageSize],
+        queryFn: async (): Promise<TReportsNewModels> => {
             const queryParams = new URLSearchParams({
                 Year: String(year),
                 Month: String(month),
@@ -28,7 +28,7 @@ export function useReportsDeductedModelsQuery(
                 PageSize: String(pageSize),
             })
 
-            const response = await axiosAPI.get(`/reports/deductedModels?${queryParams.toString()}`)
+            const response = await axiosAPI.get(`/reports/newModels?${queryParams.toString()}`)
             return response.data
         },
         refetchOnWindowFocus: false,
