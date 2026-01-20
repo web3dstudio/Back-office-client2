@@ -28,6 +28,8 @@ interface AppDataTableProps<T> {
   hidePagination?: boolean
   sx?: SxProps<Theme>
   getRowSx?: (row: T, index: number) => SxProps<Theme>
+  onSearchChange?: (searchValue: string) => void
+  onFilteredRowsCountChange?: (count: number) => void
 }
 
 export default function AppDataTable<T>({
@@ -48,6 +50,8 @@ export default function AppDataTable<T>({
   hidePagination = false,
   sx,
   getRowSx,
+  onSearchChange,
+  onFilteredRowsCountChange,
 }: AppDataTableProps<T>) {
 
 
@@ -114,6 +118,13 @@ export default function AppDataTable<T>({
     };
   }, [showSearch]);
 
+  // Вызываем колбэк при изменении поиска
+  useEffect(() => {
+    if (onSearchChange) {
+      onSearchChange(searchValue)
+    }
+  }, [searchValue, onSearchChange])
+
   const table = useReactTable({
     data: data ?? [],
     columns,
@@ -141,6 +152,14 @@ export default function AppDataTable<T>({
       maxSize: 800,
     },
   })
+
+  // Вызываем колбэк при изменении количества отфильтрованных строк
+  useEffect(() => {
+    if (onFilteredRowsCountChange && !manualPagination) {
+      const filteredCount = table.getFilteredRowModel().rows.length
+      onFilteredRowsCountChange(filteredCount)
+    }
+  }, [table.getFilteredRowModel().rows.length, onFilteredRowsCountChange, manualPagination])
 
   if (isLoading) {
     return <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', height: '100%', flexGrow: 1 }}>

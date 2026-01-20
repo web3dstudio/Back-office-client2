@@ -4,7 +4,7 @@ import { useReportsLowYearExceedsHighQuery } from '../../../../query/reportsLowY
 import AppLoading from '../../../../components/AppLoading'
 import AppError from '../../../../components/AppError'
 import StyledPaper from '../../../../components/StyledPaper'
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useEffect } from 'react'
 import AppDataTable from '../../../../components/AppDataTable'
 import type { ColumnDef, SortingState, PaginationState } from '@tanstack/react-table'
 import type { TLowYearExceedsHigh } from '../../../../types'
@@ -25,6 +25,23 @@ function LowYearExceedsHighPage() {
     pageSize: 20,
   })
   const [sorting, setSorting] = useState<SortingState>([])
+  const [searchValue, setSearchValue] = useState('')
+  const [filteredRowsCount, setFilteredRowsCount] = useState<number | null>(null)
+
+  // Сброс пагинации при изменении поиска
+  useEffect(() => {
+    if (pagination.pageIndex > 0) {
+      setPagination(prev => ({ ...prev, pageIndex: 0 }))
+    }
+  }, [searchValue])
+
+  const handleSearchChange = (newSearchValue: string) => {
+    setSearchValue(newSearchValue)
+  }
+
+  const handleFilteredRowsCountChange = (count: number) => {
+    setFilteredRowsCount(count)
+  }
 
   const rows = useMemo<TLowYearExceedsHigh[]>(() => {
     return Array.isArray(data) ? data : []
@@ -136,7 +153,9 @@ function LowYearExceedsHighPage() {
             onSortingChange={setSorting}
             pagination={pagination}
             onPaginationChange={setPagination}
-            totalPages={Math.ceil((rows.length || 0) / pagination.pageSize) || 1}
+            totalPages={filteredRowsCount !== null ? Math.ceil((filteredRowsCount || 0) / pagination.pageSize) || 1 : Math.ceil((rows.length || 0) / pagination.pageSize) || 1}
+            onSearchChange={handleSearchChange}
+            onFilteredRowsCountChange={handleFilteredRowsCountChange}
             globalFilterFn={(row, _columnId, filterValue) => {
               const q = String(filterValue || '').toLowerCase()
               if (!q) return true
