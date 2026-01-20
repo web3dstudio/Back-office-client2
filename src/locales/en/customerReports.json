@@ -1,11 +1,11 @@
 {
-  "name": "customer name",
-  "company": "company",
-  "phone": "phone",
-  "email": "email",
-  "address": "address",
+  "name": "Customer name",
+  "company": "Company",
+  "phone": "Phone",
+  "email": "Email",
+  "address": "Address",
   "subValidity": "Validity of subscriptions",
   "maxQueries": "Max queries",
-  "exclusion": "exclusion",
-  "expired": "expired"
+  "exclusion": "Excluded",
+  "expired": "Expired"
 }

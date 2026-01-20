@@ -7,10 +7,12 @@ import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DownloadTwoToneIcon from '@mui/icons-material/DownloadTwoTone';
 import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import RemoveTwoToneIcon from '@mui/icons-material/RemoveTwoTone';
+import RefreshTwoToneIcon from '@mui/icons-material/RefreshTwoTone';
+import BlockTwoToneIcon from '@mui/icons-material/BlockTwoTone';
 
 
 interface IProps {
-    type: 'edit' | 'delete' | 'send' | 'duplicate' | 'view' | 'download' | 'add' | 'remove'
+    type: 'edit' | 'delete' | 'send' | 'duplicate' | 'view' | 'download' | 'add' | 'remove' | 'refresh' | 'block'
     onClick: () => void
     sx?: SxProps
     loading?: boolean
@@ -26,9 +28,9 @@ function AppActionButton({ type, onClick, sx, loading, disabled }: IProps) {
                 width: '28px',
                 height: '28px',
                 backgroundColor:
-                    type === 'edit' || type === 'duplicate' || type === 'view' || type === 'download' || type === 'add' || type === 'remove'
+                    type === 'edit' || type === 'duplicate' || type === 'view' || type === 'download' || type === 'add' || type === 'remove' || type === 'refresh'
                         ? 'primary.main'
-                        : type === 'delete'
+                        : type === 'delete' || type === 'block'
                             ? 'error.main'
                             : type === 'send'
                                 ? 'success.main'
@@ -42,9 +44,9 @@ function AppActionButton({ type, onClick, sx, loading, disabled }: IProps) {
                 opacity: disabled ? 0.5 : 1,
                 cursor: disabled ? 'not-allowed' : 'pointer',
                 '&:hover': {
-                    backgroundColor: disabled ? undefined : (type === 'edit' || type === 'duplicate' || type === 'add' || type === 'remove'
+                    backgroundColor: disabled ? undefined : (type === 'edit' || type === 'duplicate' || type === 'add' || type === 'remove' || type === 'refresh'
                         ? 'primary.main'
-                        : type === 'delete'
+                        : type === 'delete' || type === 'block'
                             ? 'error.main'
                             : type === 'send'
                                 ? 'success.main'
@@ -65,6 +67,8 @@ function AppActionButton({ type, onClick, sx, loading, disabled }: IProps) {
                     {type === 'download' && <DownloadTwoToneIcon fontSize="small" />}
                     {type === 'add' && <AddTwoToneIcon fontSize="small" />}
                     {type === 'remove' && <RemoveTwoToneIcon fontSize="small" />}
+                    {type === 'refresh' && <RefreshTwoToneIcon fontSize="small" />}
+                    {type === 'block' && <BlockTwoToneIcon fontSize="small" />}
                 </>
             )}
         </Box>
