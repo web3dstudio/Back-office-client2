@@ -22,7 +22,7 @@ interface Props {
   onConfirm: (data: TCarType) => void
 }
 
-type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId' | 'priceListType'> & { priceListType: TPriceListType | null }
+type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId' | 'priceListType'> & { priceListType: TPriceListType | null; nameEn?: string | null }
 
 function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const { t } = useTranslation()
@@ -41,6 +41,10 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const schema = object()
     .shape({
       name: yup.string().required(t('form-field.required')),
+      nameEn: yup
+        .string()
+        .nullable()
+        .transform((o, c) => (o === '' ? null : c)),
       carTypeID: yup
         .string()
         .nullable()
@@ -69,6 +73,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
     mode: 'onChange',
     defaultValues: {
       name: data?.name || '',
+      nameEn: data?.nameEn || '',
       carTypeID: data?.carTypeID || '',
       licenseType: data?.licenseType || '',
       priceListType: (() => {
@@ -93,7 +98,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      <Grid container columns={12} sx={{ mt: 1, columnGap: 3 }}>
+      <Grid container columns={12} columnSpacing={3} sx={{ mt: 1 }}>
         <Grid size={12}>
           <AppControlledTextField
             required
@@ -107,15 +112,25 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
 
         <Grid size={12}>
           <AppControlledTextField
-            name='carTypeID'
+            name='nameEn'
             control={control}
             errors={errors}
-            label={t('ID', { ns: 'carTypes' })}
-            placeholder={t('ID', { ns: 'carTypes' })}
+            label={t('nameEn', { ns: 'carTypes' })}
+            placeholder={t('nameEn', { ns: 'carTypes' })}
           />
         </Grid>
 
-        <Grid size={12}>
+        <Grid size={6}>
+          <AppControlledTextField
+            name='carTypeID'
+            control={control}
+            errors={errors}
+            label={t('carTypeID', { ns: 'carTypes' })}
+            placeholder={t('carTypeID', { ns: 'carTypes' })}
+          />
+        </Grid>
+
+        <Grid size={6}>
           <AppControlledTextField
             name='licenseType'
             control={control}

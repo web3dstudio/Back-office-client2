@@ -32,11 +32,11 @@ export function useUploadIconMutation(): UseMutationResult<TIcon, Error, FileLis
         formData.append('fileNames', file.name);
       }
 
-      for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
-
-      const response = await axiosAPI.post('/icons', formData)
+      const response = await axiosAPI.post('/icons', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       return response.data.data
     },
     onSuccess: () => {

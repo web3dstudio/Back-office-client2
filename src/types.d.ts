@@ -249,6 +249,7 @@ export type TIcon = {
 export type TCarType = {
   id: string
   name: string
+  nameEn: string | null
   carTypeID?: string | null
   code?: number | null
   iconId?: string | null

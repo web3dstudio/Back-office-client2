@@ -83,6 +83,12 @@ function CarTypes() {
       enableHiding: true,
     },
     {
+      accessorKey: 'nameEn',
+      header: t('nameEn', { ns: 'carTypes' }),
+      enableSorting: true,
+      enableHiding: true,
+    },
+    {
       accessorKey: 'carTypeID',
       header: t('carTypeID', { ns: 'carTypes' }),
       enableSorting: true,

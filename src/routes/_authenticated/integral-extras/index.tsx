@@ -174,18 +174,29 @@ function IntegralExtrasPage() {
 					gap: 2,
 				}}
 			>
-				<AppDataTable
-					tableName='integralExtras'
-					data={integralExtras ?? []}
-					columns={columns}
-					isLoading={isLoading}
-					manualPagination={false}
-					sorting={sorting}
-					onSortingChange={setSorting}
-					pagination={pagination}
-					onPaginationChange={setPagination}
-					totalPages={Math.ceil((integralExtras?.length || 0) / pagination.pageSize) || 1}
-				/>
+			<AppDataTable
+				tableName='integralExtras'
+				data={integralExtras ?? []}
+				columns={columns}
+				isLoading={isLoading}
+				manualPagination={false}
+				sorting={sorting}
+				onSortingChange={setSorting}
+				pagination={pagination}
+				onPaginationChange={setPagination}
+				totalPages={Math.ceil((integralExtras?.length || 0) / pagination.pageSize) || 1}
+				globalFilterFn={(row, _columnId, filterValue) => {
+					const q = String(filterValue || '').toLowerCase()
+					if (!q) return true
+
+					const integralExtra: any = row.original
+					const nameMatch = (integralExtra?.name || '').toString().toLowerCase().includes(q)
+					const nameEnMatch = (integralExtra?.nameEn || '').toString().toLowerCase().includes(q)
+					const percentMatch = (integralExtra?.defaultChangePercentage ?? '').toString().toLowerCase().includes(q)
+
+					return nameMatch || nameEnMatch || percentMatch
+				}}
+			/>
 			</StyledPaper>
 
 			<AppConfirmDialog
