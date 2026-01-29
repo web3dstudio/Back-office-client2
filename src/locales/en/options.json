@@ -19,12 +19,14 @@
   "model": "Model",
   "volume": "Volume",
   "orderer": "Orderer",
-  "insDate": "Inseption date",
+  "insDate": "Inspection date",
   "recDate": "Reception date",
   "licNum": "License number",
   "year": "Year",
   "price": "Price",
   "updateDate": "Next update date",
+  "images": "Images",
+  "sendDate": "Send date",
   "tozeretNm": "Manufacturer (Ministry of Transportation)",
   "degemNm": "Model (Ministry of Transportation)"
 }

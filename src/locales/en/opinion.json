@@ -15,6 +15,7 @@
   "personalImp": "Personal import",
   "tinyImp": "Tiny import",
   "manufacturer": "Manufacturer",
+  "manufacturerCode": "Manufacturer code",
   "carType": "Car type",
   "series": "Series",
   "model": "Model",

@@ -205,6 +205,21 @@ function AdvertisementsSchedulePage() {
             pagination={pagination}
             onPaginationChange={setPagination}
             totalPages={totalPages}
+            globalFilterFn={(row, _columnId, filterValue) => {
+              const q = String(filterValue || '').toLowerCase()
+              if (!q) return true
+
+              const schedule: any = row.original
+              const fromDateMatch = schedule?.fromDate ? monthYearFormat(schedule.fromDate).toLowerCase().includes(q) : false
+              const toDateMatch = schedule?.toDate ? monthYearFormat(schedule.toDate).toLowerCase().includes(q) : false
+              const fromPageMatch = (schedule?.fromPage ?? '').toString().toLowerCase().includes(q)
+              const toPageMatch = (schedule?.toPage ?? '').toString().toLowerCase().includes(q)
+              const priorityMatch = (schedule?.priority ?? '').toString().toLowerCase().includes(q)
+              const repeatCountMatch = (schedule?.repeatCount ?? '').toString().toLowerCase().includes(q)
+              const createdDateMatch = schedule?.createdDate ? dateTimeFormat(schedule.createdDate).toLowerCase().includes(q) : false
+
+              return fromDateMatch || toDateMatch || fromPageMatch || toPageMatch || priorityMatch || repeatCountMatch || createdDateMatch
+            }}
           />
         </Grid>
       </Grid>

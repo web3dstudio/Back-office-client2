@@ -15,6 +15,7 @@
   "personalImp": "יבוא אישי",
   "tinyImp": "ייבוא זעיר",
   "manufacturer": "יצרן",
+  "manufacturerCode": "קוד יצרן",
   "carType": "סוג רכב",
   "model": "דגם",
   "email": "דואר אלקטרוני",

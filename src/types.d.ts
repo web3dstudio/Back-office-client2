@@ -442,6 +442,7 @@ export type TOpinionList = {
   update2SendDate: string | null
   update3Send: boolean
   update3SendDate: string | null
+  hasImages: boolean
 }
 
 export type TOpinionResponse = {

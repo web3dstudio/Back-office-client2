@@ -185,6 +185,16 @@ function ServicePackagesPage() {
           manualPagination={false}
           sorting={sorting}
           onSortingChange={setSorting}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const q = String(filterValue || '').toLowerCase()
+            if (!q) return true
+
+            const servicePackage: any = row.original
+            const nameMatch = (servicePackage?.name || '').toString().toLowerCase().includes(q)
+            const nameEnMatch = (servicePackage?.nameEn || '').toString().toLowerCase().includes(q)
+
+            return nameMatch || nameEnMatch
+          }}
         />
       </StyledPaper>
 

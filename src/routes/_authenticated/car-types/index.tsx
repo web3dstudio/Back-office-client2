@@ -220,6 +220,23 @@ function CarTypes() {
           initialColumnVisibility={{
             iconId: false,
           }}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const q = String(filterValue || '').toLowerCase()
+            if (!q) return true
+
+            const carType: any = row.original
+            const nameMatch = (carType?.name || '').toString().toLowerCase().includes(q)
+            const nameEnMatch = (carType?.nameEn || '').toString().toLowerCase().includes(q)
+            const carTypeIDMatch = (carType?.carTypeID || '').toString().toLowerCase().includes(q)
+            const codeMatch = (carType?.code ?? '').toString().toLowerCase().includes(q)
+            const licenseTypeMatch = (carType?.licenseType || '').toString().toLowerCase().includes(q)
+            
+            const priceListTypeId = carType?.priceListType
+            const priceListType = priceListTypesList?.find(type => String(type?.id) === String(priceListTypeId))
+            const priceListTypeMatch = priceListType?.name?.toLowerCase().includes(q) || false
+
+            return nameMatch || nameEnMatch || carTypeIDMatch || codeMatch || licenseTypeMatch || priceListTypeMatch
+          }}
         />
       </StyledPaper>
 

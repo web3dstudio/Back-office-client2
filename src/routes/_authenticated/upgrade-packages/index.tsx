@@ -178,6 +178,16 @@ function UpgradePackagesPage() {
           sorting={sorting}
           onSortingChange={setSorting}
           tableName='upgradePackages'
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const q = String(filterValue || '').toLowerCase()
+            if (!q) return true
+
+            const upgradePackage: any = row.original
+            const nameMatch = (upgradePackage?.name || '').toString().toLowerCase().includes(q)
+            const nameEnMatch = (upgradePackage?.nameEn || '').toString().toLowerCase().includes(q)
+
+            return nameMatch || nameEnMatch
+          }}
         />
       </StyledPaper>
 

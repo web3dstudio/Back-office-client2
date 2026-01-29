@@ -9,6 +9,7 @@ import { useDateTimeFormat } from '../../../hooks/useDateTimeFormat'
 import useCurrencyFormat from '../../../hooks/useCurrencyFormat';
 import { Box, Button, Grid, Tooltip, Typography } from '@mui/material';
 import CheckIcon from '@mui/icons-material/Check';
+import PhotoIcon from '@mui/icons-material/Photo';
 import AppBackBtn from '../../../components/AppBackBtn';
 import OpinionsFilter from '../../../components/Opinions/OpinionsFilter';
 import AppDataTable from '../../../components/AppDataTable';
@@ -64,6 +65,25 @@ function OpinionsPage() {
         size: 100,
         minSize: 80,
         maxSize: 150,
+      },
+      {
+        id: 'images',
+        accessorKey: 'hasImages',
+        header: t('images', { ns: 'options' }),
+        enableSorting: false,
+        enableHiding: true,
+        size: 60,
+        minSize: 40,
+        maxSize: 80,
+        cell: ({ row }) => {
+          const hasImages = (row.original as any).hasImages
+          if (!hasImages) return null
+          return (
+            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'start', width: '100%', height: '100%' }}>
+              <PhotoIcon fontSize="small" />
+            </Box>
+          )
+        },
       },
       {
         accessorKey: 'manufacturerName',

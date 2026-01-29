@@ -134,6 +134,15 @@ function MarksPage() {
           pagination={pagination}
           onPaginationChange={setPagination}
           totalPages={Math.ceil((marks?.length || 0) / pagination.pageSize) || 1}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const q = String(filterValue || '').toLowerCase()
+            if (!q) return true
+
+            const mark: any = row.original
+            const nameMatch = (mark?.name || '').toString().toLowerCase().includes(q)
+
+            return nameMatch
+          }}
         />
       </StyledPaper>
 

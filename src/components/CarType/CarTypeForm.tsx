@@ -22,7 +22,7 @@ interface Props {
   onConfirm: (data: TCarType) => void
 }
 
-type TFormInput = Omit<TCarType, 'id' | 'code' | 'icon' | 'iconId' | 'priceListType'> & { priceListType: TPriceListType | null; nameEn?: string | null }
+type TFormInput = Omit<TCarType, 'id' | 'icon' | 'iconId' | 'priceListType'> & { priceListType: TPriceListType | null; nameEn?: string | null }
 
 function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
   const { t } = useTranslation()
@@ -57,6 +57,16 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
         .transform((o, c) => (o === '' ? null : c))
         .min(1)
         .max(255),
+      code: yup
+        .number()
+        .nullable()
+        .transform((_value, originalValue) => {
+          if (originalValue === '' || originalValue === null || originalValue === undefined) {
+            return null;
+          }
+          const num = Number(originalValue);
+          return isNaN(num) ? null : num;
+        }),
       priceListType: yup
         .object()
         .shape({
@@ -76,6 +86,7 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
       nameEn: data?.nameEn || '',
       carTypeID: data?.carTypeID || '',
       licenseType: data?.licenseType || '',
+      code: data?.code || null,
       priceListType: (() => {
         if (!data?.priceListType) return null;
         if (typeof data.priceListType === 'object') return data.priceListType;
@@ -137,6 +148,17 @@ function CarTypeForm({ data, isPending, onCancel, onConfirm }: Props) {
             errors={errors}
             label={t('licenseType', { ns: 'carTypes' })}
             placeholder={t('licenseType', { ns: 'carTypes' })}
+          />
+        </Grid>
+
+        <Grid size={12}>
+          <AppControlledTextField
+            name='code'
+            control={control}
+            errors={errors}
+            label={t('code', { ns: 'carTypes' })}
+            placeholder={t('code', { ns: 'carTypes' })}
+            type='number'
           />
         </Grid>
 
