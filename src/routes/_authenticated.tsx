@@ -75,7 +75,14 @@ export default function Layout() {
             alignItems: 'center',
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box 
+            sx={{ 
+              display: 'flex', 
+              alignItems: 'center',
+              cursor: 'pointer'
+            }}
+            onClick={() => navigate({ to: '/' })}
+          >
             <img
               style={{
                 width: '100%',

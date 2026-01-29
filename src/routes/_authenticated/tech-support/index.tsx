@@ -160,6 +160,12 @@ function TechSupportPage() {
               totalPages={articles?.totalPagesNumber ?? 1}
               currentPage={articles?.currentPageNumber ?? pagination.pageIndex + 1}
               manualPagination={true}
+              globalFilterFn={(row, _columnId, filterValue) => {
+                const titleMatch = row.original.title?.toLowerCase().includes(filterValue.toLowerCase()) || false
+                const categoryMatch = row.original.categoryName?.toLowerCase().includes(filterValue.toLowerCase()) || false
+                const applicationMatch = t(String(row.original.application), { ns: 'newSupportArticle' })?.toLowerCase().includes(filterValue.toLowerCase()) || false
+                return titleMatch || categoryMatch || applicationMatch
+              }}
             />
           </StyledPaper>
         </Grid>

@@ -67,8 +67,8 @@ function EngineTypesForm({ data, isPending, onCancel, onConfirm }: Props) {
             name='nameEn'
             control={control}
             errors={errors}
-            label={t('code', { ns: 'engineTypes' })}
-            placeholder={t('code', { ns: 'engineTypes' })}
+            label={t('nameEn', { ns: 'engineTypes' })}
+            placeholder={t('nameEn', { ns: 'engineTypes' })}
           />
         </Grid>
         <Grid size={12}>
