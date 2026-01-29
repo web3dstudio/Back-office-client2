@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Box, Grid, Typography, Switch, Divider } from '@mui/material'
+import { Box, Grid, Typography, Switch, Divider, Button } from '@mui/material'
 import { useTranslation } from 'react-i18next'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -10,7 +10,6 @@ import AppControlledTextField from '../../../components/AppControlledTextField'
 import AppLoading from '../../../components/AppLoading'
 import AppError from '../../../components/AppError'
 import AppBackBtn from '../../../components/AppBackBtn'
-import LoadingButton from '@mui/lab/LoadingButton'
 import StyledPaper from '../../../components/StyledPaper'
 import { useSystemSettingsQuery, useSystemSettingsUpdateMutation } from '../../../query/settings.query'
 import type { TSystemSettings } from '../../../types'
@@ -278,7 +277,7 @@ function SettingsPage() {
 
             <Grid size={12}>
               <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end', mt: 2 }}>
-                <LoadingButton
+                <Button
                   color="primary"
                   type="submit"
                   variant="contained"
@@ -287,7 +286,7 @@ function SettingsPage() {
                   <Typography sx={{ textWrap: 'nowrap' }}>
                     {t('keeping', { ns: 'settings' })}
                   </Typography>
-                </LoadingButton>
+                </Button>
               </Box>
             </Grid>
           </Grid>

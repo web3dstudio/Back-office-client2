@@ -1,11 +1,10 @@
-import { Avatar, Box, IconButton, Typography, Switch } from '@mui/material'
+import { Avatar, Box, IconButton, Typography, Switch, Button } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useTranslation } from 'react-i18next'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { object } from 'yup'
-import LoadingButton from '@mui/lab/LoadingButton'
 import { useEffect, useState } from 'react'
 import {
   AccountCircle,
@@ -251,138 +250,138 @@ function UserForm({
     <>
       <Box>
         <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Active Directory User Section */}
-        <Grid
-          sx={{
-            borderRadius: '24px',
-            padding: '38px',
-            boxShadow: '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06)',
-            width: '100%',
-            marginBottom: 3,
-            backgroundColor: 'background.paper',
-          }}
-          container
-          columns={{ xs: 12 }}
-          columnSpacing={1}
-          rowSpacing={2}
-        >
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <AppControlledAutocomplete<TAdUser>
-              name="adSid"
-              control={control}
-              options={adUsers || []}
-              errors={errors}
-              disabled={!adUserValue}
-              loading={adUsersLoading}
+          {/* Active Directory User Section */}
+          <Grid
+            sx={{
+              borderRadius: '24px',
+              padding: '38px',
+              boxShadow: '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06)',
+              width: '100%',
+              marginBottom: 3,
+              backgroundColor: 'background.paper',
+            }}
+            container
+            columns={{ xs: 12 }}
+            columnSpacing={1}
+            rowSpacing={2}
+          >
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <AppControlledAutocomplete<TAdUser>
+                name="adSid"
+                control={control}
+                options={adUsers || []}
+                errors={errors}
+                disabled={!adUserValue}
+                loading={adUsersLoading}
                 required={false}
                 getOptionLabel={(option) => option.samAccountName || option.displayName || option.id}
-              isOptionEqualToValue={(option, value) => option.id === (value as TAdUser)?.id}
-              label={t('activeDirectoryUser', { ns: 'users' })}
-              placeholder={t('selectActiveDirectoryUser', { ns: 'users' })}
-              onUserChange={(value) => {
-                const adUser = value as TAdUser | null
+                isOptionEqualToValue={(option, value) => option.id === (value as TAdUser)?.id}
+                label={t('activeDirectoryUser', { ns: 'users' })}
+                placeholder={t('selectActiveDirectoryUser', { ns: 'users' })}
+                onUserChange={(value) => {
+                  const adUser = value as TAdUser | null
                   if (adUser) {
                     setPendingAdUser(adUser)
                     setConfirmFillAdOpen(true)
                   } else {
                     handleAdUserChange(null)
                   }
-              }}
-            />
+                }}
+              />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', gap: 1 }}>
+                <Typography>{t('activeDirectoryUser', { ns: 'users' })}</Typography>
+                <Controller
+                  name="adUser"
+                  control={control}
+                  render={({ field }) => (
+                    <Switch
+                      checked={field.value}
+                      onChange={(e) => {
+                        field.onChange(e.target.checked)
+                        if (!e.target.checked) {
+                          setValue('adSid', null)
+                        }
+                      }}
+                    />
+                  )}
+                />
+              </Box>
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', height: '100%', gap: 1 }}>
-              <Typography>{t('activeDirectoryUser', { ns: 'users' })}</Typography>
-              <Controller
-                name="adUser"
-                control={control}
-                render={({ field }) => (
-                  <Switch
-                    checked={field.value}
-                    onChange={(e) => {
-                      field.onChange(e.target.checked)
-                      if (!e.target.checked) {
-                        setValue('adSid', null)
-                      }
-                    }}
+
+          <Grid
+            sx={{
+              borderRadius: '24px',
+              padding: '38px',
+              boxShadow: '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06)',
+              width: '100%',
+              display: 'flex',
+              marginBottom: 3,
+              backgroundColor: 'background.paper',
+            }}
+            container
+            columns={{ xs: 12 }}
+            spacing={3}
+          >
+            <Grid
+              size={{ xs: 12 }}
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+              }}
+            >
+              <Box sx={{ position: 'relative', mb: 3 }}>
+                {preview && (
+                  <Avatar
+                    sx={{ width: 140, height: 140 }}
+                    alt={`${user?.firstName || ''} ${user?.lastName || ''}`}
+                    src={`${preview}`}
                   />
                 )}
-              />
-            </Box>
-          </Grid>
-        </Grid>
+                {!preview && (
+                  <Avatar
+                    sx={{ width: 140, height: 140 }}
+                    alt={`${user?.firstName || ''} ${user?.lastName || ''}`}
+                  >
+                    <AccountCircle sx={{ width: 140, height: 140 }} />
+                  </Avatar>
+                )}
 
-        <Grid
-          sx={{
-            borderRadius: '24px',
-            padding: '38px',
-            boxShadow: '0px 0px 20px rgba(28, 41, 61, .1), 0px 0px 20px rgba(28, 41, 61, 0.06)',
-            width: '100%',
-            display: 'flex',
-            marginBottom: 3,
-            backgroundColor: 'background.paper',
-          }}
-          container
-          columns={{ xs: 12 }}
-          spacing={3}
-        >
-          <Grid
-            size={{ xs: 12 }}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-            }}
-          >
-            <Box sx={{ position: 'relative', mb: 3 }}>
-              {preview && (
-                <Avatar
-                  sx={{ width: 140, height: 140 }}
-                  alt={`${user?.firstName || ''} ${user?.lastName || ''}`}
-                  src={`${preview}`}
-                />
-              )}
-              {!preview && (
-                <Avatar
-                  sx={{ width: 140, height: 140 }}
-                  alt={`${user?.firstName || ''} ${user?.lastName || ''}`}
-                >
-                  <AccountCircle sx={{ width: 140, height: 140 }} />
-                </Avatar>
-              )}
+                {preview && (
+                  <IconButton
+                    size='large'
+                    color='error'
+                    onClick={handleRemoveImage}
+                    sx={{ position: 'absolute', bottom: -20, right: -20 }}
+                  >
+                    <DeleteOutline />
+                  </IconButton>
+                )}
 
-              {preview && (
                 <IconButton
                   size='large'
-                  color='error'
-                  onClick={handleRemoveImage}
-                  sx={{ position: 'absolute', bottom: -20, right: -20 }}
+                  color='primary'
+                  component='label'
+                  aria-label='upload picture'
+                  sx={{ position: 'absolute', bottom: -20, left: -20 }}
                 >
-                  <DeleteOutline />
+                  <input
+                    hidden
+                    accept='image/*'
+                    type='file'
+                    onChange={handleImageChange}
+                  />
+                  <PhotoCameraOutlined />
                 </IconButton>
-              )}
-
-              <IconButton
-                size='large'
-                color='primary'
-                component='label'
-                aria-label='upload picture'
-                sx={{ position: 'absolute', bottom: -20, left: -20 }}
-              >
-                <input
-                  hidden
-                  accept='image/*'
-                  type='file'
-                  onChange={handleImageChange}
-                />
-                <PhotoCameraOutlined />
-              </IconButton>
-            </Box>
-            <Typography variant='h4' fontWeight={'bold'}>
-              {user ? `${user.firstName} ${user.lastName}` : t('newUser', { ns: 'users' })}
-            </Typography>
+              </Box>
+              <Typography variant='h4' fontWeight={'bold'}>
+                {user ? `${user.firstName} ${user.lastName}` : t('newUser', { ns: 'users' })}
+              </Typography>
+            </Grid>
           </Grid>
-        </Grid>
 
           <Controller
             name='imageFileName'
@@ -650,7 +649,7 @@ function UserForm({
               size={{ xs: 12 }}
               sx={{ display: 'flex', justifyContent: 'end' }}
             >
-              <LoadingButton
+              <Button
                 sx={{ width: '100px', textTransform: 'none' }}
                 loading={isPending}
                 variant='contained'
@@ -658,7 +657,7 @@ function UserForm({
                 disabled={!formState.isValid}
               >
                 <Box> {t('keeping', { ns: 'userProfile' })}</Box>
-              </LoadingButton>
+              </Button>
             </Grid>
           </Grid>
         </form>

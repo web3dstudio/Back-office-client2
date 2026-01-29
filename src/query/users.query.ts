@@ -205,7 +205,6 @@ export function useAdUsersQuery(): UseQueryResult<TAdUser[], Error> {
         queryKey: ['adUsers'],
         queryFn: async (): Promise<TAdUser[]> => {
             const response = await axiosAPI.get('/users/ad-users')
-            console.log('response', response.data)
             return response.data || []
         },
         refetchOnWindowFocus: false,

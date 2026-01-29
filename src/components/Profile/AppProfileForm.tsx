@@ -1,12 +1,10 @@
-import { Avatar, Box, IconButton, Typography } from '@mui/material'
+import { Avatar, Box, Button, IconButton, Typography } from '@mui/material'
 import Grid from '@mui/material/Grid'
 import { useTranslation } from 'react-i18next'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { object } from 'yup'
-// import { TAvatarUpload, TCurrentUser, TProfileFormInput } from '../../types'
-import LoadingButton from '@mui/lab/LoadingButton'
 import { useEffect, useState } from 'react'
 import {
   AccountCircle,
@@ -149,7 +147,7 @@ function AppProfileForm({
 
     if (selectedImage && data.imageFileName) {
       const avatar: TAvatarUpload = {
-        imageUploadUri: '', // this from update profile response!!!
+        imageUploadUri: '',
         filename: data.imageFileName,
         file: selectedImage,
       }
@@ -456,15 +454,14 @@ function AppProfileForm({
               size={{ xs: 12 }}
               sx={{ display: 'flex', justifyContent: 'end' }}
             >
-              <LoadingButton
+              <Button
                 sx={{ width: '100px', textTransform: 'none' }}
                 loading={isPending}
-                // disabled={!formState.isValid}
                 variant='contained'
                 type='submit'
               >
                 <Box> {t('keeping', { ns: 'userProfile' })}</Box>
-              </LoadingButton>
+              </Button>
             </Grid>
           </Grid>
         </form>
