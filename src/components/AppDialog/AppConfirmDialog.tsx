@@ -6,7 +6,7 @@ import {
   DialogTitle,
 } from '@mui/material'
 import type { DialogProps } from '@mui/material'
-import DialogCloseIcon from '../DialogCloseIcon'
+import AppDialogCloseIcon from './AppDialogCloseIcon'
 import { useTranslation } from 'react-i18next'
 
 interface Props {
@@ -57,7 +57,7 @@ const AppConfirmDialog = ({
     >
       <DialogTitle sx={{ mt: 1 }} id='alert-dialog-title'>
         {title}
-        <DialogCloseIcon onClick={handleClose} />
+        <AppDialogCloseIcon onClick={handleClose} />
       </DialogTitle>
       <DialogContent>{children}</DialogContent>
       <DialogActions sx={{ px: 3, pb: 3 }}>

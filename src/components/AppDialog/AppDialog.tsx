@@ -5,7 +5,7 @@ import {
 	type SxProps,
 	type DialogProps,
 } from '@mui/material'
-import DialogCloseIcon from '../DialogCloseIcon'
+import AppDialogCloseIcon from './AppDialogCloseIcon'
 
 
 interface IProps {
@@ -38,7 +38,7 @@ export default function AppDialog({ open, onClose, title, children, sx, maxWidth
 			sx={sx}
 		>
 			<DialogTitle>
-				<DialogCloseIcon onClick={onClose} />
+				<AppDialogCloseIcon onClick={onClose} />
 				{title}
 			</DialogTitle>
 			<DialogContent>

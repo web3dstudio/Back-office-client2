@@ -509,6 +509,8 @@ export type TOpinion = {
   email: string | null
   phone: string | null
   fax: string | null
+  city: string | null
+  address: string | null
   licenseNumber: string | null
   parallelImport: boolean
   tinyImport: boolean
@@ -517,6 +519,7 @@ export type TOpinion = {
   statementPrice: number | null
   claimNumber: string | null
   carType: TCarType | undefined
+  carTypeOld?: string | null
   manufacturer: TManufacturer | undefined
   manufacturerCode: string | null
   model: TModel | undefined
@@ -535,7 +538,7 @@ export type TOpinion = {
   usageType: TUsageType | undefined
   internalStatus: TInternalStatus | undefined
   externalStatus: TExternalStatus | undefined
-  tyresStatus: number | null
+  tyresStatus: sting | null
   appraisers: TAppraiser[] | null
   numberOfOwners: number | null
   owners: TOpinionOwner[] | null
