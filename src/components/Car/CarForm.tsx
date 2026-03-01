@@ -392,16 +392,16 @@ export default function CarForm({ data }: Props) {
     setCarPricesMap(next)
   }, [data?.id, (data as any)?.country?.id])
 
-  // When user selects year/month, reflect stored price in input
+  // When user selects year/month, reflect stored price in input (or clear if none)
   useEffect(() => {
     if (!selectedYear || !selectedMonth) {
       setValue('price', null)
       return
     }
     const key = `${selectedYear}-${selectedMonth}-${currentCountryId}`
-    const existing = carPricesMapRef.current[key]
-    setValue('price', existing ? existing.totalPrice : null)
-  }, [selectedYear, selectedMonth, currentCountryId, setValue])
+    const existing = carPricesMap[key]
+    setValue('price', existing ? existing.totalPrice : null, { shouldDirty: true })
+  }, [selectedYear, selectedMonth, currentCountryId, carPricesMap, setValue])
 
   // When user changes price input, update map
   useEffect(() => {

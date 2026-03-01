@@ -74,6 +74,7 @@ const ControlledTextField = ({
             minRows={minRows}
             disabled={disabled}
             {...field}
+            value={type === 'number' && (field.value === null || field.value === undefined) ? '' : field.value}
             id={name}
             error={!!errorMessage}
             variant='outlined'

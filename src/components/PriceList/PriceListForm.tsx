@@ -1,4 +1,4 @@
-import { Button, DialogActions, Grid } from "@mui/material";
+import { Box, Button, DialogActions, Grid } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import * as yup from 'yup'
@@ -11,7 +11,7 @@ import { useEngineTypesQuery } from "../../query/engineTypes.query";
 import AppControlledCheckboxesTags from "../AppControlledCheckboxesTags";
 import { useNavigate } from "@tanstack/react-router";
 import type { TCarType, TEngineType, TPriceList, TPriceListType } from "../../types";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import AppDialog from "../AppDialog/AppDialog";
 import AppControlledTextField from "../AppControlledTextField";
 import usePriceListCreateMutation from "../../query/priceList.query";
@@ -30,9 +30,9 @@ type TFormInput = {
 }
 
 const currentYear = new Date().getFullYear()
-const futureYears = Array.from({ length: 10 }, (_, i) => currentYear + i)
-const pastYears = Array.from({ length: currentYear - 2005 + 1 }, (_, i) => currentYear - i)
-const months = Array.from({ length: 12 }, (_, i) => i + 1)
+const futureYears = Array.from({ length: 15 }, (_unused, index) => currentYear - index)
+const pastYears = Array.from({ length: currentYear - 2005 + 1 }, (_unused, index) => currentYear - index)
+const months = Array.from({ length: 12 }, (_unused, index) => index + 1)
 
 
 
@@ -42,6 +42,7 @@ export default function PriceListForm() {
 
   const [titleDialogOpen, setTitleDialogOpen] = useState(false)
   const [commentDialogOpen, setCommentDialogOpen] = useState(false)
+  const prevPriceListYearRef = useRef<number | null>(null)
 
 
   const { data: priceListTypes, isLoading: isPriceListTypesLoading } = usePriceListTypesQuery()
@@ -61,8 +62,8 @@ export default function PriceListForm() {
         .min(2005, t('form-field.required'))
         .transform((_value, originalValue) => {
           if (originalValue === '' || originalValue === null || originalValue === undefined) return null
-          const n = Number(originalValue)
-          return Number.isNaN(n) ? null : n
+          const parsedValue = Number(originalValue)
+          return Number.isNaN(parsedValue) ? null : parsedValue
         }),
       upToYearOfManufacture: yup
         .number()
@@ -70,15 +71,23 @@ export default function PriceListForm() {
         .min(2005, t('form-field.required'))
         .transform((_value, originalValue) => {
           if (originalValue === '' || originalValue === null || originalValue === undefined) return null
-          const n = Number(originalValue)
-          return Number.isNaN(n) ? null : n
+          const parsedValue = Number(originalValue)
+          return Number.isNaN(parsedValue) ? null : parsedValue
         })
-        .when('yearOfFirstRegistration', (y, s) => {
-          const year = Array.isArray(y) ? y[0] : y
-          if (typeof year !== 'number') return s
-          return s.min(
-            year,
+        .when('yearOfFirstRegistration', (yearOfFirstRegValue, schema) => {
+          const yofr = Array.isArray(yearOfFirstRegValue) ? yearOfFirstRegValue[0] : yearOfFirstRegValue
+          if (typeof yofr !== 'number') return schema
+          return schema.min(
+            yofr,
             `${t('upToYearOfManufacture', { ns: 'priceList' })} >= ${t('yearOfFirstRegistration', { ns: 'priceList' })}`
+          )
+        })
+        .when('year', (yearValue, schema) => {
+          const plYear = Array.isArray(yearValue) ? yearValue[0] : yearValue
+          if (typeof plYear !== 'number') return schema
+          return schema.max(
+            plYear,
+            t('upToYearCannotExceedPriceListYear', { ns: 'priceList' })
           )
         }),
     })
@@ -103,6 +112,7 @@ export default function PriceListForm() {
   const errors = formState.errors
 
   const priceListType = watch('priceListType')
+  const year = watch('year')
   const yearOfFirstRegistration = watch('yearOfFirstRegistration')
   const upToYearOfManufacture = watch('upToYearOfManufacture')
 
@@ -113,10 +123,16 @@ export default function PriceListForm() {
         ? Number(yearOfFirstRegistration)
         : null
 
+  const priceListYear = typeof year === 'number' ? year : year ? Number(year) : null
+
   const upToYearOfManufactureOptions = useMemo(() => {
     if (!yearOfFirstRegistrationNumber || Number.isNaN(yearOfFirstRegistrationNumber)) return pastYears
-    return pastYears.filter(y => y >= yearOfFirstRegistrationNumber)
-  }, [yearOfFirstRegistrationNumber])
+    let options = pastYears.filter(candidateYear => candidateYear >= yearOfFirstRegistrationNumber)
+    if (priceListYear != null && !Number.isNaN(priceListYear)) {
+      options = options.filter(candidateYear => candidateYear <= priceListYear)
+    }
+    return options
+  }, [yearOfFirstRegistrationNumber, priceListYear])
 
   const carTypesFiltered = useMemo(() => {
     return carTypes?.filter(carType => carType.priceListType === priceListType?.id) || []
@@ -136,6 +152,26 @@ export default function PriceListForm() {
       setValue('upToYearOfManufacture', undefined, { shouldValidate: true, shouldDirty: true })
     }
   }, [yearOfFirstRegistrationNumber, upToYearOfManufacture, setValue])
+
+  useEffect(() => {
+    if (priceListYear == null || Number.isNaN(priceListYear)) return
+    const upTo =
+      typeof upToYearOfManufacture === 'number'
+        ? upToYearOfManufacture
+        : null
+
+    const prevPriceListYear = prevPriceListYearRef.current
+
+    if (prevPriceListYear != null && priceListYear > prevPriceListYear) {
+      if (upTo !== null && upTo === prevPriceListYear) {
+        setValue('upToYearOfManufacture', priceListYear, { shouldValidate: true, shouldDirty: true })
+      }
+    } else if (upTo !== null && !Number.isNaN(upTo) && upTo > priceListYear) {
+      setValue('upToYearOfManufacture', priceListYear, { shouldValidate: true, shouldDirty: true })
+    }
+
+    prevPriceListYearRef.current = priceListYear
+  }, [priceListYear, upToYearOfManufacture, setValue])
 
 
 
@@ -166,7 +202,7 @@ export default function PriceListForm() {
     <form onSubmit={handleSubmit(onSubmit)} style={{ width: '100%' }}>
       <Grid container columnSpacing={2} rowSpacing={0} columns={12} sx={{ width: '100%' }}>
 
-        <Grid size={1}>
+        <Grid size={2}>
           <AppControlledAutocomplete
             name='year'
             required
@@ -179,7 +215,7 @@ export default function PriceListForm() {
           />
         </Grid>
 
-        <Grid size={1}>
+        <Grid size={2}>
           <AppControlledAutocomplete
             name='month'
             required
@@ -192,7 +228,7 @@ export default function PriceListForm() {
           />
         </Grid>
 
-        <Grid size={1}>
+        <Grid size={2}>
           <AppControlledAutocomplete
             name='priceListType'
             required
@@ -220,7 +256,7 @@ export default function PriceListForm() {
           />
         </Grid>
 
-        <Grid size={2}>
+        <Grid size={4}>
           <AppControlledCheckboxesTags
             name='engineTypes'
             loading={isEngineTypesLoading}
@@ -233,30 +269,30 @@ export default function PriceListForm() {
           />
         </Grid>
 
-        <Grid size={'auto'}>
-          <Button
-            variant="outlined"
-            color="primary" sx={{ textTransform: 'capitalize', mt: 2 }}
-            onClick={() => navigate({ to: '/price-list/advertisements' })}>
-            {t('advertize', { ns: 'priceList' })}
-          </Button>
-        </Grid>
-
-        <Grid size={'auto'}>
-          <Button
-            variant="contained"
-            color="primary" sx={{ textTransform: 'capitalize', mt: 2 }}
-            onClick={() => setTitleDialogOpen(true)}>
-            {t('priceListTitle', { ns: 'priceList' })}
-          </Button>
-        </Grid>
-        <Grid size={'auto'}>
-          <Button
-            variant="contained"
-            color="primary" sx={{ textTransform: 'capitalize', mt: 2 }}
-            onClick={() => setCommentDialogOpen(true)}>
-            {t('comment', { ns: 'priceList' })}
-          </Button>
+        <Grid size={12}>
+          <Box sx={{ display: 'flex', gap: 2, justifyContent: 'flex-start', flexWrap: 'wrap', mt: 2 }}>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ textTransform: 'capitalize' }}
+              onClick={() => setTitleDialogOpen(true)}>
+              {t('carYears', { ns: 'priceList' })} ({yearOfFirstRegistration ?? '—'} – {upToYearOfManufacture ?? '—'})
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ textTransform: 'capitalize' }}
+              onClick={() => setCommentDialogOpen(true)}>
+              {t('comment', { ns: 'priceList' })}
+            </Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              sx={{ textTransform: 'capitalize' }}
+              onClick={() => navigate({ to: '/price-list/advertisements' })}>
+              {t('advertize', { ns: 'priceList' })}
+            </Button>
+          </Box>
         </Grid>
 
         <Grid size={12}>
@@ -301,7 +337,7 @@ export default function PriceListForm() {
       <AppDialog
         open={titleDialogOpen}
         onClose={() => setTitleDialogOpen(false)}
-        title={t('priceListTitle', { ns: 'priceList' })}
+        title={t('carYears', { ns: 'priceList' })}
         maxWidth='sm'
       >
         <Grid container spacing={2} columns={12} sx={{ width: '100%', mt: 2 }}>

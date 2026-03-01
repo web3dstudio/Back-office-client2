@@ -67,19 +67,30 @@ function PriceListPage() {
         header: t('date', { ns: 'priceList' }),
         enableSorting: true,
         enableHiding: true,
-        size: 200,
-        minSize: 150,
-        maxSize: 300,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
         cell: ({ row }) => dateTimeFormat(row.original.date),
+      },
+      {
+        id: 'priceListDate',
+        accessorFn: (row) => `${row.month}/${row.year}`,
+        header: t('priceListDate', { ns: 'priceList' }),
+        enableSorting: true,
+        enableHiding: true,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
+        cell: ({ row }) => `${row.original.month}/${row.original.year}`,
       },
       {
         accessorKey: 'priceListType',
         header: t('priceListType', { ns: 'priceList' }),
         enableSorting: false,
         enableHiding: true,
-        size: 200,
-        minSize: 150,
-        maxSize: 300,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
         cell: ({ row }) => priceListTypes?.find(type => type.id === row.original.priceListType)?.name,
       },
       {
@@ -87,9 +98,9 @@ function PriceListPage() {
         header: t('carTypes', { ns: 'priceList' }),
         enableSorting: false,
         enableHiding: true,
-        size: 300,
-        minSize: 200,
-        maxSize: 400,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
         cell: ({ row }) => row.original.carTypes.map(type => type?.name).join(', '),
       },
       {
@@ -97,9 +108,9 @@ function PriceListPage() {
         header: t('title', { ns: 'engineTypes' }),
         enableSorting: false,
         enableHiding: true,
-        size: 300,
-        minSize: 200,
-        maxSize: 400,
+        size: 150,
+        minSize: 120,
+        maxSize: 200,
         cell: ({ row }) => {
           const types = row.original.engineTypes || []
           if (types.length === 0) {
@@ -115,9 +126,9 @@ function PriceListPage() {
         header: t('years', { ns: 'priceList' }),
         enableSorting: false,
         enableHiding: true,
-        size: 140,
+        size: 150,
         minSize: 120,
-        maxSize: 180,
+        maxSize: 200,
         cell: ({ row }) => {
           const from = row.original.yearOfFirstRegistration
           const to = row.original.upToYearOfManufacture
@@ -275,9 +286,10 @@ function PriceListPage() {
           currentPage={priceLists?.currentPageNumber ?? pagination.pageIndex + 1}
           globalFilterFn={(row, _columnId, filterValue) => {
             const dateMatch = dateTimeFormat(row.original.date).toLowerCase().includes(filterValue.toLowerCase())
+            const priceListDateMatch = `${row.original.month}/${row.original.year}`.toLowerCase().includes(filterValue.toLowerCase())
             const typeMatch = priceListTypes?.find(type => type.id === row.original.priceListType)?.name?.toLowerCase().includes(filterValue.toLowerCase()) || false
             const carTypesMatch = row.original.carTypes.map((type: any) => type?.name).join(', ').toLowerCase().includes(filterValue.toLowerCase())
-            return dateMatch || typeMatch || carTypesMatch
+            return dateMatch || priceListDateMatch || typeMatch || carTypesMatch
           }}
         />
       </StyledPaper>

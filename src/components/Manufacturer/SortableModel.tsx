@@ -40,7 +40,7 @@ function SortableModel({ modelIndex, serieIndex, dndId, onDelete }: Props) {
   return (
     <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
       <Grid container size={12} columnGap={2} >
-        <Grid size={2}>
+        <Grid size={4}>
           <AppControlledTextField
             required
             name={`serieses.${serieIndex}.models.${modelIndex}.name`}

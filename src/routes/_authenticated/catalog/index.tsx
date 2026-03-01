@@ -52,7 +52,7 @@ function CatalogPage() {
 
   const handleSortingChange = (newSorting: SortingState) => {
     setSorting(newSorting)
-    setPagination(prev => ({ ...prev, pageIndex: 0 })) // сброс на первую страницу
+    setPagination(prev => ({ ...prev, pageIndex: 0 }))
   }
 
   // Формируем объект фильтров для запроса
@@ -66,7 +66,6 @@ function CatalogPage() {
     return filterObj
   }, [modelCode, carType, manufacturer, category, country])
 
-  // При изменении фильтров сбрасываем страницу на 1
   useEffect(() => {
     setPagination(prev => ({ ...prev, pageIndex: 0 }))
   }, [modelCode, carType?.id, manufacturer?.id, category?.id, country?.id])
@@ -117,6 +116,7 @@ function CatalogPage() {
 
     {
       accessorKey: 'year',
+      accessorFn: (row) => row.fromYear,
       header: t('year', { ns: 'carCatalog' }),
       enableSorting: true,
       enableHiding: false,
@@ -132,6 +132,7 @@ function CatalogPage() {
     },
     {
       accessorKey: 'gearbox',
+      accessorFn: (row) => (i18n.language?.startsWith('he') ? row.gearbox?.name : row.gearbox?.nameEn || row.gearbox?.name) ?? '',
       header: t('gearbox', { ns: 'carCatalog' }),
       enableSorting: true,
       cell: ({ row }) => {
@@ -194,7 +195,7 @@ function CatalogPage() {
         }
       },
     },
-  ], [t, expandedRows, setExpandedRows])
+  ], [t, i18n, expandedRows])
 
 
   return (<>
@@ -340,6 +341,16 @@ function CatalogPage() {
           totalPages={cars?.totalPagesNumber ?? 1}
           currentPage={cars?.currentPageNumber ?? pagination.pageIndex + 1}
           manualPagination={true}
+          globalFilterFn={(row, _columnId, filterValue) => {
+            const search = filterValue.toLowerCase()
+            const manufacturer = row.original.manufacturerName?.toLowerCase().includes(search)
+            const series = row.original.seriesName?.toLowerCase().includes(search)
+            const model = row.original.modelName?.toLowerCase().includes(search)
+            const modelCode = row.original.modelCode?.toLowerCase().includes(search)
+            const yearStr = `${row.original.fromYear} ${row.original.toYear}`.includes(search)
+            const gearbox = (row.original.gearbox?.name ?? '').toLowerCase().includes(search) || (row.original.gearbox?.nameEn ?? '').toLowerCase().includes(search)
+            return !!(manufacturer || series || model || modelCode || yearStr || gearbox)
+          }}
           renderSubComponent={({ row, table }) => {
             const modelYears = carYearsData[row.modelId]
             if (modelYears) {
