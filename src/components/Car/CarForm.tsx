@@ -127,6 +127,19 @@ export default function CarForm({ data }: Props) {
     return null
   }, [data, driveTypes])
 
+  // Фильтр extras по серии (extraSeriesRules) и manufacturerId — для начальной загрузки
+  const initialSeries = (data?.model as any)?.series ?? null
+  const initialManufacturer = (data?.model as any)?.series?.manufacturer ?? null
+  const filteredExtrasForInit = useMemo(() => {
+    if (!extrasData?.length) return []
+    return extrasData.filter((extra) => {
+      if (extra.manufacturerId != null && initialManufacturer?.id && extra.manufacturerId !== initialManufacturer.id) return false
+      if (!initialSeries?.id) return true
+      const rules = extra.extraSeriesRules
+      if (!rules?.length) return true
+      return rules.some((r) => r.appliesToAllSeries || r.manufacturerSeriesId === initialSeries.id)
+    })
+  }, [extrasData, initialSeries?.id, initialManufacturer?.id])
 
   const defaultValues = useMemo(() => ({
     carType: data?.carType || null,
@@ -169,7 +182,7 @@ export default function CarForm({ data }: Props) {
         value: existingExtra ? existingExtra.value || 0 : 0
       }
     }) || [],
-    extras: extrasData?.map((item: TExtra) => {
+    extras: filteredExtrasForInit?.map((item: TExtra) => {
       const existingExtra = (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
       return {
         id: item.id,
@@ -225,7 +238,7 @@ export default function CarForm({ data }: Props) {
       letterText: line.letterText || '',
       letterNum: line.letterNum?.toString() || ''
     })) || [],
-  }), [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedBodyType, resolvedDriveType])
+  }), [integralExtrasData, extrasData, filteredExtrasForInit, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedBodyType, resolvedDriveType])
 
 
   const schema = object()
@@ -255,6 +268,7 @@ export default function CarForm({ data }: Props) {
     control,
     name: 'additionalLines'
   })
+  const { replace: replaceExtras } = useFieldArray({ control, name: 'extras' })
 
   // Следим за изменениями полей
   const selectedManufacturer = useWatch({ control, name: 'manufacturer' })
@@ -289,6 +303,37 @@ export default function CarForm({ data }: Props) {
     const series = seriesOptions.find(s => s.id === selectedSeries.id)
     return series?.models || []
   }, [selectedSeries, seriesOptions])
+
+  // Фильтр extras по серии (extraSeriesRules) и manufacturerId — при смене series/manufacturer
+  const seriesForFilter = selectedSeries ?? initialSeries
+  const manufacturerForFilter = selectedManufacturer ?? initialManufacturer
+  const filteredExtras = useMemo(() => {
+    if (!extrasData?.length) return []
+    return extrasData.filter((extra) => {
+      if (extra.manufacturerId != null && manufacturerForFilter?.id && extra.manufacturerId !== manufacturerForFilter.id) return false
+      if (!seriesForFilter?.id) return true
+      const rules = extra.extraSeriesRules
+      if (!rules?.length) return true
+      return rules.some((r) => r.appliesToAllSeries || r.manufacturerSeriesId === seriesForFilter.id)
+    })
+  }, [extrasData, seriesForFilter?.id, manufacturerForFilter?.id])
+
+  useEffect(() => {
+    if (!filteredExtras.length && !extrasData?.length) return
+    const mapped = filteredExtras.map((item: TExtra) => {
+      const existingExtra = (data?.extras as any)?.find((e: any) => e.extraId === item.id)
+      const isSameSeries = data && (data?.model as any)?.series?.id === seriesForFilter?.id
+      return {
+        id: item.id,
+        checked: isSameSeries && !!existingExtra?.priceListItem,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn,
+        selected: isSameSeries && !!existingExtra,
+        value: isSameSeries && existingExtra ? existingExtra.value || 0 : 0
+      }
+    })
+    replaceExtras(mapped as any)
+  }, [seriesForFilter?.id, filteredExtras, data, extrasData, replaceExtras])
 
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
