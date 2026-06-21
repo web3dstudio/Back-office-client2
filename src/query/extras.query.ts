@@ -23,6 +23,13 @@ export type TExtraUpsert = {
   extraSeriesRules: TExtraSeriesRuleUpsert[]
 }
 
+export type TFilteredExtrasForCarParams = {
+  manufacturerId: string
+  seriesId: string
+  year: number
+  includeExtraIds?: string[]
+}
+
 export function useExtrasQuery(): UseQueryResult<TExtra[], Error> {
   return useQuery({
     queryKey: ['extras'],
@@ -38,6 +45,48 @@ export function useExtrasQuery(): UseQueryResult<TExtra[], Error> {
   })
 }
 
+export function useFilteredExtrasForCarQuery(
+  params: TFilteredExtrasForCarParams | null
+): UseQueryResult<TExtra[], Error> {
+  const enabled = !!(
+    params?.manufacturerId &&
+    params?.seriesId &&
+    params?.year &&
+    params.year > 0
+  )
+
+  return useQuery({
+    queryKey: [
+      'extras',
+      'filtered',
+      params?.manufacturerId,
+      params?.seriesId,
+      params?.year,
+      params?.includeExtraIds,
+    ],
+    queryFn: async (): Promise<TExtra[]> => {
+      const response = await axiosAPI.get('/extras/filtered', {
+        params: {
+          manufacturerId: params!.manufacturerId,
+          seriesId: params!.seriesId,
+          year: params!.year,
+          includeExtraIds: params!.includeExtraIds,
+        },
+        paramsSerializer: {
+          indexes: null,
+        },
+      })
+      return response.data
+    },
+    enabled,
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    staleTime: 0,
+    retry: 3,
+  })
+}
+
 export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TExtraUpsert, 'id'>> {
   const { t } = useTranslation('notifications')
   const queryClient = useQueryClient()
@@ -49,6 +98,7 @@ export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TE
     },
     onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['extras'] })
+      queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
       toast.success(t('extra_added_successfully'))
     },
     onError: (error) => {
@@ -69,6 +119,7 @@ export function useExtrasUpdateMutation(): UseMutationResult<TExtra, Error, TExt
     },
     onSuccess: (_data) => {
       queryClient.invalidateQueries({ queryKey: ['extras'] })
+      queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
       toast.success(t('extra_updated_successfully'))
     },
     onError: (error) => {
@@ -93,6 +144,7 @@ export function useExtrasDeleteMutation(): UseMutationResult<string, Error, stri
         return old.filter((x) => x.id !== deletedId)
       })
       queryClient.invalidateQueries({ queryKey: ['extras'] })
+      queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
       toast.success(t('extra_deleted_successfully'))
     },
     onError: (error) => {

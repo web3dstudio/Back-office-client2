@@ -13,7 +13,7 @@ import { useManufacturersWithSeriesAndModelsQuery } from "../../query/manufactur
 import AppControlledTextField from "../AppControlledTextField"
 import { useCategoriesQuery } from "../../query/category.query"
 import StyledPaper from "../StyledPaper"
-import { useExtrasQuery } from "../../query/extras.query"
+import { useFilteredExtrasForCarQuery } from "../../query/extras.query"
 import { useIntegralExtrasQuery } from "../../query/integralExtras.query"
 import { useUpgradePackagesQuery } from "../../query/upgradePackages.query"
 import { useServicePackagesQuery } from "../../query/servicePackages.query"
@@ -88,7 +88,6 @@ export default function CarForm({ data }: Props) {
   const { data: manufacturers, isLoading: isManufacturersLoading } = useManufacturersWithSeriesAndModelsQuery()
   const { data: categories, isLoading: isCategoriesLoading } = useCategoriesQuery()
   const { data: integralExtrasData, isLoading: _isIntegralExtrasLoading } = useIntegralExtrasQuery()
-  const { data: extrasData, isLoading: _isExtrasLoading } = useExtrasQuery()
   const { data: upgradePackagesData, isLoading: _isUpgradePackagesLoading } = useUpgradePackagesQuery()
   const { data: servicePackagesData, isLoading: _isServicePackagesLoading } = useServicePackagesQuery()
   const { data: marksData, isLoading: isMarksLoading } = useMarksQuery()
@@ -127,19 +126,13 @@ export default function CarForm({ data }: Props) {
     return null
   }, [data, driveTypes])
 
-  // Фильтр extras по серии (extraSeriesRules) и manufacturerId — для начальной загрузки
   const initialSeries = (data?.model as any)?.series ?? null
   const initialManufacturer = (data?.model as any)?.series?.manufacturer ?? null
-  const filteredExtrasForInit = useMemo(() => {
-    if (!extrasData?.length) return []
-    return extrasData.filter((extra) => {
-      if (extra.manufacturerId != null && initialManufacturer?.id && extra.manufacturerId !== initialManufacturer.id) return false
-      if (!initialSeries?.id) return true
-      const rules = extra.extraSeriesRules
-      if (!rules?.length) return true
-      return rules.some((r) => r.appliesToAllSeries || r.manufacturerSeriesId === initialSeries.id)
-    })
-  }, [extrasData, initialSeries?.id, initialManufacturer?.id])
+  const initialYear = data?.manufacturerYear ?? null
+  const carIncludeExtraIds = useMemo(
+    () => (data?.extras as any[])?.map((extra) => extra.extraId).filter(Boolean) ?? [],
+    [data]
+  )
 
   const defaultValues = useMemo(() => ({
     carType: data?.carType || null,
@@ -182,17 +175,7 @@ export default function CarForm({ data }: Props) {
         value: existingExtra ? existingExtra.value || 0 : 0
       }
     }) || [],
-    extras: filteredExtrasForInit?.map((item: TExtra) => {
-      const existingExtra = (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
-      return {
-        id: item.id,
-        checked: !!existingExtra?.priceListItem,
-        fieldName: item.name,
-        fieldNameEn: item.nameEn,
-        selected: !!existingExtra,
-        value: existingExtra ? existingExtra.value || 0 : 0
-      }
-    }) || [],
+    extras: [],
     upgradePackages: upgradePackagesData?.map((item: TUpgradePackage) => {
       const existingPackage = (data?.upgradePackages as any)?.find((pkg: any) => pkg.upgradePackageId === item.id)
       return {
@@ -238,7 +221,7 @@ export default function CarForm({ data }: Props) {
       letterText: line.letterText || '',
       letterNum: line.letterNum?.toString() || ''
     })) || [],
-  }), [integralExtrasData, extrasData, filteredExtrasForInit, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedBodyType, resolvedDriveType])
+  }), [integralExtrasData, upgradePackagesData, servicePackagesData, marksData, data, countries, resolvedBodyType, resolvedDriveType, resolvedEngineType])
 
 
   const schema = object()
@@ -259,7 +242,7 @@ export default function CarForm({ data }: Props) {
     if (integralExtrasData) {
       methods.reset(defaultValues);
     }
-  }, [integralExtrasData, extrasData, upgradePackagesData, servicePackagesData, marksData, methods, defaultValues]);
+  }, [integralExtrasData, upgradePackagesData, servicePackagesData, marksData, methods, defaultValues]);
 
   const { handleSubmit, control, setValue } = methods
 
@@ -275,6 +258,32 @@ export default function CarForm({ data }: Props) {
   const selectedSeries = useWatch({ control, name: 'series' })
   const selectedModel = useWatch({ control, name: 'model' })
   const selectedCarType = useWatch({ control, name: 'carType' })
+  const selectedManufacturerYear = useWatch({ control, name: 'manufacturerYear' })
+
+  const extrasFilterParams = useMemo(() => {
+    const manufacturerId = selectedManufacturer?.id ?? initialManufacturer?.id
+    const seriesId = selectedSeries?.id ?? initialSeries?.id
+    const year = selectedManufacturerYear ?? initialYear
+    if (!manufacturerId || !seriesId || !year || year <= 0) return null
+
+    return {
+      manufacturerId,
+      seriesId,
+      year,
+      includeExtraIds: data ? carIncludeExtraIds : undefined,
+    }
+  }, [
+    selectedManufacturer?.id,
+    selectedSeries?.id,
+    selectedManufacturerYear,
+    initialManufacturer?.id,
+    initialSeries?.id,
+    initialYear,
+    data,
+    carIncludeExtraIds,
+  ])
+
+  const { data: filteredExtrasData } = useFilteredExtrasForCarQuery(extrasFilterParams)
 
   useEffect(() => {
     setValue('volume', (selectedModel as any)?.volume ?? (data as any)?.model?.volume ?? null)
@@ -304,36 +313,49 @@ export default function CarForm({ data }: Props) {
     return series?.models || []
   }, [selectedSeries, seriesOptions])
 
-  // Фильтр extras по серии (extraSeriesRules) и manufacturerId — при смене series/manufacturer
-  const seriesForFilter = selectedSeries ?? initialSeries
-  const manufacturerForFilter = selectedManufacturer ?? initialManufacturer
-  const filteredExtras = useMemo(() => {
-    if (!extrasData?.length) return []
-    return extrasData.filter((extra) => {
-      if (extra.manufacturerId != null && manufacturerForFilter?.id && extra.manufacturerId !== manufacturerForFilter.id) return false
-      if (!seriesForFilter?.id) return true
-      const rules = extra.extraSeriesRules
-      if (!rules?.length) return true
-      return rules.some((r) => r.appliesToAllSeries || r.manufacturerSeriesId === seriesForFilter.id)
-    })
-  }, [extrasData, seriesForFilter?.id, manufacturerForFilter?.id])
-
+  // Обновляем список extras с сервера при смене производителя / серии / года
   useEffect(() => {
-    if (!filteredExtras.length && !extrasData?.length) return
-    const mapped = filteredExtras.map((item: TExtra) => {
-      const existingExtra = (data?.extras as any)?.find((e: any) => e.extraId === item.id)
-      const isSameSeries = data && (data?.model as any)?.series?.id === seriesForFilter?.id
+    if (!filteredExtrasData) {
+      replaceExtras([])
+      return
+    }
+
+    const currentExtras = methods.getValues('extras') as TAppExtrasItemField[]
+    const isSameCarContext = !!data &&
+      (data?.model as any)?.series?.id === (selectedSeries?.id ?? initialSeries?.id) &&
+      data?.manufacturerYear === (selectedManufacturerYear ?? initialYear)
+
+    const mapped = filteredExtrasData.map((item: TExtra) => {
+      const existingFromCar = isSameCarContext
+        ? (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
+        : null
+      const existingFromForm = currentExtras?.find((extra) => extra.id === item.id)
+
+      const selected = existingFromForm?.selected ?? (isSameCarContext && !!existingFromCar)
+      const checked = existingFromForm?.checked ?? (isSameCarContext && !!existingFromCar?.priceListItem)
+      const value = existingFromForm?.value ?? (existingFromCar?.value || 0)
+
       return {
         id: item.id,
-        checked: isSameSeries && !!existingExtra?.priceListItem,
+        checked: !!checked,
         fieldName: item.name,
         fieldNameEn: item.nameEn,
-        selected: isSameSeries && !!existingExtra,
-        value: isSameSeries && existingExtra ? existingExtra.value || 0 : 0
+        selected: !!selected,
+        value: selected ? value : 0,
       }
     })
+
     replaceExtras(mapped as any)
-  }, [seriesForFilter?.id, filteredExtras, data, extrasData, replaceExtras])
+  }, [
+    filteredExtrasData,
+    data,
+    selectedSeries?.id,
+    selectedManufacturerYear,
+    initialSeries?.id,
+    initialYear,
+    methods,
+    replaceExtras,
+  ])
 
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
