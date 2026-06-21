@@ -1,13 +1,24 @@
+import { useEffect } from "react";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import AppExtrasItem from "./AppExtrasItem"
 import { Grid } from "@mui/material";
+import type { TAppExtrasItemField } from "../types";
 
+type Props = {
+  name?: string
+  /** When undefined, field array is not touched (e.g. while loading). */
+  items?: TAppExtrasItemField[] | undefined
+}
 
-function AppExtrasMultiselect({ name = "extras" }) {
+function AppExtrasMultiselect({ name = "extras", items }: Props) {
 	const { control } = useFormContext();
-	const { fields } = useFieldArray({ control, name });
+	const { fields, replace } = useFieldArray({ control, name });
 	const fieldsDefault = control._defaultValues?.[name] || [];
 
+	useEffect(() => {
+		if (items === undefined) return
+		replace(items ?? [])
+	}, [items, replace])
 
 	return (
 		<Grid container columns={{ xs: 12 }} spacing={2}>

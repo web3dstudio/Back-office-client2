@@ -237,7 +237,10 @@ export default function CarForm({ data }: Props) {
 
   useEffect(() => {
     if (integralExtrasData) {
-      methods.reset(defaultValues);
+      methods.reset({
+        ...defaultValues,
+        extras: methods.getValues('extras'),
+      });
     }
   }, [integralExtrasData, upgradePackagesData, servicePackagesData, marksData, methods, defaultValues]);
 
@@ -248,7 +251,6 @@ export default function CarForm({ data }: Props) {
     control,
     name: 'additionalLines'
   })
-  const { replace: replaceExtras } = useFieldArray({ control, name: 'extras' })
 
   // Следим за изменениями полей
   const selectedManufacturer = useWatch({ control, name: 'manufacturer' })
@@ -286,6 +288,51 @@ export default function CarForm({ data }: Props) {
     isFetching: isFetchingFilteredExtras,
   } = useFilteredExtrasForCarQuery(extrasFilterParams)
 
+  const extrasFormItems = useMemo((): TAppExtrasItemField[] | undefined => {
+    if (!extrasFilterParams) return []
+
+    if (isFetchingFilteredExtras && filteredExtrasData === undefined) {
+      return undefined
+    }
+
+    if (!filteredExtrasData?.length) return []
+
+    const currentExtras = methods.getValues('extras')
+    const isSameCarContext = !!data &&
+      (data?.model as any)?.series?.manufacturer?.id === selectedManufacturer?.id &&
+      (data?.model as any)?.series?.id === selectedSeries?.id &&
+      data?.manufacturerYear === selectedManufacturerYear
+
+    return filteredExtrasData.map((item: TExtra) => {
+      const existingFromCar = isSameCarContext
+        ? (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
+        : null
+      const existingFromForm = currentExtras?.find((extra) => extra.id === item.id)
+
+      const selected = existingFromForm?.selected ?? (isSameCarContext && !!existingFromCar)
+      const checked = existingFromForm?.checked ?? (isSameCarContext && !!existingFromCar?.priceListItem)
+      const value = existingFromForm?.value ?? (existingFromCar?.value || 0)
+
+      return {
+        id: item.id,
+        checked: !!checked,
+        fieldName: item.name,
+        fieldNameEn: item.nameEn ?? '',
+        selected: !!selected,
+        value: selected ? value : 0,
+      }
+    })
+  }, [
+    extrasFilterParams,
+    filteredExtrasData,
+    isFetchingFilteredExtras,
+    data,
+    selectedManufacturer?.id,
+    selectedSeries?.id,
+    selectedManufacturerYear,
+    methods,
+  ])
+
   useEffect(() => {
     setValue('volume', (selectedModel as any)?.volume ?? (data as any)?.model?.volume ?? null)
     const rawEngineType = (selectedModel as any)?.engineType ?? (data as any)?.model?.engineType ?? null
@@ -313,61 +360,6 @@ export default function CarForm({ data }: Props) {
     const series = seriesOptions.find(s => s.id === selectedSeries.id)
     return series?.models || []
   }, [selectedSeries, seriesOptions])
-
-  // Обновляем список extras с сервера при смене производителя / серии / года
-  useEffect(() => {
-    if (!extrasFilterParams) {
-      replaceExtras([])
-      return
-    }
-
-    if (isFetchingFilteredExtras && filteredExtrasData === undefined) {
-      return
-    }
-
-    if (!filteredExtrasData) {
-      replaceExtras([])
-      return
-    }
-
-    const currentExtras = methods.getValues('extras')
-    const isSameCarContext = !!data &&
-      (data?.model as any)?.series?.manufacturer?.id === selectedManufacturer?.id &&
-      (data?.model as any)?.series?.id === selectedSeries?.id &&
-      data?.manufacturerYear === selectedManufacturerYear
-
-    const mapped = filteredExtrasData.map((item: TExtra) => {
-      const existingFromCar = isSameCarContext
-        ? (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
-        : null
-      const existingFromForm = currentExtras?.find((extra) => extra.id === item.id)
-
-      const selected = existingFromForm?.selected ?? (isSameCarContext && !!existingFromCar)
-      const checked = existingFromForm?.checked ?? (isSameCarContext && !!existingFromCar?.priceListItem)
-      const value = existingFromForm?.value ?? (existingFromCar?.value || 0)
-
-      return {
-        id: item.id,
-        checked: !!checked,
-        fieldName: item.name,
-        fieldNameEn: item.nameEn ?? '',
-        selected: !!selected,
-        value: selected ? value : 0,
-      }
-    })
-
-    replaceExtras(mapped)
-  }, [
-    extrasFilterParams,
-    filteredExtrasData,
-    isFetchingFilteredExtras,
-    data,
-    selectedManufacturer?.id,
-    selectedSeries?.id,
-    selectedManufacturerYear,
-    methods,
-    replaceExtras,
-  ])
 
   // Получаем коды из выбранной модели, отфильтрованные по carType (если выбран)
   const codeOptions = useMemo(() => {
@@ -1017,6 +1009,7 @@ export default function CarForm({ data }: Props) {
             <Grid size={12}>
               <AppExtrasMultiselect
                 name='extras'
+                items={extrasFormItems}
               />
             </Grid>
 
