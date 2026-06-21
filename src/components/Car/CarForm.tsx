@@ -170,7 +170,7 @@ export default function CarForm({ data }: Props) {
         id: item.id,
         checked: !!existingExtra?.priceListItem,
         fieldName: item.name,
-        fieldNameEn: item.nameEn,
+        fieldNameEn: item.nameEn ?? '',
         selected: !!existingExtra,
         value: existingExtra ? existingExtra.value || 0 : 0
       }
@@ -182,7 +182,7 @@ export default function CarForm({ data }: Props) {
         id: item.id,
         checked: !!existingPackage?.priceListItem,
         fieldName: item.name,
-        fieldNameEn: item.nameEn,
+        fieldNameEn: item.nameEn ?? '',
         selected: !!existingPackage,
         value: existingPackage ? existingPackage.value || 0 : 0
       }
@@ -193,7 +193,7 @@ export default function CarForm({ data }: Props) {
         id: item.id,
         checked: !!existingPackage?.priceListItem,
         fieldName: item.name,
-        fieldNameEn: item.nameEn,
+        fieldNameEn: item.nameEn ?? '',
         selected: !!existingPackage,
         value: existingPackage ? existingPackage.value || 0 : 0
       }
@@ -339,7 +339,7 @@ export default function CarForm({ data }: Props) {
         id: item.id,
         checked: !!checked,
         fieldName: item.name,
-        fieldNameEn: item.nameEn,
+        fieldNameEn: item.nameEn ?? '',
         selected: !!selected,
         value: selected ? value : 0,
       }
