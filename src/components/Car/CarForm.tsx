@@ -65,7 +65,7 @@ type TFormInput = {
   manufacturerYear: number | null
   extraPrice: number | null
   integralExtras: TIntegralExtra[]
-  extras: TExtra[]
+  extras: TAppExtrasItemField[]
   upgradePackages: TUpgradePackage[]
   servicePackages: TServicePackage[]
   marks: TAppExtrasItemField[]
@@ -320,7 +320,7 @@ export default function CarForm({ data }: Props) {
       return
     }
 
-    const currentExtras = methods.getValues('extras') as TAppExtrasItemField[]
+    const currentExtras = methods.getValues('extras')
     const isSameCarContext = !!data &&
       (data?.model as any)?.series?.id === (selectedSeries?.id ?? initialSeries?.id) &&
       data?.manufacturerYear === (selectedManufacturerYear ?? initialYear)
@@ -345,7 +345,7 @@ export default function CarForm({ data }: Props) {
       }
     })
 
-    replaceExtras(mapped as any)
+    replaceExtras(mapped)
   }, [
     filteredExtrasData,
     data,
