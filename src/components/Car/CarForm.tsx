@@ -126,9 +126,6 @@ export default function CarForm({ data }: Props) {
     return null
   }, [data, driveTypes])
 
-  const initialSeries = (data?.model as any)?.series ?? null
-  const initialManufacturer = (data?.model as any)?.series?.manufacturer ?? null
-  const initialYear = data?.manufacturerYear ?? null
   const carIncludeExtraIds = useMemo(
     () => (data?.extras as any[])?.map((extra) => extra.extraId).filter(Boolean) ?? [],
     [data]
@@ -261,9 +258,9 @@ export default function CarForm({ data }: Props) {
   const selectedManufacturerYear = useWatch({ control, name: 'manufacturerYear' })
 
   const extrasFilterParams = useMemo(() => {
-    const manufacturerId = selectedManufacturer?.id ?? initialManufacturer?.id
-    const seriesId = selectedSeries?.id ?? initialSeries?.id
-    const year = selectedManufacturerYear ?? initialYear
+    const manufacturerId = selectedManufacturer?.id
+    const seriesId = selectedSeries?.id
+    const year = selectedManufacturerYear
     if (!manufacturerId || !seriesId || !year || year <= 0) return null
 
     return {
@@ -276,9 +273,6 @@ export default function CarForm({ data }: Props) {
     selectedManufacturer?.id,
     selectedSeries?.id,
     selectedManufacturerYear,
-    initialManufacturer?.id,
-    initialSeries?.id,
-    initialYear,
     data,
     carIncludeExtraIds,
   ])
@@ -315,15 +309,16 @@ export default function CarForm({ data }: Props) {
 
   // Обновляем список extras с сервера при смене производителя / серии / года
   useEffect(() => {
-    if (!filteredExtrasData) {
+    if (!extrasFilterParams || !filteredExtrasData) {
       replaceExtras([])
       return
     }
 
     const currentExtras = methods.getValues('extras')
     const isSameCarContext = !!data &&
-      (data?.model as any)?.series?.id === (selectedSeries?.id ?? initialSeries?.id) &&
-      data?.manufacturerYear === (selectedManufacturerYear ?? initialYear)
+      (data?.model as any)?.series?.manufacturer?.id === selectedManufacturer?.id &&
+      (data?.model as any)?.series?.id === selectedSeries?.id &&
+      data?.manufacturerYear === selectedManufacturerYear
 
     const mapped = filteredExtrasData.map((item: TExtra) => {
       const existingFromCar = isSameCarContext
@@ -347,12 +342,12 @@ export default function CarForm({ data }: Props) {
 
     replaceExtras(mapped)
   }, [
+    extrasFilterParams,
     filteredExtrasData,
     data,
+    selectedManufacturer?.id,
     selectedSeries?.id,
     selectedManufacturerYear,
-    initialSeries?.id,
-    initialYear,
     methods,
     replaceExtras,
   ])
