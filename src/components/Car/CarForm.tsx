@@ -259,15 +259,19 @@ export default function CarForm({ data }: Props) {
 
   const extrasFilterParams = useMemo(() => {
     const manufacturerId = selectedManufacturer?.id
+    if (!manufacturerId) return null
+
     const seriesId = selectedSeries?.id
     const year = selectedManufacturerYear
-    if (!manufacturerId || !seriesId || !year || year <= 0) return null
+    const carManufacturerId = (data?.model as any)?.series?.manufacturer?.id as string | undefined
+    const includeExtraIds =
+      data && carManufacturerId === manufacturerId ? carIncludeExtraIds : undefined
 
     return {
       manufacturerId,
-      seriesId,
-      year,
-      includeExtraIds: data ? carIncludeExtraIds : undefined,
+      ...(seriesId ? { seriesId } : {}),
+      ...(year && year > 0 ? { year } : {}),
+      includeExtraIds,
     }
   }, [
     selectedManufacturer?.id,
@@ -277,7 +281,10 @@ export default function CarForm({ data }: Props) {
     carIncludeExtraIds,
   ])
 
-  const { data: filteredExtrasData } = useFilteredExtrasForCarQuery(extrasFilterParams)
+  const {
+    data: filteredExtrasData,
+    isFetching: isFetchingFilteredExtras,
+  } = useFilteredExtrasForCarQuery(extrasFilterParams)
 
   useEffect(() => {
     setValue('volume', (selectedModel as any)?.volume ?? (data as any)?.model?.volume ?? null)
@@ -309,7 +316,16 @@ export default function CarForm({ data }: Props) {
 
   // Обновляем список extras с сервера при смене производителя / серии / года
   useEffect(() => {
-    if (!extrasFilterParams || !filteredExtrasData) {
+    if (!extrasFilterParams) {
+      replaceExtras([])
+      return
+    }
+
+    if (isFetchingFilteredExtras && filteredExtrasData === undefined) {
+      return
+    }
+
+    if (!filteredExtrasData) {
       replaceExtras([])
       return
     }
@@ -344,6 +360,7 @@ export default function CarForm({ data }: Props) {
   }, [
     extrasFilterParams,
     filteredExtrasData,
+    isFetchingFilteredExtras,
     data,
     selectedManufacturer?.id,
     selectedSeries?.id,

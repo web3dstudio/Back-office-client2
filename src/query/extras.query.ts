@@ -25,8 +25,8 @@ export type TExtraUpsert = {
 
 export type TFilteredExtrasForCarParams = {
   manufacturerId: string
-  seriesId: string
-  year: number
+  seriesId?: string
+  year?: number
   includeExtraIds?: string[]
 }
 
@@ -48,12 +48,7 @@ export function useExtrasQuery(): UseQueryResult<TExtra[], Error> {
 export function useFilteredExtrasForCarQuery(
   params: TFilteredExtrasForCarParams | null
 ): UseQueryResult<TExtra[], Error> {
-  const enabled = !!(
-    params?.manufacturerId &&
-    params?.seriesId &&
-    params?.year &&
-    params.year > 0
-  )
+  const enabled = !!params?.manufacturerId
 
   return useQuery({
     queryKey: [
@@ -68,8 +63,8 @@ export function useFilteredExtrasForCarQuery(
       const response = await axiosAPI.get('/extras/filtered', {
         params: {
           manufacturerId: params!.manufacturerId,
-          seriesId: params!.seriesId,
-          year: params!.year,
+          ...(params!.seriesId ? { seriesId: params!.seriesId } : {}),
+          ...(params!.year && params!.year > 0 ? { year: params!.year } : {}),
           includeExtraIds: params!.includeExtraIds,
         },
         paramsSerializer: {
