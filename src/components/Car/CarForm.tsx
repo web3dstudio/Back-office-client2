@@ -1,4 +1,4 @@
-import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TCarModelCode, TCarModel, CarUpdateRequest, TDriveType, TAppExtrasItemField, TMark, TBodyType, TEngineType } from "../../types"
+import type { TCar, TCarType, TManufacturer, TSerie, TModel, TCategory, TExtra, TIntegralExtra, TUpgradePackage, TServicePackage, TCountry, TGearbox, TCarModelCode, TCarModel, CarUpdateRequest, CarExtra, TDriveType, TAppExtrasItemField, TMark, TBodyType, TEngineType } from "../../types"
 import * as yup from 'yup'
 import { yupResolver } from '@hookform/resolvers/yup'
 import { object } from 'yup'
@@ -565,14 +565,17 @@ export default function CarForm({ data }: Props) {
       priceListItem: !!item.checked,
     })) || null;
 
-    const carExtrasMap = new Map<string, { extraId: string; value: number | null; priceListItem: boolean }>()
+    const carExtrasMap = new Map<string, CarExtra>()
     for (const item of formData.extras || []) {
       if (!item?.selected || !item.id) continue
+      // null/empty in UI = use placeholder (rule / Extra.Default), API needs a concrete number
+      const resolvedValue =
+        item.value == null
+          ? (item.ruleChangePercentage ?? item.defaultChangePercentage ?? 0)
+          : Number(item.value)
       carExtrasMap.set(item.id, {
         extraId: item.id,
-        value: item.value === null || item.value === undefined || item.value === ''
-          ? null
-          : Number(item.value),
+        value: Number.isFinite(resolvedValue) ? resolvedValue : 0,
         priceListItem: !!item.checked,
       })
     }
