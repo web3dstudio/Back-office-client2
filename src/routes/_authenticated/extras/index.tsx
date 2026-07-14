@@ -278,14 +278,31 @@ function ExtrasPage() {
           onPaginationChange={setPagination}
           totalPages={Math.ceil((extras?.length || 0) / pagination.pageSize) || 1}
           globalFilterFn={(row, _columnId, filterValue) => {
-            const q = String(filterValue || '').toLowerCase()
+            const normalize = (v: unknown) =>
+              String(v ?? '')
+                .toLowerCase()
+                .replace(/[\u2013\u2014\u2212]/g, '-') // en/em/minus → hyphen
+                .replace(/\s+/g, ' ')
+                .trim()
+
+            const q = normalize(filterValue)
             if (!q) return true
 
-            const extra: any = row.original
-            const nameMatch = (extra?.name || '').toString().toLowerCase().includes(q)
-            const nameEnMatch = (extra?.nameEn || '').toString().toLowerCase().includes(q)
-            const percentMatch = (extra?.defaultChangePercentage ?? '').toString().toLowerCase().includes(q)
+            const shortYear = (y: number) => String(y).slice(-2)
+            const formatYears = (fromYear: number | null | undefined, toYear: number | null | undefined) => {
+              if (fromYear == null && toYear == null) return null
+              if (fromYear != null && toYear != null) {
+                // Index short + full forms so "20-25", "20–25", "2020-2025" all match
+                return [
+                  `${shortYear(fromYear)}-${shortYear(toYear)}`,
+                  `${fromYear}-${toYear}`,
+                ].join(' ')
+              }
+              if (fromYear != null) return `${shortYear(fromYear)} ${fromYear}`
+              return `${shortYear(toYear as number)} ${toYear}`
+            }
 
+            const extra: any = row.original
             const manufacturerId = extra?.manufacturerId || extra?.manufacturer?.id || null
             const nameFromExtra = extra?.manufacturer?.name || null
             const resolvedManufacturer =
@@ -295,30 +312,38 @@ function ExtrasPage() {
               typeof resolvedManufacturer === 'string'
                 ? resolvedManufacturer
                 : resolvedManufacturer
-                  ? (resolvedManufacturer.name || resolvedManufacturer.engName || '')
+                  ? [
+                      resolvedManufacturer.name,
+                      resolvedManufacturer.engName,
+                    ].filter(Boolean).join(' ')
                   : ''
-            const manufacturerMatch = manufacturerText.toLowerCase().includes(q)
 
             const m = manufacturerId ? (manufacturers || []).find(mm => mm.id === manufacturerId) : null
             const serieses = Array.isArray(m?.serieses) ? m!.serieses : []
             const rules = Array.isArray(extra?.extraSeriesRules) ? extra.extraSeriesRules : []
-            const seriesNames = rules
-              .filter((r: any) => !r?.appliesToAllSeries)
-              .map((r: any) => {
-                const seriesId = r?.manufacturerSeriesId
-                if (!seriesId) return null
-                const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
-                return serie?.name || null
-              })
-              .filter(Boolean)
-            const hasAll = rules.some((r: any) => !!r?.appliesToAllSeries)
-            const uniqueSeries = Array.from(new Set(seriesNames))
-            if (hasAll) uniqueSeries.push(t('all', { ns: 'extras' }))
-            uniqueSeries.sort((a: any, b: any) => String(a).localeCompare(String(b)))
-            const seriesText = uniqueSeries.join(', ')
-            const seriesMatch = seriesText.toLowerCase().includes(q)
 
-            return nameMatch || nameEnMatch || percentMatch || manufacturerMatch || seriesMatch
+            const seriesParts: string[] = []
+            for (const r of rules) {
+              const years = formatYears(r?.fromYear, r?.toYear)
+              if (r?.appliesToAllSeries) {
+                seriesParts.push([t('all', { ns: 'extras' }), years].filter(Boolean).join(' '))
+                continue
+              }
+              const seriesId = r?.manufacturerSeriesId
+              if (!seriesId) continue
+              const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
+              if (!serie?.name) continue
+              seriesParts.push([serie.name, years].filter(Boolean).join(' '))
+            }
+
+            const haystack = normalize([
+              extra?.name,
+              extra?.nameEn,
+              manufacturerText,
+              ...seriesParts,
+            ].filter(Boolean).join(' '))
+
+            return haystack.includes(q)
           }}
         />
       </StyledPaper>
