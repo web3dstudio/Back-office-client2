@@ -108,28 +108,69 @@ function ExtrasPage() {
         const serieses = Array.isArray(m?.serieses) ? m!.serieses : []
         const rules = Array.isArray(extra?.extraSeriesRules) ? extra.extraSeriesRules : []
 
-        const seriesNames = rules
-          .filter((r: any) => !r?.appliesToAllSeries)
-          .map((r: any) => {
-            const seriesId = r?.manufacturerSeriesId
-            if (!seriesId) return null
-            const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
-            return serie?.name || null
-          })
-          .filter(Boolean)
+        const formatYears = (fromYear: number | null | undefined, toYear: number | null | undefined) => {
+          const short = (y: number) => String(y).slice(-2)
+          if (fromYear == null && toYear == null) return null
+          if (fromYear != null && toYear != null) return `${short(fromYear)}–${short(toYear)}`
+          if (fromYear != null) return short(fromYear)
+          return short(toYear as number)
+        }
 
-        const hasAll = rules.some((r: any) => !!r?.appliesToAllSeries)
-        const unique = Array.from(new Set(seriesNames))
-        if (hasAll) unique.push(t('all', { ns: 'extras' }))
-        unique.sort((a: any, b: any) => String(a).localeCompare(String(b)))
-        return unique.length ? unique.join(', ') : ''
+        type SeriesLabel = { key: string; name: string; years: string | null }
+        const items: SeriesLabel[] = []
+        const seen = new Set<string>()
+
+        for (const r of rules) {
+          const years = formatYears(r?.fromYear, r?.toYear)
+          let name: string | null = null
+          if (r?.appliesToAllSeries) {
+            name = t('all', { ns: 'extras' })
+          } else {
+            const seriesId = r?.manufacturerSeriesId
+            if (!seriesId) continue
+            const serie = serieses.find((s: any) => s.id === seriesId || s.dbId === seriesId) || null
+            name = serie?.name || null
+          }
+          if (!name) continue
+          const key = `${name}|${years ?? ''}`
+          if (seen.has(key)) continue
+          seen.add(key)
+          items.push({ key, name, years })
+        }
+
+        items.sort((a, b) => a.name.localeCompare(b.name))
+        if (!items.length) return ''
+
+        return (
+          <Box component="span" sx={{ display: 'inline' }}>
+            {items.map((item, i) => (
+              <Box key={item.key} component="span">
+                <Box
+                  component="span"
+                  sx={{
+                    display: 'inline-block',
+                    whiteSpace: 'nowrap',
+                    unicodeBidi: 'isolate',
+                  }}
+                >
+                  <Box component="span" dir="auto" sx={{ display: 'inline' }}>
+                    {item.name}
+                  </Box>
+                  {item.years ? (
+                    <>
+                      {'\u00A0'}
+                      <Box component="span" dir="ltr" sx={{ display: 'inline', unicodeBidi: 'isolate' }}>
+                        {`(${item.years})`}
+                      </Box>
+                    </>
+                  ) : null}
+                </Box>
+                {i < items.length - 1 ? ', ' : ''}
+              </Box>
+            ))}
+          </Box>
+        )
       },
-    },
-    {
-      accessorKey: 'defaultChangePercentage',
-      header: t('defaultChangePercentage', { ns: 'extras' }),
-      enableSorting: true,
-      enableHiding: false,
     },
     {
       id: 'actions',
