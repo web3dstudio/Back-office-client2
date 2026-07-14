@@ -3,6 +3,7 @@
   "name": "Name",
   "nameEn": "Name (English)",
   "defaultChangePercentage": "Default change percentage",
+  "ruleChangePercentage": "Rule change percentage",
   "icon": "Icon",
   "actions": "Actions",
   "appliesToAllSeries": "Applies to all series",

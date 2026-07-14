@@ -3,6 +3,7 @@
   "name": "שם",
   "nameEn": "שם (אנגלית)",
   "defaultChangePercentage": "אחוז שינוי ברירת מחדל",
+  "ruleChangePercentage": "אחוז שינוי לפי כלל",
   "icon": "סמליל",
   "actions": "פעולות",
   "appliesToAllSeries": "חל על כל הסדרות",

@@ -139,7 +139,10 @@ export type TManufacturerSeriesExtraItem = {
   extraId: string
   extraName: string
   includeInPriceList: boolean
-  changePercentage: number
+  /** Кастом из ManufacturerSeriesExtraSettings; null = брать ruleChangePercentage */
+  changePercentage: number | null
+  /** Из ExtraSeriesRules.ChangePercentage */
+  ruleChangePercentage: number
   fromYear: number
   toYear: number
 }
@@ -147,6 +150,7 @@ export type TManufacturerSeriesExtraItem = {
 export type TManufacturerSeriesExtras = {
   seriesId: string
   seriesName: string
+  appliesToAllSeries?: boolean
   extras: TManufacturerSeriesExtraItem[]
 }
 
@@ -154,7 +158,7 @@ export type TManufacturerSeriesExtraSetting = {
   manufacturerSeriesId: string
   extraId: string
   includeInPriceList: boolean
-  changePercentage: number
+  changePercentage: number | null
 }
 
 export type ModelCode = {
@@ -289,7 +293,16 @@ export type TAppExtrasItemField = {
   fieldNameEn: string;
   checked: boolean;
   selected: boolean;
-  value: number;
+  /** null = use placeholder (rule ChangePercentage) */
+  value: number | null;
+  /** Placeholder = ExtraSeriesRules.ChangePercentage */
+  ruleChangePercentage?: number;
+  /** @deprecated Prefer ruleChangePercentage; kept for integral / packages */
+  defaultChangePercentage?: number;
+  fromYear?: number;
+  toYear?: number;
+  /** ExtraSeriesRule id — one rule = one row (same Extra may appear multiple times) */
+  ruleId?: string;
 }
 
 export type TExtraSeriesRules = {
@@ -299,6 +312,8 @@ export type TExtraSeriesRules = {
   appliesToAllSeries: boolean
   fromYear: number | null
   toYear: number | null
+  /** % этого правила (ExtraSeriesRules.ChangePercentage) */
+  changePercentage: number | null
   manufacturerId: string
 }
 

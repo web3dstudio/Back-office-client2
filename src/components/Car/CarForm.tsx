@@ -303,24 +303,64 @@ export default function CarForm({ data }: Props) {
       (data?.model as any)?.series?.id === selectedSeries?.id &&
       data?.manufacturerYear === selectedManufacturerYear
 
-    return filteredExtrasData.map((item: TExtra) => {
-      const existingFromCar = isSameCarContext
-        ? (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
-        : null
-      const existingFromForm = currentExtras?.find((extra) => extra.id === item.id)
+    const seriesId = selectedSeries?.id
+    const year = selectedManufacturerYear
 
-      const selected = existingFromForm?.selected ?? (isSameCarContext && !!existingFromCar)
-      const checked = existingFromForm?.checked ?? (isSameCarContext && !!existingFromCar?.priceListItem)
-      const value = existingFromForm?.value ?? (existingFromCar?.value || 0)
+    const matchRule = (rule: NonNullable<TExtra['extraSeriesRules']>[number], ignoreYear: boolean) => {
+      const seriesOk = !!rule.appliesToAllSeries || rule.manufacturerSeriesId === seriesId
+      if (!seriesOk) return false
+      if (ignoreYear || !year || year <= 0) return true
+      const from = rule.fromYear ?? 0
+      const to = rule.toYear ?? 0
+      if (from > 0 && year < from) return false
+      if (to > 0 && year > to) return false
+      return true
+    }
 
-      return {
-        id: item.id,
-        checked: !!checked,
-        fieldName: item.name,
-        fieldNameEn: item.nameEn ?? '',
-        selected: !!selected,
-        value: selected ? value : 0,
+    return filteredExtrasData.flatMap((item: TExtra) => {
+      const allRules = item.extraSeriesRules ?? []
+      let rules = allRules.filter((r) => matchRule(r, false))
+
+      // Attached to car but outside year window — still show series-matching rules
+      if (rules.length === 0 && carIncludeExtraIds.includes(item.id)) {
+        rules = allRules.filter((r) => matchRule(r, true))
       }
+
+      // Extra without rules: one row (placeholder 0)
+      const ruleRows = rules.length > 0
+        ? rules
+        : allRules.length === 0
+          ? [{ id: item.id, fromYear: null, toYear: null, changePercentage: null } as NonNullable<TExtra['extraSeriesRules']>[number]]
+          : []
+
+      return ruleRows.map((rule) => {
+        const existingFromCar = isSameCarContext
+          ? (data?.extras as any)?.find((extra: any) => extra.extraId === item.id)
+          : null
+        const existingFromForm = currentExtras?.find(
+          (extra) => extra.id === item.id && (extra.ruleId == null || extra.ruleId === rule.id)
+        ) ?? currentExtras?.find((extra) => extra.id === item.id)
+
+        const selected = existingFromForm?.selected ?? (isSameCarContext && !!existingFromCar)
+        const checked = existingFromForm?.checked ?? (isSameCarContext && !!existingFromCar?.priceListItem)
+        const value =
+          existingFromForm?.value !== undefined
+            ? existingFromForm.value
+            : (existingFromCar ? (existingFromCar.value ?? null) : null)
+
+        return {
+          id: item.id,
+          ruleId: rule.id,
+          checked: !!checked,
+          fieldName: item.name,
+          fieldNameEn: item.nameEn ?? '',
+          selected: !!selected,
+          value: selected ? value : null,
+          ruleChangePercentage: rule.changePercentage ?? 0,
+          fromYear: rule.fromYear ?? undefined,
+          toYear: rule.toYear ?? undefined,
+        } satisfies TAppExtrasItemField
+      })
     })
   }, [
     extrasFilterParams,
@@ -330,6 +370,7 @@ export default function CarForm({ data }: Props) {
     selectedManufacturer?.id,
     selectedSeries?.id,
     selectedManufacturerYear,
+    carIncludeExtraIds,
     methods,
   ])
 
@@ -524,11 +565,18 @@ export default function CarForm({ data }: Props) {
       priceListItem: !!item.checked,
     })) || null;
 
-    const carExtras = formData.extras?.filter((item: any) => item.selected).map((item: any) => ({
-      extraId: item.id,
-      value: item.value || 0,
-      priceListItem: !!item.checked,
-    })) || null;
+    const carExtrasMap = new Map<string, { extraId: string; value: number | null; priceListItem: boolean }>()
+    for (const item of formData.extras || []) {
+      if (!item?.selected || !item.id) continue
+      carExtrasMap.set(item.id, {
+        extraId: item.id,
+        value: item.value === null || item.value === undefined || item.value === ''
+          ? null
+          : Number(item.value),
+        priceListItem: !!item.checked,
+      })
+    }
+    const carExtras = carExtrasMap.size > 0 ? Array.from(carExtrasMap.values()) : null
 
     const carUpgradePackages = formData.upgradePackages?.filter((item: any) => item.selected).map((item: any) => ({
       upgradePackageId: item.id,

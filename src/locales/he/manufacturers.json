@@ -18,5 +18,6 @@
   "manufacturerCode": "קוד יצרן",
   "seriesCode": "קוד סדרה",
   "manufacturerCodes": "קודי יצרן",
-  "extras": "תוספות"
+  "extras": "תוספות",
+  "extrasAllSeries": "כל הסדרות"
 }

@@ -18,5 +18,6 @@
   "manufacturerCode": "Manufacturer Code",
   "seriesCode": "Series Code",
   "manufacturerCodes": "Manufacturer Codes",
-  "extras": "Extras"
+  "extras": "Extras",
+  "extrasAllSeries": "All series"
 }

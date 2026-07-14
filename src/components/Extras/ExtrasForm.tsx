@@ -34,6 +34,7 @@ type TFormInput = {
     fromYear: number | null
     toYear: number | null
     appliesToAllSeries: boolean
+    changePercentage: number | null
   }[]
 }
 
@@ -66,6 +67,12 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
       extraSeriesRules: yup.array().of(
         yup.object().shape({
           appliesToAllSeries: yup.boolean().required(),
+          changePercentage: yup
+            .number()
+            .nullable()
+            .transform((v, o) => (o === '' || o === null || o === undefined ? null : v))
+            .min(0)
+            .max(100),
           fromYear: yup
             .number()
             .typeError(t('form-field.required'))
@@ -111,6 +118,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
   const errors = formState.errors
   const manufacturer = useWatch({ control, name: 'manufacturer' })
   const rulesValues = useWatch({ control, name: 'extraSeriesRules' })
+  const extraDefaultPct = useWatch({ control, name: 'defaultChangePercentage' }) ?? 0
   const seriesOptions = useMemo(() => (manufacturer?.serieses || []) as TSerie[], [manufacturer])
 
   const { fields: rulesFields, prepend: prependRule, remove: removeRule } = useFieldArray({
@@ -137,6 +145,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
         fromYear: r.fromYear ?? null,
         toYear: r.toYear ?? null,
         appliesToAllSeries: !!r.appliesToAllSeries,
+        changePercentage: r.changePercentage ?? null,
       }
     })
 
@@ -168,6 +177,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
           appliesToAllSeries: !!r.appliesToAllSeries,
           fromYear: r.fromYear ?? null,
           toYear: r.toYear ?? null,
+          changePercentage: r.changePercentage ?? null,
         }
         if (r.id) payload.id = r.id
         return payload
@@ -283,7 +293,15 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
             <AppActionButton
               type="add"
-              onClick={() => prependRule({ id: undefined, manufacturerSeriesId: null, serie: null, fromYear: null, toYear: null, appliesToAllSeries: false })}
+              onClick={() => prependRule({
+                id: undefined,
+                manufacturerSeriesId: null,
+                serie: null,
+                fromYear: null,
+                toYear: null,
+                appliesToAllSeries: false,
+                changePercentage: typeof extraDefaultPct === 'number' ? extraDefaultPct : null,
+              })}
             />
           </Box>
         </Grid>
@@ -294,7 +312,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
             (
               <div key={rule.id} style={{ marginBottom: 8 }}>
                 <Grid container size={12} columnGap={2} sx={{ flexWrap: 'nowrap', alignItems: 'center' }}>
-                  <Grid size={4}>
+                  <Grid size={3}>
                     <AppControlledAutocomplete<TSerie>
                       name={`extraSeriesRules.${idx}.serie`}
                       control={control}
@@ -315,7 +333,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
                       errors={errors}
                     />
                   </Grid>
-                  <Grid size={2}>
+                  <Grid size={1.5}>
                     <AppControlledTextField
                       type="number"
                       name={`extraSeriesRules.${idx}.fromYear`}
@@ -325,7 +343,7 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
                       placeholder={t('fromYear', { ns: 'newCode' })}
                     />
                   </Grid>
-                  <Grid size={2}>
+                  <Grid size={1.5}>
                     <AppControlledTextField
                       type="number"
                       name={`extraSeriesRules.${idx}.toYear`}
@@ -335,7 +353,22 @@ function ExtrasForm({ data, isPending, onCancel, onConfirm }: Props) {
                       placeholder={t('toYear', { ns: 'newCode' })}
                     />
                   </Grid>
-                  <Grid size={5} sx={{ display: 'flex', alignItems: 'center' }}>
+                  <Grid size={2}>
+                    <AppControlledTextField
+                      type="number"
+                      name={`extraSeriesRules.${idx}.changePercentage`}
+                      control={control}
+                      errors={errors}
+                      label={t('ruleChangePercentage', { ns: 'extras' })}
+                      placeholder={String(extraDefaultPct)}
+                      slotProps={{
+                        input: {
+                          endAdornment: <InputAdornment position="start">%</InputAdornment>,
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid size={3.5} sx={{ display: 'flex', alignItems: 'center' }}>
                     <Controller
                       name={`extraSeriesRules.${idx}.appliesToAllSeries`}
                       control={control}

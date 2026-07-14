@@ -10,6 +10,7 @@ export type TExtraSeriesRuleUpsert = {
   appliesToAllSeries: boolean
   fromYear: number | null
   toYear: number | null
+  changePercentage: number | null
 }
 
 export type TExtraUpsert = {
@@ -91,9 +92,16 @@ export function useExtrasAddMutation(): UseMutationResult<TExtra, Error, Omit<TE
       const response = await axiosAPI.post('/extras', newExtra)
       return response.data
     },
-    onSuccess: (_data) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['extras'] })
       queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
+      // Manufacturer edit caches forever (staleTime: Infinity, refetchOnMount: false) —
+      // drop detail cache so seriesExtras reload after extra/rules change.
+      if (variables.manufacturerId) {
+        queryClient.removeQueries({ queryKey: ['manufacturer', variables.manufacturerId] })
+      } else {
+        queryClient.removeQueries({ queryKey: ['manufacturer'] })
+      }
       toast.success(t('extra_added_successfully'))
     },
     onError: (error) => {
@@ -112,9 +120,14 @@ export function useExtrasUpdateMutation(): UseMutationResult<TExtra, Error, TExt
       const response = await axiosAPI.put(`/extras/${updatedExtra.id}`, updatedExtra)
       return response.data
     },
-    onSuccess: (_data) => {
+    onSuccess: (_data, variables) => {
       queryClient.invalidateQueries({ queryKey: ['extras'] })
       queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
+      if (variables.manufacturerId) {
+        queryClient.removeQueries({ queryKey: ['manufacturer', variables.manufacturerId] })
+      } else {
+        queryClient.removeQueries({ queryKey: ['manufacturer'] })
+      }
       toast.success(t('extra_updated_successfully'))
     },
     onError: (error) => {
@@ -140,6 +153,7 @@ export function useExtrasDeleteMutation(): UseMutationResult<string, Error, stri
       })
       queryClient.invalidateQueries({ queryKey: ['extras'] })
       queryClient.invalidateQueries({ queryKey: ['extras', 'filtered'] })
+      queryClient.removeQueries({ queryKey: ['manufacturer'] })
       toast.success(t('extra_deleted_successfully'))
     },
     onError: (error) => {

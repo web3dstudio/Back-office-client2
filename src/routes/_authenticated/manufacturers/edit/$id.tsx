@@ -84,6 +84,7 @@ function MenufacturerEditPage() {
       seriesExtras: ((manufacturer as any)?.seriesExtras || []).map((serie: any) => ({
         seriesId: serie.seriesId,
         seriesName: serie.seriesName,
+        appliesToAllSeries: !!serie.appliesToAllSeries,
         extras: Array.isArray(serie.extras)
           ? serie.extras.map((ex: any) => ({
             id: ex.extraId,
@@ -91,7 +92,8 @@ function MenufacturerEditPage() {
             fieldNameEn: ex.extraName,
             checked: !!ex.includeInPriceList,
             selected: true,
-            value: ex.changePercentage ?? 0,
+            value: ex.changePercentage ?? null,
+            ruleChangePercentage: ex.ruleChangePercentage ?? 0,
             fromYear: ex.fromYear,
             toYear: ex.toYear,
           }))
@@ -128,13 +130,14 @@ function MenufacturerEditPage() {
 
   useEffect(() => {
     if (manufacturer) {
-      // Создаем ключ для сравнения без поля codes
+      // Ключ без codes (их правят отдельно), но со seriesExtras — иначе после
+      // смены правил экстра форма не подхватывает All Series / extras без F5.
       const manufacturerKey = JSON.stringify({
         id: manufacturer.id,
         name: manufacturer.name,
         engName: manufacturer.engName,
-        // manufacturerCode: manufacturer.manufacturerCode,
-        serieses: manufacturer.serieses
+        serieses: manufacturer.serieses,
+        seriesExtras: (manufacturer as any)?.seriesExtras,
       })
 
       // Обновляем форму только если изменились поля, кроме codes
@@ -147,6 +150,7 @@ function MenufacturerEditPage() {
           seriesExtras: ((manufacturer as any)?.seriesExtras || []).map((serie: any) => ({
             seriesId: serie.seriesId,
             seriesName: serie.seriesName,
+            appliesToAllSeries: !!serie.appliesToAllSeries,
             extras: Array.isArray(serie.extras)
               ? serie.extras.map((ex: any) => ({
                 id: ex.extraId,
@@ -154,7 +158,8 @@ function MenufacturerEditPage() {
                 fieldNameEn: ex.extraName,
                 checked: !!ex.includeInPriceList,
                 selected: true,
-                value: ex.changePercentage ?? 0,
+                value: ex.changePercentage ?? null,
+                ruleChangePercentage: ex.ruleChangePercentage ?? 0,
                 fromYear: ex.fromYear,
                 toYear: ex.toYear,
               }))
@@ -185,14 +190,24 @@ function MenufacturerEditPage() {
 
   const onSubmit: SubmitHandler<TFormInput> = (data) => {
     const seriesExtraSettings = ((data as any)?.seriesExtras || []).flatMap((serie: any) => {
-      const seriesId = serie?.seriesId
       const items = Array.isArray(serie?.extras) ? serie.extras : []
-      return items.map((it: any) => ({
-        manufacturerSeriesId: seriesId,
-        extraId: it.id,
-        includeInPriceList: !!it.checked,
-        changePercentage: Number(it.value) || 0,
-      }))
+      const targetSeriesIds = serie?.appliesToAllSeries
+        ? (data.serieses || []).map((s: any) => s.dbId).filter(Boolean)
+        : [serie?.seriesId].filter(Boolean)
+
+      return items.flatMap((it: any) => {
+        const raw = it.value
+        const changePercentage =
+          raw === null || raw === undefined || raw === ''
+            ? null
+            : (Number.isFinite(Number(raw)) ? Number(raw) : null)
+        return targetSeriesIds.map((seriesId: string) => ({
+          manufacturerSeriesId: seriesId,
+          extraId: it.id,
+          includeInPriceList: !!it.checked,
+          changePercentage,
+        }))
+      })
     })
 
     const seriesesWithPriority = data.serieses.map((serie: TSerie, serieIdx: number) => ({
@@ -315,9 +330,11 @@ function MenufacturerEditPage() {
                 </Grid>
                 <Grid size={12}>
                   {seriesExtrasFromForm.map((serie: any, idx: number) => (
-                    <Box key={serie.seriesId || idx} sx={{ mb: 2 }}>
+                    <Box key={serie.appliesToAllSeries ? `all-${idx}` : (serie.seriesId || idx)} sx={{ mb: 2 }}>
                       <Typography sx={{ mb: 1, fontWeight: 600 }}>
-                        {serie.seriesName}
+                        {serie.appliesToAllSeries
+                          ? t('extrasAllSeries', { ns: 'manufacturers' })
+                          : serie.seriesName}
                       </Typography>
                       <AppExtrasMultiselect name={`seriesExtras.${idx}.extras`} />
                     </Box>
