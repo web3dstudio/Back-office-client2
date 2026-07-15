@@ -265,7 +265,7 @@ export default function PriceListForm() {
             isOptionEqualToValue={(option, value) => option.id === value.id}
             control={control}
             errors={errors}
-            label={t('title', { ns: 'engineTypes' })}
+            label={t('engineTypes', { ns: 'priceList' })}
           />
         </Grid>
 

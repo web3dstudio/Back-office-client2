@@ -15,6 +15,7 @@ interface AppControlledSelectProps {
   required?: boolean;
   sx?: SxProps;
   loading?: boolean;
+  disabled?: boolean;
 }
 
 export default function AppControlledSelect({
@@ -26,6 +27,7 @@ export default function AppControlledSelect({
   required = false,
   sx,
   loading = false,
+  disabled = false,
 }: AppControlledSelectProps) {
   const theme = useTheme();
 
@@ -54,6 +56,7 @@ export default function AppControlledSelect({
               <Select
                 {...field}
                 displayEmpty
+                disabled={disabled}
                 inputProps={{ 'aria-label': 'Without label' }}
                 sx={{
                   '& .MuiOutlinedInput-root': {

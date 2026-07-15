@@ -86,7 +86,8 @@ function AdvertisementsLayoutsPage() {
           const isDownloading = loadingDownloadIds.has(rowId)
           const isPreviewing = openPreviewDialog && previewLayout?.id === rowId
           const isVertical = row.original.orientation === 'Vertical'
-          const previewHeight = isVertical ? 200 : 70
+          const isFullPage = row.original.orientation === 'FullPage'
+          const previewHeight = isFullPage ? 160 : isVertical ? 200 : 70
           return (
             <Box
               onClick={isDownloading || isPreviewing ? undefined : () => handleOpenPreview(row.original)}
@@ -219,21 +220,27 @@ function AdvertisementsLayoutsPage() {
               <MenuItem value="0">{t('layoutType_unassigned', { ns: 'priceListAdvertisements' })}</MenuItem>
               <MenuItem
                 value="1"
-                disabled={row.original.orientation === 'Vertical'}
+                disabled={row.original.orientation === 'Vertical' || row.original.orientation === 'FullPage'}
               >
                 {t('layoutType_horizontal', { ns: 'priceListAdvertisements' })}
               </MenuItem>
               <MenuItem
                 value="2"
-                disabled={row.original.orientation === 'Horizontal'}
+                disabled={row.original.orientation === 'Horizontal' || row.original.orientation === 'FullPage'}
               >
                 {t('layoutType_verticalLeft', { ns: 'priceListAdvertisements' })}
               </MenuItem>
               <MenuItem
                 value="3"
-                disabled={row.original.orientation === 'Horizontal'}
+                disabled={row.original.orientation === 'Horizontal' || row.original.orientation === 'FullPage'}
               >
                 {t('layoutType_verticalRight', { ns: 'priceListAdvertisements' })}
+              </MenuItem>
+              <MenuItem
+                value="4"
+                disabled={row.original.orientation === 'Horizontal' || row.original.orientation === 'Vertical'}
+              >
+                {t('layoutType_fullPage', { ns: 'priceListAdvertisements' })}
               </MenuItem>
             </Select>
           </FormControl>

@@ -39,6 +39,8 @@ function LoginPage() {
   const accessTokenStore = useAccessTokenStore()
   const authStore = useAuthStore()
   const navigate = useNavigate()
+  const buildDateRaw = (import.meta.env.VITE_BUILD_DATE as string | undefined) ?? ''
+  const buildDate = buildDateRaw.replace(/-/g, '')
 
 
   const schema = object()
@@ -115,6 +117,7 @@ function LoginPage() {
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
+              position: 'relative',
               p: 3,
             }}
           >
@@ -228,6 +231,24 @@ function LoginPage() {
 
               </Grid>
             </form>
+            {!!buildDateRaw && (
+              <Typography
+                variant='caption'
+                sx={{
+                  position: 'absolute',
+                  bottom: 10,
+                  left: 0,
+                  right: 0,
+                  textAlign: 'center',
+                  fontSize: '0.75rem',
+                  direction: 'ltr',
+                  color: 'rgba(255,255,255,0.7)',
+                }}
+                dir='ltr'
+              >
+                Build: {buildDate}
+              </Typography>
+            )}
             {/* <DevTool control={control} /> */}
           </Box>
         </Box>

@@ -23,6 +23,7 @@ interface ControlledTextFieldProps {
   multiline?: boolean
   minRows?: number
   disabled?: boolean
+  onBlur?: () => void
 }
 
 const ControlledTextField = ({
@@ -38,6 +39,7 @@ const ControlledTextField = ({
   multiline = false,
   minRows = 1,
   disabled = false,
+  onBlur,
 }: ControlledTextFieldProps) => {
   const { t } = useTranslation()
   const theme = useTheme()
@@ -74,6 +76,10 @@ const ControlledTextField = ({
             minRows={minRows}
             disabled={disabled}
             {...field}
+            onBlur={() => {
+              field.onBlur()
+              onBlur?.()
+            }}
             value={type === 'number' && (field.value === null || field.value === undefined) ? '' : field.value}
             id={name}
             error={!!errorMessage}

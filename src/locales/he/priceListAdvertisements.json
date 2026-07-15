@@ -20,5 +20,9 @@
   "layoutType_unassigned": "לא משויך",
   "layoutType_horizontal": "אופקי",
   "layoutType_verticalLeft": "אנכי שמאל",
-  "layoutType_verticalRight": "אנכי ימין"
+  "layoutType_verticalRight": "אנכי ימין",
+  "layoutType_fullPage": "עמוד מלא",
+  "spreadSide": "צד במרכב",
+  "spreadSide_left": "שמאל (אי-זוגי)",
+  "spreadSide_right": "ימין (זוגי)"
 }

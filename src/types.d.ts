@@ -1097,13 +1097,14 @@ export enum EPriceListAdvertisementLayoutType {
   Horizontal = 1, // 145 на 30 мм
   VerticalLeft = 2,
   VerticalRight = 3,
+  FullPage = 4, // после реза ≈ 177×250 мм (левая → правая боковая)
 }
 
 export type TPriceListLayout = {
   id: string
   name: string
   layoutType: EPriceListAdvertisementLayoutType
-  orientation: 'Horizontal' | 'Vertical'
+  orientation: 'Horizontal' | 'Vertical' | 'FullPage'
   originalFileName: string
   convertedPdfFileName: string
   previewFileName: string
@@ -1132,6 +1133,7 @@ export type TPricelistLayoutSchedule = {
     name: string
     previewFileName: string
     layoutType: EPriceListAdvertisementLayoutType
+    orientation?: 'Horizontal' | 'Vertical' | 'FullPage'
   }
   fromDate: string // ISO Date String
   toDate: string | null   // ISO Date String

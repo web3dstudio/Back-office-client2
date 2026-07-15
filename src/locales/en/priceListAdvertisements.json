@@ -20,5 +20,9 @@
   "layoutType_unassigned": "Unassigned",
   "layoutType_horizontal": "Horizontal",
   "layoutType_verticalLeft": "Vertical Left",
-  "layoutType_verticalRight": "Vertical Right"
+  "layoutType_verticalRight": "Vertical Right",
+  "layoutType_fullPage": "Full page",
+  "spreadSide": "Spread side",
+  "spreadSide_left": "Left (odd)",
+  "spreadSide_right": "Right (even)"
 }
