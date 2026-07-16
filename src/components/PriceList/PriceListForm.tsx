@@ -365,6 +365,9 @@ export default function PriceListForm() {
           </Grid>
         </Grid>
         <DialogActions>
+          <Button variant="outlined" color="primary" onClick={() => setTitleDialogOpen(false)}>
+            {t('modals.cancel', { ns: 'common' })}
+          </Button>
           <Button variant="contained" color="primary" sx={{ textTransform: 'capitalize' }} onClick={() => setTitleDialogOpen(false)}>
             {t('save', { ns: 'common' })}
           </Button>
@@ -391,6 +394,12 @@ export default function PriceListForm() {
           </Grid>
         </Grid>
         <DialogActions>
+          <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => setCommentDialogOpen(false)}>
+            {t('modals.cancel', { ns: 'common' })}
+          </Button>
           <Button
             variant="contained"
             color="primary"
